@@ -1,0 +1,71 @@
+# GunMatch
+
+## 現在の構成（2026-10-21）
+
+- Laravel 13の標準アプリケーションです。現在の `/` は標準Welcomeページです。
+- 起動方法・検証結果・不足素材は [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) を参照してください。
+- 作業指示書は [docs/CODEX_作業指示.md](docs/CODEX_作業指示.md)、旧デザインの参考HTMLは [docs/reference/index.html](docs/reference/index.html) に保存しています。
+- CSSは `public/assets/css/gunmatch.css`、画像は `public/assets/img/logo/`・`hero/`・`categories/` に配置しています。
+- カテゴリ画像はPNG 6枚です。`category_air_rifle.png` は未同梱です。
+- `public/assets/js/` は今後の配置先のみ用意しています。JavaScriptファイルはありません。
+- TOPのBlade化、共通カード、検索・認証・取引機能は未実装です。
+
+以下は受領時のスターター説明を参考資料として保持したものです。記載のBlade・WebP・SVG・JavaScriptには未同梱のものがあり、現在の実装状態とは一致しません。
+
+---
+
+# GunMatch TOPデザイン・Laravel Bladeスターター（受領時の説明）
+
+2026-10-21 / 第一案（静的UIベース）
+
+## 結論
+
+GunMatchのTOPを、Laravel Blade / 外部CSS / 外部JavaScript / 画像素材に分離した**開発用ひな形**です。
+**Laravelアプリ本体・DB・認証・検索機能を完成させたものではありません。**
+Codexに渡す際は `CODEX_作業指示.md` と本フォルダをセットで使ってください。
+
+## ディレクトリ
+
+```text
+app/Http/Controllers/HomeController.php         # データと表示の橋渡し。local環境のみデモ掲載
+resources/views/layouts/app.blade.php           # head、ヘッダー、フッター、CSS/JS読み込み
+resources/views/partials/header.blade.php       # 共通ヘッダー、SPメニュー
+resources/views/partials/footer.blade.php       # 共通フッター
+resources/views/components/category-card.blade.php
+resources/views/components/listing-card.blade.php
+resources/views/home.blade.php                  # TOPのBlade
+routes/web.php                                  # ルート設定の参考。既存ファイルとマージ
+public/assets/css/gunmatch.css                 # CSS本体
+public/assets/js/gunmatch.js                   # SPナビだけ。業務ロジックなし
+public/assets/img/branding/                   # ヒーロー、ロゴ、バナー
+public/assets/img/categories/                 # 以前作成した7カテゴリの透過WebP
+public/assets/icons/                          # 手作業SVGのUIアイコン
+preview/index.html                             # HTML静的確認用（Bladeとは別の見本）
+```
+
+## 新規Laravelプロジェクトへの仮組み込み
+
+1. バックアップまたはGit差分を確認してから、本フォルダ中の `app` / `resources` / `public/assets` をプロジェクト同名パスへコピー。
+2. `routes/web.php` は**既存ファイルを上書きせず**、TOPの `Route::get('/', ...)` を適切に統合。
+3. `php artisan serve` を起動し `/` を確認。
+4. `.env` の `APP_ENV=local` では実在しない**デザイン確認専用**の掲載カードが表示されます。`local` 以外では架空の掲載を出さず、空状態になります。
+5. `GET /listings`、`/login`、`/register` 等の遷移先は**今後実装するURLの想定**です。現段階で404でもTOPテンプレートの故障ではありません。
+
+## 重要な仕様
+
+- `譲る` と `探す` の2モード。カテゴリは**7カテゴリのみ**（散弾銃、ライフル、ハーフライフル、エアライフル、銃身、アクセサリー、無可動銃）。
+- 弾薬・火薬・雷管等は取扱対象外。デザインにも商品として掲載しない。
+- `所持許可あり` は**自己申告**。GunMatchが許可証を確認したかのような「本人確認済み」「許可証確認済み」は使わない。
+- 画像：依頼者と作成してきたGunMatch専用素材を同梱。カテゴリ画像は透明背景のWebP。
+- 色はCSS `:root` 変数へ集約。共通カードはBlade anonymous componentへ分割。
+- サイト内メッセージ、SMS認証、検索結果、詳細、マイページなどの機能は今後Codexが別工程で実装。
+- ロゴと商品画像は試作画像です。実運用時は実掲載の商品画像をDB経由で表示。
+
+## 静的プレビュー
+
+`preview/index.html` はLaravelをインストールせず、PC・SPデザインをブラウザで確認するためのHTML見本です。
+画像・CSSのパスは `../public/assets/...` を参照します。BladeやDBとは接続していません。
+
+## 推奨動作環境
+
+PHP 8.3以上を想定。Laravel / MySQLのバージョン確定、さくらレンタルサーバーとの互換性（DocumentRoot、スケジューラ、メール送信、SMSサービス）はCodexの実プロジェクト検証で判断。

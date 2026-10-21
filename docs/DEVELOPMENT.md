@@ -4,7 +4,7 @@
 
 Laravel 13の標準アプリケーションを追加しています。現在の `/` はLaravel標準のWelcomeページです。GunMatchのTOPデザインの実装完了を意味しません。
 
-既存のREADME.md、CODEX_作業指示.md、index.html、gunmatch.css、PNG素材、AGENTS.mdは上書きしていません。元のHTMLはLaravelのルートから配信していません。
+初期導入では既存ファイルを保持しました。その後、下記「素材・資料の整理」に従って配置を整理しています。元のHTMLはLaravelのルートから配信していません。
 
 ## ローカル起動
 
@@ -40,9 +40,9 @@ php artisan test
 
 ## Git管理
 
-`.env`、認証ファイル、vendor、node_modules、ログ、キャッシュ、SQLite実体はコミット対象から除外します。元から存在する資料と素材はAGENTS.mdを除き、今回のLaravel基盤のコミットに含めません。
+`.env`、認証ファイル、vendor、node_modules、ログ、キャッシュ、SQLite実体はコミット対象から除外します。初期コミット `f4a4766` ではLaravel基盤とAGENTS.mdを保存し、今回の整理でREADME・参考HTML・既存CSS・既存PNG・作業指示書も管理対象に追加します。
 
-## 今回の検証結果（2026-10-21）
+## 初期導入の検証結果（2026-10-21）
 
 - PHP 8.4.1でLaravel Framework 13.38.0が起動。
 - `/` と `/up` のHTTP 200応答を確認。
@@ -53,6 +53,40 @@ php artisan test
 - `.env`、vendor、ログ、SQLite実体がGit除外対象であることを確認。
 - PC・スマートフォンのブラウザ表示、参考画像との比較は未実施。
 - Composer 2.5.8はPHP 8.4環境で非推奨警告を出しましたが、依存関係の導入は終了コード0で完了。グローバルComposerは変更していません。
+
+## 素材・資料の整理（2026-10-21）
+
+- `logo.png` → `public/assets/img/logo/logo.png`
+- `image.png` → `public/assets/img/hero/hero-main.png`
+- `category_*.png`（既存6枚）→ `public/assets/img/categories/`
+- `gunmatch.css` → `public/assets/css/gunmatch.css`（内容は変更なし）
+- `CODEX_作業指示.md` → `docs/CODEX_作業指示.md`（内容は変更なし）
+- `index.html` → `docs/reference/index.html`（参照パスのみ修正）
+- `public/assets/js/` は `.gitkeep` のみ。ダミーJavaScriptは追加していません。
+- `AGENTS.md` はルートで内容を保持。README.mdはルートで保持し、現状説明を追記。
+- LaravelのPHP・Blade・ルート・依存関係・DB設定は変更していません。
+
+### 参考資料の参照と不足ファイル
+
+参考HTMLのCSS・ロゴ・カテゴリ画像への参照を新しい配置に合わせています。旧WebP参照は既存のPNGに合わせ、フッターロゴの未展開プレースホルダーも実際のロゴパスに修正しています。本文・掲載内容・スタイル指定は変更していません。
+
+次の参照先は元から未同梱です。素材の代替や生成、機能実装は行っていないため、参考HTMLを開いても完全なデザイン表示にはなりません。
+
+- `public/assets/img/categories/category_air_rifle.png`：プロジェクト全体を検索したが見つからず。カテゴリ画像は7種類中6枚。
+- `public/assets/icons/` の `search.svg`、`mail-check.svg`、`badge-check.svg`、`message-circle.svg`、`bell.svg`。
+- `public/assets/js/gunmatch.js`：元HTMLに参照のみ存在。メニュー等の動作は未実装。
+- CSS内の `../img/branding/hero-mountain-hunter.webp` と `../img/branding/banner-hunting.webp`：元の参照を保持。`hero-main.png` は指定どおり保管したが、CSSの内容保持を優先して背景参照は変更していません。
+
+参考HTMLは `docs/` 内の資料であり、Laravelの公開ルートに追加していません。
+
+### 整理後の検証
+
+- 作業前の70ファイルを記録し、画像・CSS・作業指示書・AGENTS.md・Laravel構成ファイルの内容保持を確認。変更は参考HTMLの参照パスとREADME・本書の説明のみ。
+- Laravel 13.38.0の起動、既存4ルートの一覧取得、標準テスト2件の成功を確認。
+- `/`・`/up`・CSS・画像8枚の計11件でHTTP 200。CSS・画像のHTTPレスポンスは実ファイルとハッシュ一致。
+- 参考HTMLのローカル参照15種類を点検し、不足は上記の7ファイル（画像1枚・SVG 5点・JS 1点）のみ。CSS内の不足背景参照2種類は別途記載済み。
+- `.env`・vendor・node_modules・auth.json・ログのGit除外を確認。
+- 今回はファイル整理のみ。TOP実装やデザイン変更、ブラウザでのPC・スマートフォン表示確認は行っていません。
 
 ## 参考資料
 
