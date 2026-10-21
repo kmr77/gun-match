@@ -11,6 +11,7 @@
         <nav class="main-nav" id="primary-navigation" aria-label="メインナビゲーション" data-navigation>
             <a href="{{ route('home') }}#hunting-system">狩猟制度</a>
             <a href="{{ route('home') }}#hunting-basics">猟法の基礎</a>
+            <a href="{{ route('home') }}#categories">テーマ</a>
             <a href="{{ route('home') }}#outdoor">アウトドア</a>
             <a href="{{ route('home') }}#safety">安全とマナー</a>
             <a href="{{ route('home') }}#howto">ガイドの使い方</a>

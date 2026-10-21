@@ -15,6 +15,24 @@
         </div>
     </section>
 
+    <section class="section topics-section" id="categories" aria-labelledby="categories-title">
+        <div class="container">
+            <div class="section-heading">
+                <div><span class="section-heading__accent" aria-hidden="true"></span><h2 id="categories-title">狩猟・アウトドアのテーマ</h2></div>
+                <span class="section-kicker">INFORMATION CATEGORIES</span>
+            </div>
+            <p class="section-intro">道具の種類を知るための静的な案内です。出品・譲渡・取得・検索・問い合わせには対応していません。</p>
+            <div class="topic-grid">
+                @foreach ($categories as $category)
+                    <x-topic-card
+                        :name="$category['name']"
+                        :image="$category['image']"
+                    />
+                @endforeach
+            </div>
+        </div>
+    </section>
+
     <section class="section guide-section" id="guide" aria-labelledby="guide-title">
         <div class="container">
             <div class="section-heading">

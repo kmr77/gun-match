@@ -12,6 +12,7 @@
                 <h2>情報ガイド</h2>
                 <a href="{{ route('home') }}#hunting-system">狩猟制度</a>
                 <a href="{{ route('home') }}#hunting-basics">猟法の基礎</a>
+                <a href="{{ route('home') }}#categories">道具の種類</a>
                 <a href="{{ route('home') }}#outdoor">アウトドアの準備</a>
             </div>
             <div>

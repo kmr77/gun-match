@@ -2,12 +2,12 @@
 
 ## 現在の構成（2026-10-21）
 
-- Laravel 13の `/` で、狩猟・アウトドアの静的な情報案内TOPを表示します。
+- Laravel 13の `/` は `HomeController` 経由で、狩猟・アウトドアの静的な情報案内TOPを表示します。道具カテゴリ7件は画像付きの非リンクカードです。
 - 共通レイアウトは `resources/views/layouts/app.blade.php`、ヘッダー・フッター・情報カードは `resources/views/components/`、TOP本文は `resources/views/home.blade.php` です。
 - 起動方法は [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md)、今回の実装・検証記録は [docs/GM-003.md](docs/GM-003.md) を参照してください。
 - 作業指示書は [docs/CODEX_作業指示.md](docs/CODEX_作業指示.md)、旧デザインの参考HTMLは [docs/reference/index.html](docs/reference/index.html) に保存しています。
 - CSSは `public/assets/css/gunmatch.css`、画像は `public/assets/img/logo/`・`hero/`・`categories/` に配置しています。
-- GM-002でカテゴリPNG 7枚・SVG 5点・バナー画像・JavaScriptがそろっています。今回のTOPではロゴ・ヒーロー・バナー・情報案内用のSVGを使用しています。
+- GM-002でカテゴリPNG 7枚・SVG 5点・バナー画像・JavaScriptがそろっています。TOPではロゴ・ヒーロー・バナー・情報案内用のSVGとカテゴリ画像7枚を使用しています。
 - `public/assets/js/gunmatch.js` はモバイルメニューの開閉用です。
 - 制度と安全情報の案内先は環境省の公式ページです。出品・取引・マッチング・検索・会員機能はありません。
 
