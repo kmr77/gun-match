@@ -90,5 +90,7 @@ php artisan test
 
 ## 参考資料
 
+最新の素材・参照パス確認は [GM-001の作業記録](GM-001.md) を参照してください。上記の整理時点から、CSSのヒーロー画像参照を `../img/hero/hero-main.png` に修正しています。バナー画像等の不足は継続しています。
+
 - [Laravel 13 インストール](https://laravel.com/framework/docs/13.x/installation)
 - [Laravel 13 サーバー要件と公開ディレクトリ](https://laravel.com/framework/docs/13.x/deployment)

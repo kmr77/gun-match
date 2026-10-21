@@ -58,7 +58,7 @@ button, input, select { -webkit-tap-highlight-color: transparent; }
 .btn--light:hover { background: #f6f5f0; }
 
 /* ---------------- Hero ---------------- */
-.hero { position: relative; isolation: isolate; min-height: 480px; display: flex; align-items: center; overflow: hidden; background: #394638 url('../img/branding/hero-mountain-hunter.webp') center 55% / cover no-repeat; color: white; }
+.hero { position: relative; isolation: isolate; min-height: 480px; display: flex; align-items: center; overflow: hidden; background: #394638 url('../img/hero/hero-main.png') center 55% / cover no-repeat; color: white; }
 .hero::before { content: ""; position: absolute; z-index: -1; inset: 0; background: linear-gradient(90deg, rgba(5, 19, 12, .84) 0%, rgba(5, 19, 12, .66) 42%, rgba(5, 19, 12, .19) 74%, rgba(5, 19, 12, .06) 100%); }
 .hero__inner { width: min(calc(100% - 64px), 1200px); padding: 51px 0 63px; }
 .hero__copy { width: min(770px, 71%); }
