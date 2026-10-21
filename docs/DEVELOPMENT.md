@@ -2,7 +2,7 @@
 
 ## 実装範囲
 
-Laravel 13の標準アプリケーションを追加しています。現在の `/` はLaravel標準のWelcomeページです。GunMatchのTOPデザインの実装完了を意味しません。
+Laravel 13の `/` は、GM-003で実装した狩猟・アウトドアの静的な情報案内TOPです。共通Bladeレイアウトとヘッダー・フッター・情報カードの匿名コンポーネントを使用します。出品・取引・マッチング・検索・会員機能はありません。実装・検証の詳細は [GM-003.md](GM-003.md) を参照してください。
 
 初期導入では既存ファイルを保持しました。その後、下記「素材・資料の整理」に従って配置を整理しています。元のHTMLはLaravelのルートから配信していません。
 
@@ -36,7 +36,7 @@ php artisan view:cache
 php artisan test
 ```
 
-フロントエンドのnpm依存関係は未導入です。現在の標準Welcomeページは、Viteのビルド成果物がない場合にLaravel標準のフォールバック表示を使用します。
+フロントエンドのnpm依存関係は未導入です。現在のTOPは `public/assets/css/gunmatch.css` と `public/assets/js/gunmatch.js` を直接読み込むため、Viteのビルドは不要です。`welcome.blade.php` は既存資料として保持していますが、現在の `/` からは使用しません。
 
 ## Git管理
 
@@ -90,7 +90,7 @@ php artisan test
 
 ## 参考資料
 
-最新の素材・参照パス確認は [GM-001の作業記録](GM-001.md) を参照してください。上記の整理時点から、CSSのヒーロー画像参照を `../img/hero/hero-main.png` に修正しています。バナー画像等の不足は継続しています。
+上記の初期導入・整理時点の記録以降、GM-001でヒーロー参照を修正し、GM-002で不足素材8点を追加済みです。現在は素材不足を解消しています。履歴は [GM-001.md](GM-001.md)、現在のページ構成は [GM-003.md](GM-003.md) を参照してください。
 
 - [Laravel 13 インストール](https://laravel.com/framework/docs/13.x/installation)
 - [Laravel 13 サーバー要件と公開ディレクトリ](https://laravel.com/framework/docs/13.x/deployment)

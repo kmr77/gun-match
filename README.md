@@ -2,15 +2,16 @@
 
 ## 現在の構成（2026-10-21）
 
-- Laravel 13の標準アプリケーションです。現在の `/` は標準Welcomeページです。
-- 起動方法・検証結果・不足素材は [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) を参照してください。
+- Laravel 13の `/` で、狩猟・アウトドアの静的な情報案内TOPを表示します。
+- 共通レイアウトは `resources/views/layouts/app.blade.php`、ヘッダー・フッター・情報カードは `resources/views/components/`、TOP本文は `resources/views/home.blade.php` です。
+- 起動方法は [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md)、今回の実装・検証記録は [docs/GM-003.md](docs/GM-003.md) を参照してください。
 - 作業指示書は [docs/CODEX_作業指示.md](docs/CODEX_作業指示.md)、旧デザインの参考HTMLは [docs/reference/index.html](docs/reference/index.html) に保存しています。
 - CSSは `public/assets/css/gunmatch.css`、画像は `public/assets/img/logo/`・`hero/`・`categories/` に配置しています。
-- カテゴリ画像はPNG 6枚です。`category_air_rifle.png` は未同梱です。
-- `public/assets/js/` は今後の配置先のみ用意しています。JavaScriptファイルはありません。
-- TOPのBlade化、共通カード、検索・認証・取引機能は未実装です。
+- GM-002でカテゴリPNG 7枚・SVG 5点・バナー画像・JavaScriptがそろっています。今回のTOPではロゴ・ヒーロー・バナー・情報案内用のSVGを使用しています。
+- `public/assets/js/gunmatch.js` はモバイルメニューの開閉用です。
+- 制度と安全情報の案内先は環境省の公式ページです。出品・取引・マッチング・検索・会員機能はありません。
 
-以下は受領時のスターター説明を参考資料として保持したものです。記載のBlade・WebP・SVG・JavaScriptには未同梱のものがあり、現在の実装状態とは一致しません。
+以下は受領時のスターター説明を参考資料として保持したものです。記載のファイル構成・サービス仕様は、現在の情報サイトの実装状態とは一致しません。
 
 ---
 
