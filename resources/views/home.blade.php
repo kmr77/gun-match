@@ -30,6 +30,42 @@
         </div>
     </section>
 
+    <section class="section listings-section" id="offer-items" aria-labelledby="offer-items-title">
+        <div class="container">
+            <x-section-heading
+                title="新着の「譲る」（売りたい）"
+                id="offer-items-title"
+                badge="譲"
+                badge-variant="offer"
+                kicker="仮データ"
+            />
+            <p class="demo-notice">一般的なアウトドア用品の仮データです。実在の商品・募集ではありません。</p>
+            <div class="listing-grid">
+                @foreach ($offerItems as $item)
+                    <x-listing-card :item="$item" mode="offer" />
+                @endforeach
+            </div>
+        </div>
+    </section>
+
+    <section class="section listings-section listings-section--wanted" id="wanted-items" aria-labelledby="wanted-items-title">
+        <div class="container">
+            <x-section-heading
+                title="新着の「探す」（買いたい）"
+                id="wanted-items-title"
+                badge="探"
+                badge-variant="wanted"
+                kicker="仮データ"
+            />
+            <p class="demo-notice">一般的なアウトドア用品の仮データです。実在の商品・募集ではありません。</p>
+            <div class="listing-grid">
+                @foreach ($wantedItems as $item)
+                    <x-listing-card :item="$item" mode="wanted" />
+                @endforeach
+            </div>
+        </div>
+    </section>
+
     <section class="features" id="reasons" aria-labelledby="reasons-title">
         <div class="container">
             <h2 id="reasons-title">GunMatchが選ばれる理由</h2>

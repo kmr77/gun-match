@@ -444,6 +444,19 @@ button, input, select { -webkit-tap-highlight-color: transparent; }
 .brand-site .topics-section { padding: 24px 0 32px; background: #fff; }
 .brand-site .section-heading { margin-bottom: 18px; }
 .brand-site .section-heading h2 { font-size: 22px; }
+.brand-site .listings-section { padding: 27px 0 34px; }
+.brand-site .listings-section--wanted { padding: 30px 0 36px; background: #f7f6f2; }
+.brand-site .listings-section .section-heading { margin-bottom: 10px; }
+.brand-site .listing-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 14px; }
+.brand-site .listing-card { box-shadow: none; transition: none; }
+.brand-site .listing-card:hover { transform: none; box-shadow: var(--shadow-card); }
+.brand-site .listing-card__media { height: 150px; }
+.brand-site .listing-card__media > img { padding: 13px; }
+.brand-site .listing-card__body { min-height: 118px; padding: 11px 12px 13px; }
+.brand-site .listing-card__type { margin-bottom: 3px; color: var(--color-muted); font-size: 10px; font-weight: 600; }
+.brand-site .listing-card__title { min-height: 0; font-size: 13px; line-height: 1.55; }
+.brand-site .listing-card__description { margin: 6px 0 0; color: var(--color-muted); font-size: 11px; line-height: 1.6; }
+.brand-site .demo-notice { margin: 0 0 14px; color: var(--color-muted); font-size: 11px; }
 .brand-site .topic-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 12px; }
 .brand-site .topic-card {
   min-width: 0;
@@ -549,6 +562,7 @@ button, input, select { -webkit-tap-highlight-color: transparent; }
   .brand-site .hero__inner { width: min(calc(100% - 40px), 1320px); }
   .brand-site .hero__copy { width: min(680px, 88%); }
   .brand-site .topic-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .brand-site .listing-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .brand-site .features-grid { gap: 14px; }
 }
 @media (max-width: 600px) {
@@ -571,6 +585,16 @@ button, input, select { -webkit-tap-highlight-color: transparent; }
   .brand-site .topic-grid { width: 100%; min-width: 0; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
   .brand-site .topic-card { min-width: 0; padding: 8px 8px 10px; }
   .brand-site .topic-card h3 { font-size: 12px; }
+  .brand-site .listings-section,
+  .brand-site .listings-section--wanted { padding: 24px 0 28px; }
+  .brand-site .listings-section .section-heading h2 { font-size: 19px; }
+  .brand-site .listing-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .brand-site .listing-card__media { height: 126px; }
+  .brand-site .listing-card__media > img { padding: 7px; }
+  .brand-site .listing-card__body { min-height: 112px; padding: 10px 9px 12px; }
+  .brand-site .listing-card__title { font-size: 12px; }
+  .brand-site .listing-card__description { font-size: 10px; }
+  .brand-site .listing-card__status { top: 6px; right: 6px; font-size: 9px; padding: 3px 5px; }
   .brand-site .features { padding: 25px 0 24px; background-position: 62% center; }
   .brand-site .features h2 { font-size: 21px; }
   .brand-site .features__lead { font-size: 11px; }

@@ -1,16 +1,17 @@
 # GunMatch
 
-## 現在の構成（2026-10-21）
+## 現在の構成（2026-10-22）
 
-- Laravel 13の `/` はGunMatchのブランドTOPです。ヒーロー、カテゴリ画像7件、「GunMatchが選ばれる理由」、利用の流れ、最下部バナーを表示します。
-- 共通レイアウトは `resources/views/layouts/app.blade.php`、ヘッダー・フッター・セクション見出し・カテゴリカードは `resources/views/components/`、TOP本文は `resources/views/home.blade.php` です。
+- Laravel 13の `/` はGunMatchのブランドTOPです。ヒーロー、カテゴリー、新着の「譲る」「探す」（一般的なアウトドア用品の仮データ）、選ばれる理由、利用の流れ、最下部バナーを表示します。
+- 共通レイアウトは `resources/views/layouts/app.blade.php`、ヘッダー・フッター・セクション見出し・カテゴリカード・仮データカードは `resources/views/components/`、TOP本文は `resources/views/home.blade.php` です。
 - 起動方法は [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md)、GM-003時点の実装記録は [docs/GM-003.md](docs/GM-003.md) を参照してください。
 - 作業指示書は [docs/CODEX_作業指示.md](docs/CODEX_作業指示.md)、旧デザインの参考HTMLは [docs/reference/index.html](docs/reference/index.html) に保存しています。
-- CSSは `public/assets/css/gunmatch.css`、画像は `public/assets/img/logo/`・`hero/`・`categories/` に配置しています。
+- CSSは `public/assets/css/gunmatch.css`、画像は `public/assets/img/logo/`・`hero/`・`categories/`・`dummy/outdoor/` に配置しています。
 - GM-002でカテゴリPNG 7枚・SVG 5点・バナー画像・JavaScriptがそろっています。TOPでは既存のロゴ・ヒーロー・カテゴリ画像7枚を使用しています。
 - `public/assets/js/gunmatch.js` はモバイルメニューの開閉用です。
 - 取引や許認可の詳細案内は提供していません。銃器等の取り扱いには関係法令の遵守が必要です。
 - 売買募集、取得希望者のマッチング、取引問い合わせ、会員登録・本人確認機能は未実装です。機能の実装状況は開発資料で管理し、公開画面では未提供機能を提供中と誤認させる記載をしません。
+- TOPの商品帯は画像と固定配列を使うデザイン確認用表示です。一般的なアウトドア用品だけを扱い、実在の商品・募集や取引へのリンクはありません。ルート一覧と将来のページ計画は [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) を参照してください。
 - 夕景の山並みと鹿を写した最下部バナー画像は未提供です。素材が追加されるまでは、他の画像で代用しません。
 
 以下は受領時のスターター説明を参考資料として保持したものです。記載のファイル構成・サービス仕様は、現在の実装状態とは一致しません。

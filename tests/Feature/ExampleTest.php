@@ -24,6 +24,31 @@ class ExampleTest extends TestCase
             ->assertSee('アクセサリー')
             ->assertSee('無可動銃')
             ->assertSee(asset('assets/img/categories/category_shotgun.png'))
+            ->assertSee('新着の「譲る」（売りたい）')
+            ->assertSee('新着の「探す」（買いたい）')
+            ->assertSee('撥水シェルジャケット')
+            ->assertSee('保温フリースジャケット')
+            ->assertSee(asset('assets/img/dummy/outdoor/jacket.svg'))
+            ->assertSee(asset('assets/img/dummy/outdoor/gloves.svg'))
+            ->assertSee('一般的なアウトドア用品の仮データです。実在の商品・募集ではありません。')
+            ->assertDontSee('listing-card__link')
+            ->assertDontSee('弾薬');
+
+        $response->assertSeeInOrder([
+            'id="categories"',
+            'id="offer-items"',
+            'id="wanted-items"',
+            'id="reasons"',
+            'id="howto"',
+            'id="bottom-banner-title"',
+        ]);
+
+        $html = $response->getContent();
+        $this->assertSame(12, substr_count($html, 'class="listing-card"'));
+        $this->assertSame(6, substr_count($html, 'listing-card__kind--offer'));
+        $this->assertSame(6, substr_count($html, 'listing-card__kind--wanted'));
+
+        $response
             ->assertSee('GunMatchが選ばれる理由')
             ->assertSee('法令を大切に')
             ->assertSee('情報をわかりやすく')
@@ -45,5 +70,10 @@ class ExampleTest extends TestCase
             ->assertDontSee('狩猟・アウトドアの情報ガイド')
             ->assertDontSee('検索する')
             ->assertDontSee('新規登録');
+    }
+
+    public function test_unregistered_page_returns_not_found(): void
+    {
+        $this->get('/gm006-route-check-not-found')->assertNotFound();
     }
 }
