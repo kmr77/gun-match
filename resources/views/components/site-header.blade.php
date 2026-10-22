@@ -13,7 +13,7 @@
             <a href="{{ route('home') }}#categories">カテゴリー</a>
             <a href="{{ route('home') }}#reasons">選ばれる理由</a>
             <a href="{{ route('home') }}#howto">利用の流れ</a>
-            <a href="{{ route('home') }}#service-notice">GunMatchについて</a>
+            <a href="{{ route('home') }}#service-notice">法令・安全について</a>
         </nav>
     </div>
 </header>
