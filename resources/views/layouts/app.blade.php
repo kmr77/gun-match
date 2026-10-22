@@ -3,13 +3,13 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="狩猟制度や猟法の基礎、山での安全とマナーを知るための情報ガイド。公的な情報とともに、自然と向き合う一歩を案内します。">
-    <title>@yield('title', 'GunMatch｜狩猟・アウトドアの情報ガイド')</title>
+    <meta name="description" content="GunMatchは、狩猟用銃器・銃身・関連用品を対象とするマッチングサービスとして構想されたプロジェクトです。">
+    <title>@yield('title', 'GunMatch｜狩猟用品のマッチングサービス')</title>
     <link rel="preload" as="image" href="{{ asset('assets/img/hero/hero-main.png') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/gunmatch.css') }}">
     <script src="{{ asset('assets/js/gunmatch.js') }}" defer></script>
 </head>
-<body class="information-site" id="page-top">
+<body class="brand-site" id="page-top">
     <a class="skip-link" href="#main-content">本文へ移動</a>
     <x-site-header />
     <main id="main-content" tabindex="-1">

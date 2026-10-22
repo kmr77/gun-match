@@ -9,13 +9,11 @@
             <span aria-hidden="true"></span>
         </button>
         <nav class="main-nav" id="primary-navigation" aria-label="メインナビゲーション" data-navigation>
-            <a href="{{ route('home') }}#hunting-system">狩猟制度</a>
-            <a href="{{ route('home') }}#hunting-basics">猟法の基礎</a>
-            <a href="{{ route('home') }}#categories">テーマ</a>
-            <a href="{{ route('home') }}#outdoor">アウトドア</a>
-            <a href="{{ route('home') }}#safety">安全とマナー</a>
-            <a href="{{ route('home') }}#howto">ガイドの使い方</a>
+            <a href="{{ route('home') }}#page-top">トップ</a>
+            <a href="{{ route('home') }}#categories">カテゴリー</a>
+            <a href="{{ route('home') }}#reasons">選ばれる理由</a>
+            <a href="{{ route('home') }}#howto">利用の流れ</a>
+            <a href="{{ route('home') }}#service-notice">GunMatchについて</a>
         </nav>
-        <a class="btn btn--primary btn--small header-guide-link" href="{{ route('home') }}#guide">情報ガイドを見る <span aria-hidden="true">→</span></a>
     </div>
 </header>

@@ -4,24 +4,20 @@
     <section class="hero" aria-labelledby="hero-title">
         <div class="container hero__inner">
             <div class="hero__copy">
-                <p class="hero__eyebrow">GUNMATCH · HUNTING &amp; OUTDOOR GUIDE</p>
-                <h1 id="hero-title">自然を知る。<br>安全に、山へ。</h1>
-                <p class="hero__lead">狩猟のこと、山のこと、自然との向き合い方。<br class="desktop-break">学ぶことから、次の一歩をはじめよう。</p>
-                <div class="hero__actions">
-                    <a class="btn btn--primary" href="#guide">情報ガイドを見る <span aria-hidden="true">→</span></a>
-                    <a class="hero__safety-link" href="#safety">安全とマナーを確認する <span aria-hidden="true">→</span></a>
-                </div>
+                <p class="hero__eyebrow">HUNTING &amp; SHOOTING MARKETPLACE</p>
+                <h1 id="hero-title">狩猟の道具と人をつなぐ<br>マーケットプレイス</h1>
+                <p class="hero__lead">狩猟用銃器・銃身・関連用品のマッチングサービスとして構想されたプロジェクトです。</p>
             </div>
         </div>
+        <span class="hero__note" aria-hidden="true">狩猟を、<br>もっと身近に。</span>
     </section>
 
     <section class="section topics-section" id="categories" aria-labelledby="categories-title">
         <div class="container">
             <div class="section-heading">
-                <div><span class="section-heading__accent" aria-hidden="true"></span><h2 id="categories-title">狩猟・アウトドアのテーマ</h2></div>
-                <span class="section-kicker">INFORMATION CATEGORIES</span>
+                <div><span class="section-heading__accent" aria-hidden="true"></span><h2 id="categories-title">カテゴリー</h2></div>
+                <span class="section-kicker">HUNTING &amp; SHOOTING</span>
             </div>
-            <p class="section-intro">道具の種類を知るための静的な案内です。出品・譲渡・取得・検索・問い合わせには対応していません。</p>
             <div class="topic-grid">
                 @foreach ($categories as $category)
                     <x-topic-card
@@ -33,87 +29,121 @@
         </div>
     </section>
 
-    <section class="section guide-section" id="guide" aria-labelledby="guide-title">
+    <section class="features" id="reasons" aria-labelledby="reasons-title">
         <div class="container">
-            <div class="section-heading">
-                <div><span class="section-heading__accent" aria-hidden="true"></span><h2 id="guide-title">まずは、知ることから。</h2></div>
-                <span class="section-kicker">LEARN THE BASICS</span>
-            </div>
-            <p class="section-intro">はじめての方にも、あらためて学びたい方にも。気になるテーマから、公的な情報へ。</p>
-            <div class="guide-grid">
-                <x-info-card
-                    id="hunting-system" number="01" icon="badge-check" title="狩猟制度を知る"
-                    description="狩猟免許や狩猟者登録、区域・期間など、制度の全体像を確認するための入り口です。詳しい条件は、環境省やお住まいの都道府県の案内をご確認ください。"
-                    href="https://www.env.go.jp/nature/choju/hunt/hunt2.html" source="環境省の制度案内を読む"
-                />
-                <x-info-card
-                    id="hunting-basics" number="02" icon="mail-check" title="猟法の基礎を学ぶ"
-                    description="網猟・わな猟・銃猟など、狩猟にはさまざまな区分があります。まずは制度上の分類を知り、学習や安全講習について地域の担当窓口で確認しましょう。"
-                    href="https://www.env.go.jp/nature/choju/hunt/hunt2.html" source="環境省で猟法の区分を知る"
-                />
-                <x-info-card
-                    id="outdoor" number="03" icon="bell" title="山歩きの準備をする"
-                    description="自然を楽しむ時間は、計画から始まります。体力に合うルート選び、服装や持ち物、天候の確認など、出かける前の準備を見直してみましょう。"
-                    href="https://www.env.go.jp/nature/nationalparks/pick-up/long-trail/beginner/" source="環境省の自然歩道ガイドを読む"
-                />
-            </div>
-            <p class="source-note">リンク先は環境省の公式サイトです。制度・地域の案内は最新情報をご確認ください。</p>
-        </div>
-    </section>
-
-    <section class="features" id="safety" aria-labelledby="safety-title">
-        <div class="container">
-            <p class="section-kicker">SAFETY &amp; RESPECT</p>
-            <h2 id="safety-title">山に入る前に、4つの確認。</h2>
-            <p class="features__lead">自分の安全と、自然への思いやり。どちらも大切に。</p>
+            <h2 id="reasons-title">GunMatchが選ばれる理由</h2>
+            <p class="features__lead">狩猟を楽しむすべての人のために、安心・安全を大切にするサービスを構想しています。</p>
             <div class="features-grid">
                 <article class="feature">
-                    <span class="feature__icon"><img src="{{ asset('assets/icons/bell.svg') }}" alt="" width="33" height="33" loading="lazy"></span>
-                    <h3>天候と現地の状況</h3>
-                    <p>出発前に天気やルートの状況を確認。<br>無理のない計画を立てましょう。</p>
+                    <span class="feature__icon" aria-hidden="true">
+                        <svg viewBox="0 0 40 40" fill="none">
+                            <path d="M20 4 32 9v9c0 8-5 14-12 18C13 32 8 26 8 18V9l12-5Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                            <path d="m14 20 4 4 8-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </span>
+                    <h3>法令を尊重する</h3>
+                    <p>銃器等の取り扱いに関わる法令を尊重し、責任ある姿勢を大切にします。</p>
                 </article>
                 <article class="feature">
-                    <span class="feature__icon"><img src="{{ asset('assets/icons/badge-check.svg') }}" alt="" width="33" height="33" loading="lazy"></span>
-                    <h3>地域のルールとマナー</h3>
-                    <p>立ち入りや施設利用の案内を確認。<br>地域の暮らしにも配慮を。</p>
+                    <span class="feature__icon" aria-hidden="true">
+                        <svg viewBox="0 0 40 40" fill="none">
+                            <path d="M10 5h14l7 7v23H10V5Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                            <path d="M24 5v8h7M15 20h11M15 25h11M15 30h7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </span>
+                    <h3>情報を丁寧に伝える</h3>
+                    <p>道具や狩猟にまつわる情報を、分かりやすく伝えることを目指します。</p>
                 </article>
                 <article class="feature">
-                    <span class="feature__icon"><img src="{{ asset('assets/icons/mail-check.svg') }}" alt="" width="33" height="33" loading="lazy"></span>
-                    <h3>服装と持ち物</h3>
-                    <p>気温や行程に合う装備を準備。<br>出かける前に点検しましょう。</p>
+                    <span class="feature__icon" aria-hidden="true">
+                        <svg viewBox="0 0 40 40" fill="none">
+                            <path d="M6 9h28v19H19l-8 6v-6H6V9Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                            <circle cx="14" cy="18.5" r="1.4" fill="currentColor"/>
+                            <circle cx="20" cy="18.5" r="1.4" fill="currentColor"/>
+                            <circle cx="26" cy="18.5" r="1.4" fill="currentColor"/>
+                        </svg>
+                    </span>
+                    <h3>安全を大切にする</h3>
+                    <p>安心して趣味を続けられるよう、安全への意識を大切にする構想です。</p>
                 </article>
                 <article class="feature">
-                    <span class="feature__icon"><img src="{{ asset('assets/icons/message-circle.svg') }}" alt="" width="33" height="33" loading="lazy"></span>
-                    <h3>行動計画の共有</h3>
-                    <p>行き先や予定を家族などに共有。<br>安心して帰るための準備を。</p>
+                    <span class="feature__icon" aria-hidden="true">
+                        <svg viewBox="0 0 40 40" fill="none">
+                            <circle cx="20" cy="13" r="5" stroke="currentColor" stroke-width="2"/>
+                            <path d="M10 33v-3a10 10 0 0 1 20 0v3H10Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                            <path d="M9 10a4 4 0 0 0 0 8M31 10a4 4 0 0 1 0 8M5 30v-2a7 7 0 0 1 5-6.7M35 30v-2a7 7 0 0 0-5-6.7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </span>
+                    <h3>共通の趣味でつながる</h3>
+                    <p>狩猟という共通の趣味を通じた、新しい出会いを目指しています。</p>
                 </article>
             </div>
-            <p class="features__source">参考：環境省 <a href="https://www.env.go.jp/nature/nationalparks/about/manner/">国立公園の利用上のマナー ↗</a> ／ <a href="https://www.env.go.jp/nature/nationalparks/pick-up/long-trail/beginner/">自然歩道初心者ガイド ↗</a></p>
         </div>
     </section>
 
-    <section class="section howto" id="howto" aria-labelledby="howto-title">
+    <section class="howto" id="howto" aria-labelledby="howto-title">
         <div class="container">
             <div class="section-heading">
-                <div><span class="section-heading__accent" aria-hidden="true"></span><h2 id="howto-title">このガイドの使い方</h2></div>
-                <span class="section-kicker">YOUR FIRST STEP</span>
+                <div>
+                    <span class="section-heading__accent" aria-hidden="true"></span>
+                    <h2 id="howto-title">利用の流れ</h2>
+                </div>
             </div>
-            <ol class="steps">
-                <li class="step"><span class="step__number" aria-hidden="true">1</span><div><h3>テーマを選ぶ</h3><p>制度のこと、自然の楽しみ方。知りたいテーマの案内から読み進めます。</p></div></li>
-                <li class="step"><span class="step__number" aria-hidden="true">2</span><div><h3>公的な情報を読む</h3><p>各案内のリンクから、環境省が公開する制度や安全に関する情報を確認します。</p></div></li>
-                <li class="step"><span class="step__number" aria-hidden="true">3</span><div><h3>地域の案内を確かめる</h3><p>実際に出かける前に、都道府県や現地施設が発信する最新の案内を確認します。</p></div></li>
-            </ol>
+            <div class="howto__panel">
+                <ol class="steps">
+                    <li class="step">
+                        <div class="step__heading">
+                            <span class="step__number">1</span>
+                            <svg class="step__icon" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+                                <circle cx="14" cy="12" r="6" stroke="currentColor" stroke-width="2"/>
+                                <path d="M4 33v-3a10 10 0 0 1 20 0v3H4ZM30 12v12M24 18h12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <h3>構想を知る</h3>
+                        </div>
+                        <p>GunMatchが目指すサービスの考え方をご紹介します。</p>
+                    </li>
+                    <li class="step">
+                        <div class="step__heading">
+                            <span class="step__number">2</span>
+                            <svg class="step__icon" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+                                <path d="M10 5h14l7 7v23H10V5Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                                <path d="M24 5v8h7M15 20h11M15 25h11M15 30h7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <h3>法令を確認する</h3>
+                        </div>
+                        <p>銃器等に関わる法令・手続きは、公的機関の最新情報をご確認ください。</p>
+                    </li>
+                    <li class="step">
+                        <div class="step__heading">
+                            <span class="step__number">3</span>
+                            <svg class="step__icon" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+                                <path d="M6 9h28v19H19l-8 6v-6H6V9Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                                <path d="M14 18h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                            <h3>安全を大切にする</h3>
+                        </div>
+                        <p>安全と責任を前提とした、狩猟の楽しみ方を大切にします。</p>
+                    </li>
+                </ol>
+            </div>
+            <p class="howto__legal" id="service-notice">GunMatchは、狩猟用銃器・銃身・関連用品を対象とするマッチングサービスとして構想されています。銃器等の取り扱いには関係法令の遵守が必要です。このページはデザイン確認用であり、掲載・検索・マッチング・問い合わせ・取引の機能はありません。</p>
         </div>
     </section>
 
-    <section class="bottom-banner" id="about" aria-labelledby="about-title">
+    <section class="bottom-banner" aria-labelledby="bottom-banner-title">
+        <img
+            class="bottom-banner__image"
+            src="{{ asset('assets/img/branding/banner-hunting.webp') }}"
+            alt=""
+            width="1254"
+            height="1254"
+            loading="lazy"
+        >
         <div class="container bottom-banner__inner">
-            <div>
-                <p class="bottom-banner__eyebrow">ABOUT GUNMATCH</p>
-                <h2 id="about-title">自然との付き合いを、<br>知ることから。</h2>
-                <p>GunMatchは、狩猟・アウトドアの基礎と安全を学ぶ情報ガイドです。</p>
+            <div class="bottom-banner__copy">
+                <h2 id="bottom-banner-title">狩猟という共通の趣味が、新しい出会いをつくる。</h2>
+                <p>GunMatchが目指すのは、趣味を通じたつながりです。</p>
             </div>
-            <a class="btn btn--light" href="#guide">情報ガイドに戻る <span aria-hidden="true">↑</span></a>
         </div>
     </section>
 @endsection
