@@ -13,7 +13,23 @@
                 <a href="{{ route('home') }}#categories">カテゴリー</a>
                 <a href="{{ route('home') }}#reasons">選ばれる理由</a>
                 <a href="{{ route('home') }}#howto">利用の流れ</a>
-                <a href="{{ route('home') }}#service-notice">法令・安全について</a>
+                <a href="{{ route('about') }}">GunMatchについて</a>
+                <a href="{{ route('guide') }}">初めての方・利用ガイド</a>
+            </div>
+            <div>
+                <h2>ご利用案内</h2>
+                <a href="{{ route('safety') }}">安全・法令について</a>
+                <a href="{{ route('prohibited-items') }}">禁止事項・禁止品目</a>
+                <a href="{{ route('faq') }}">よくある質問</a>
+                <a href="{{ route('contact') }}">お問い合わせ案内</a>
+                <a href="{{ route('terms') }}">利用規約</a>
+                <a href="{{ route('privacy') }}">プライバシーポリシー</a>
+            </div>
+            <div>
+                <h2>会員メニュー</h2>
+                <a href="{{ route('login') }}">ログイン</a>
+                <a href="{{ route('register') }}">新規会員登録</a>
+                <a href="{{ route('mypage') }}">マイページ</a>
             </div>
         </nav>
     </div>

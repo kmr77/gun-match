@@ -74,6 +74,8 @@ class ExampleTest extends TestCase
 
     public function test_unregistered_page_returns_not_found(): void
     {
-        $this->get('/gm006-route-check-not-found')->assertNotFound();
+        $this->get('/gm006-route-check-not-found')
+            ->assertNotFound()
+            ->assertSee('ページが見つかりません');
     }
 }
