@@ -92,7 +92,11 @@ class StaticPagesTest extends TestCase
 
         $this->get(route('register'))
             ->assertOk()
-            ->assertSee('会員登録・認証・データ保存は未実装です');
+            ->assertSee('会員登録・認証・データ保存は未実装です')
+            ->assertSee('個人会員')
+            ->assertSee('銃砲店会員')
+            ->assertSee('name="member_type"', false)
+            ->assertSee('aria-describedby="member_type-description"', false);
 
         $this->get(route('password.request'))
             ->assertOk()
@@ -123,6 +127,45 @@ class StaticPagesTest extends TestCase
             ->assertOk()
             ->assertSee('実際のお知らせや配信履歴ではありません')
             ->assertSee('お知らせ機能は未実装です');
+
+        $this->get(route('mypage.profile.preview'))
+            ->assertOk()
+            ->assertSee('公開プロフィール表示へ')
+            ->assertDontSee('プレビュー表示へ');
+    }
+
+    public function test_mypage_navigation_marks_each_current_page_once(): void
+    {
+        $pages = [
+            'mypage' => 'home',
+            'mypage.profile' => 'profile',
+            'mypage.profile.public' => 'profile-public',
+            'mypage.profile.preview' => 'profile-preview',
+            'mypage.settings' => 'settings',
+            'mypage.security' => 'security',
+            'mypage.account' => 'account',
+            'mypage.notifications' => 'notifications',
+            'mypage.announcements' => 'announcements',
+        ];
+
+        foreach ($pages as $routeName => $activeKey) {
+            $html = $this->get(route($routeName))->assertOk()->getContent();
+            preg_match('/<nav class="mypage-nav" aria-label="マイページメニュー">(.*?)<\/nav>/s', $html, $navigation);
+            preg_match_all('/<a\b[^>]*>.*?<\/a>/s', $navigation[1] ?? '', $menuLinks);
+            $activeLinks = array_values(array_filter(
+                $menuLinks[0] ?? [],
+                fn (string $link): bool => str_contains($link, 'class="is-active"'),
+            ));
+            preg_match('/href="([^"]+)"/', $activeLinks[0] ?? '', $activeLink);
+
+            $this->assertSame(1, substr_count($navigation[1] ?? '', 'aria-current="page"'), "Expected one current-page marker on {$routeName}");
+            $this->assertSame(1, substr_count($navigation[1] ?? '', 'class="is-active"'), "Expected one active navigation item on {$routeName}");
+            $this->assertSame(
+                parse_url(route($routeName), PHP_URL_PATH),
+                isset($activeLink[1]) ? parse_url($activeLink[1], PHP_URL_PATH) : null,
+                "Expected the {$activeKey} navigation item to be current",
+            );
+        }
     }
 
     public function test_category_overview_uses_existing_categories_without_transaction_links(): void

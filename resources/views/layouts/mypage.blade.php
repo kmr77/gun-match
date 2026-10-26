@@ -62,7 +62,11 @@
                                 <div><dt>プロフィール公開設定</dt><dd>機能未実装</dd></div>
                             </dl>
                         </article>
-                        <p class="member-help"><a href="{{ route('mypage.profile') }}">プロフィール編集画面へ</a> ・ <a href="{{ route('mypage.profile.preview') }}">プレビュー表示へ</a></p>
+                        @if ($pageKey === 'profile-preview')
+                            <p class="member-help"><a href="{{ route('mypage.profile') }}">プロフィール編集画面へ</a> ・ <a href="{{ route('mypage.profile.public') }}">公開プロフィール表示へ</a></p>
+                        @else
+                            <p class="member-help"><a href="{{ route('mypage.profile') }}">プロフィール編集画面へ</a> ・ <a href="{{ route('mypage.profile.preview') }}">プレビュー表示へ</a></p>
+                        @endif
                     @elseif ($pageKey === 'settings')
                         <p class="member-help">アカウント設定の表示例です。実際の登録情報や変更機能はありません。</p>
                         <div class="setting-row"><div><h3>ログイン情報</h3><p>メールアドレス・パスワード</p></div><span class="status-pill">未設定</span></div>

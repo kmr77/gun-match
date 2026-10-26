@@ -5,7 +5,11 @@
 @section('content')
     <section class="auth-page">
         <div class="container auth-page__inner">
-            <x-page-heading :title="$page['title']" :description="$page['description']" />
+            <x-page-heading
+                :title="$page['title']"
+                :description="$page['description']"
+                :breadcrumbs="[['label' => 'トップ', 'route' => 'home'], ['label' => $page['title']]]"
+            />
             <div class="auth-card">
                 <p class="page-notice" role="note">{{ $page['notice'] }}</p>
                 <form class="preview-form">
@@ -16,6 +20,8 @@
                             :type="$field['type']"
                             :autocomplete="$field['autocomplete']"
                             :required="true"
+                            :description="$field['description'] ?? null"
+                            :options="$field['options'] ?? []"
                         />
                     @endforeach
 

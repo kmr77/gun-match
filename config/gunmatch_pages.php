@@ -185,6 +185,17 @@ return [
             'notice' => '会員登録・認証・データ保存は未実装です。入力内容は送信・保存されません。',
             'button' => '会員登録機能は未実装です',
             'fields' => [
+                [
+                    'name' => 'member_type',
+                    'label' => '会員区分',
+                    'type' => 'select',
+                    'autocomplete' => null,
+                    'description' => '個人会員・銃砲店会員で共通利用する画面の表示例です。選択・登録機能は未実装です。',
+                    'options' => [
+                        'individual' => '個人会員',
+                        'business' => '銃砲店会員',
+                    ],
+                ],
                 ['name' => 'name', 'label' => 'お名前', 'type' => 'text', 'autocomplete' => 'name'],
                 ['name' => 'email', 'label' => 'メールアドレス', 'type' => 'email', 'autocomplete' => 'email'],
                 ['name' => 'password', 'label' => 'パスワード', 'type' => 'password', 'autocomplete' => 'new-password'],

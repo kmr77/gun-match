@@ -45,7 +45,7 @@ php artisan test
 
 フロントエンドのnpm依存関係は未導入です。現在のTOPは `public/assets/css/gunmatch.css` と `public/assets/js/gunmatch.js` を直接読み込むため、Viteのビルドは不要です。`welcome.blade.php` は既存資料として保持していますが、現在の `/` からは使用しません。
 
-## ページ一覧とルーティング（GM-007）
+## ページ一覧とルーティング（GM-010）
 
 以下は `routes/web.php` に登録した静的ページのルートです。会員関連はデザイン確認用であり、認証やデータ保存を行いません。
 ページごとのデザイン、共通部品、PC/SP検証、バックエンド要否、残作業の棚卸しは [GM-008-page-inventory.md](GM-008-page-inventory.md) を参照してください。
@@ -63,7 +63,7 @@ php artisan test
 | プライバシーポリシー | `/privacy` | `privacy` | 公開前確認中 |
 | お問い合わせ案内 | `/contact` | `contact` | 案内のみ。送信フォームなし |
 | ログイン | `/login` | `login` | 表示のみ。会員認証なし |
-| 新規会員登録 | `/register` | `register` | 表示のみ。登録・保存なし |
+| 新規会員登録 | `/register` | `register` | 個人・事業者の区分を含む表示のみ。登録・保存なし |
 | パスワード再設定案内 | `/forgot-password` | `password.request` | 表示のみ。メール送信なし |
 | マイページTOP | `/mypage` | `mypage` | 共通UI見本。会員データなし |
 | プロフィール編集 | `/mypage/profile` | `mypage.profile` | 表示のみ。保存なし |
@@ -77,7 +77,7 @@ php artisan test
 | Not Found | 存在しないURL | Laravel標準404 | `resources/views/errors/404.blade.php` |
 | Laravelヘルスチェック | `/up` | `healthcheck` | フレームワーク提供 |
 
-共通レイアウトは公開案内・静的会員プレビューで既存の `layouts.app` とヘッダー・フッターを再利用し、マイページは同じ共通パーツを使う操作性重視のレイアウトです。ページ見出し、入力欄、マイページメニューはBladeコンポーネント化しています。
+共通レイアウトは公開案内・静的会員プレビューで既存の `layouts.app` とヘッダー・フッターを再利用し、マイページは同じ共通パーツを使う操作性重視のレイアウトです。ページ見出し、入力欄・選択欄、マイページメニュー、状態メッセージはBladeコンポーネント化しています。全22ページルートは静的フロントエンドで、会員認証や保存などのバックエンドは未実装です。
 
 ### 公開前に確認が必要な事項
 
