@@ -53,6 +53,7 @@ php artisan test
 | 種別 | URL | ルート名 | 実装範囲 |
 | --- | --- | --- | --- |
 | ブランドTOP | `/` | `home` | TOP・固定の仮データ表示 |
+| カテゴリー一覧 | `/categories` | `categories.index` | 既存7カテゴリーの表示例。掲載・検索・譲渡・取得機能なし |
 | GunMatchについて | `/about` | `about` | 公開案内 |
 | 初めての方・利用ガイド | `/guide` | `guide` | 公開案内 |
 | 安全・法令について | `/safety` | `safety` | 一般的な案内。個別の法的判断なし |

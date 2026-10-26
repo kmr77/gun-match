@@ -9,6 +9,7 @@
 | ページ名 | URL | Laravelルート名 | デザイン実装状況 | 共通コンポーネント | PC/SP検証 | バックエンド要否 | 残作業 |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | GunMatch TOP | `/` | `home` | 実装済み | site-header, site-footer, section-heading, topic-card, listing-card等 | GM-008: 1440/375確認済み | 現状不要。実データ機能は別途設計 | TOPデザイン確認後の細部調整 |
+| カテゴリー一覧 | `/categories` | `categories.index` | GM-009: 7カテゴリーの表示例を実装。掲載・検索等の機能なし | layouts.app, site-header/footer, page-heading, topic-card | GM-009: 1440/375確認済み | 現状不要 | 提供機能を追加する場合は別途仕様・法令確認 |
 | GunMatchについて | `/about` | `about` | 実装済み | layouts.app, site-header/footer, page-heading | GM-008: 1440/375確認済み | 不要 | 公開内容の最終確認 |
 | 初めての方・利用ガイド | `/guide` | `guide` | 実装済み | layouts.app, site-header/footer, page-heading | GM-008: 1440/375確認済み | 不要 | 公開内容の最終確認 |
 | 安全・法令について | `/safety` | `safety` | 実装済み | layouts.app, site-header/footer, page-heading | GM-008: 1440/375確認済み | 不要 | 公開前に専門的・法的確認 |
@@ -50,3 +51,10 @@
 - 公開プロフィールとプレビューは個人情報を含まない固定の表示サンプル。お知らせ一覧の項目もすべて仮データ。
 
 認証情報、個人情報、実ユーザーデータ、実際のお知らせは使用していません。これらの画面は表示確認用で、保存・認証・配信処理はありません。
+
+## GM-009で追加した画面・共通部品
+
+- `/categories` は既存の7カテゴリーと画像を再利用する表示専用の一覧です。出品・取得募集・検索・取引へのリンクや個別の品目説明は設けていません。
+- カテゴリー定義は `config/gunmatch_categories.php` に集約し、TOPとカテゴリー一覧で共有します。
+- アカウント管理画面と通知・プロフィールの表示部品はGM-008で整備済みのため、重複する画面・部品は追加していません。
+- 商品一覧・詳細、検索、取引・連絡機能は未実装です。正式な規約・プライバシー文書、禁止品目の確定も公開前の確認事項です。

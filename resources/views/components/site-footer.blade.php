@@ -11,6 +11,7 @@
             <div>
                 <h2>GunMatch</h2>
                 <a href="{{ route('home') }}#categories">カテゴリー</a>
+                <a href="{{ route('categories.index') }}">カテゴリー一覧</a>
                 <a href="{{ route('home') }}#reasons">選ばれる理由</a>
                 <a href="{{ route('home') }}#howto">利用の流れ</a>
                 <a href="{{ route('about') }}">GunMatchについて</a>

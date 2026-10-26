@@ -10,6 +10,7 @@ class StaticPagesTest extends TestCase
     public function test_all_public_and_member_pages_have_named_routes_and_render(): void
     {
         $pages = [
+            'categories.index' => '/categories',
             'about' => '/about',
             'guide' => '/guide',
             'safety' => '/safety',
@@ -42,6 +43,7 @@ class StaticPagesTest extends TestCase
     public function test_static_pages_link_only_to_registered_local_routes(): void
     {
         $pageRoutes = [
+            'categories.index',
             'about', 'guide', 'safety', 'prohibited-items', 'faq', 'terms', 'privacy', 'contact',
             'login', 'register', 'password.request', 'mypage', 'mypage.profile',
             'mypage.profile.public', 'mypage.profile.preview', 'mypage.settings',
@@ -121,6 +123,23 @@ class StaticPagesTest extends TestCase
             ->assertOk()
             ->assertSee('実際のお知らせや配信履歴ではありません')
             ->assertSee('お知らせ機能は未実装です');
+    }
+
+    public function test_category_overview_uses_existing_categories_without_transaction_links(): void
+    {
+        $response = $this->get(route('categories.index'))
+            ->assertOk()
+            ->assertSee('現在、掲載・検索・譲渡・取得を支援する機能は提供していません。')
+            ->assertSee('散弾銃')
+            ->assertSee('ライフル')
+            ->assertSee('ハーフライフル')
+            ->assertSee('エアライフル')
+            ->assertSee('銃身')
+            ->assertSee('アクセサリー')
+            ->assertSee('無可動銃');
+
+        $response->assertDontSee('商品を検索する')
+            ->assertDontSee('取引相手に問い合わせる');
     }
 
     public function test_unknown_page_uses_custom_not_found_page(): void
