@@ -22,6 +22,11 @@ Route::controller(StaticPageController::class)->group(function (): void {
 
     Route::get('/mypage', 'mypage')->defaults('page', 'home')->name('mypage');
     Route::get('/mypage/profile', 'mypage')->defaults('page', 'profile')->name('mypage.profile');
+    Route::get('/mypage/profile/public', 'mypage')->defaults('page', 'profile-public')->name('mypage.profile.public');
+    Route::get('/mypage/profile/preview', 'mypage')->defaults('page', 'profile-preview')->name('mypage.profile.preview');
     Route::get('/mypage/settings', 'mypage')->defaults('page', 'settings')->name('mypage.settings');
+    Route::get('/mypage/security', 'mypage')->defaults('page', 'security')->name('mypage.security');
+    Route::get('/mypage/account', 'mypage')->defaults('page', 'account')->name('mypage.account');
     Route::get('/mypage/notifications', 'mypage')->defaults('page', 'notifications')->name('mypage.notifications');
+    Route::get('/mypage/announcements', 'mypage')->defaults('page', 'announcements')->name('mypage.announcements');
 });

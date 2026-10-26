@@ -30,14 +30,19 @@ class StaticPageController extends Controller
 
     public function mypage(string $page): View
     {
-        abort_unless(in_array($page, ['home', 'profile', 'settings', 'notifications'], true), 404);
-
         $titles = [
             'home' => 'マイページ',
             'profile' => 'プロフィール編集',
+            'profile-public' => '公開プロフィール',
+            'profile-preview' => 'プロフィールプレビュー',
             'settings' => 'アカウント設定',
+            'security' => 'セキュリティ設定',
+            'account' => 'アカウント管理のご案内',
             'notifications' => '通知設定',
+            'announcements' => 'お知らせ一覧',
         ];
+
+        abort_unless(array_key_exists($page, $titles), 404);
 
         return view('pages.mypage', [
             'pageKey' => $page,

@@ -48,6 +48,7 @@ php artisan test
 ## ページ一覧とルーティング（GM-007）
 
 以下は `routes/web.php` に登録した静的ページのルートです。会員関連はデザイン確認用であり、認証やデータ保存を行いません。
+ページごとのデザイン、共通部品、PC/SP検証、バックエンド要否、残作業の棚卸しは [GM-008-page-inventory.md](GM-008-page-inventory.md) を参照してください。
 
 | 種別 | URL | ルート名 | 実装範囲 |
 | --- | --- | --- | --- |
@@ -65,8 +66,13 @@ php artisan test
 | パスワード再設定案内 | `/forgot-password` | `password.request` | 表示のみ。メール送信なし |
 | マイページTOP | `/mypage` | `mypage` | 共通UI見本。会員データなし |
 | プロフィール編集 | `/mypage/profile` | `mypage.profile` | 表示のみ。保存なし |
+| 公開プロフィール | `/mypage/profile/public` | `mypage.profile.public` | 個人情報を含まない表示サンプル |
+| プロフィールプレビュー | `/mypage/profile/preview` | `mypage.profile.preview` | 保存・公開されない表示例 |
 | アカウント設定 | `/mypage/settings` | `mypage.settings` | 表示のみ。変更なし |
+| セキュリティ設定 | `/mypage/security` | `mypage.security` | 表示のみ。認証機能なし |
+| アカウント管理案内 | `/mypage/account` | `mypage.account` | 静的な案内。操作なし |
 | 通知設定 | `/mypage/notifications` | `mypage.notifications` | 表示のみ。配信・変更なし |
+| お知らせ一覧 | `/mypage/announcements` | `mypage.announcements` | 固定の表示確認用仮データ |
 | Not Found | 存在しないURL | Laravel標準404 | `resources/views/errors/404.blade.php` |
 | Laravelヘルスチェック | `/up` | `healthcheck` | フレームワーク提供 |
 

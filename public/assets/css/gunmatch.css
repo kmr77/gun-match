@@ -687,6 +687,7 @@ button, input, select { -webkit-tap-highlight-color: transparent; }
 .mypage-nav a { padding: 10px 12px; border-radius: 5px; color: #424b44; font-size: 13px; }
 .mypage-nav a:hover,
 .mypage-nav a.is-active { color: var(--color-primary); background: #edf3ee; font-weight: 800; }
+.mypage-nav a > span { display: inline-block; width: 1.5em; color: var(--color-primary); font-weight: 800; text-align: center; }
 .mypage-content h2 { margin: 0 0 15px; font-size: 20px; }
 .mypage-content .empty-state h3 { margin: 0 0 8px; font-size: 16px; }
 .mypage-content .empty-state p,
@@ -699,6 +700,30 @@ button, input, select { -webkit-tap-highlight-color: transparent; }
 .status-pill { flex: 0 0 auto; padding: 4px 9px; border-radius: 99px; color: #58635b; background: #f0f2ef; font-size: 11px; }
 .member-site .site-footer__links { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .member-site .site-footer__links > div { min-width: 0; }
+.feedback-message { display: flex; align-items: flex-start; gap: 12px; margin: 18px 0; padding: 14px 16px; border: 1px solid var(--color-border); border-left: 4px solid var(--color-primary); border-radius: 5px; background: #f7f9f7; }
+.feedback-message__icon { display: grid; flex: 0 0 23px; width: 23px; height: 23px; place-items: center; border-radius: 50%; color: #fff; background: var(--color-primary); font-size: 13px; font-weight: 800; line-height: 1; }
+.feedback-message h3 { margin: 0 0 3px; font-size: 13px; }
+.feedback-message p { margin: 0; color: #505950; font-size: 12px; line-height: 1.7; }
+.feedback-message--success { border-left-color: #31734a; background: #f2f8f3; }
+.feedback-message--success .feedback-message__icon { background: #31734a; }
+.feedback-message--error { border-left-color: #a83d32; background: #fff7f5; }
+.feedback-message--error .feedback-message__icon { background: #a83d32; }
+.profile-preview-card { max-width: 680px; margin: 20px 0; padding: 22px; border: 1px solid var(--color-border); border-radius: 8px; background: #fff; }
+.profile-preview-card__label { display: inline-block; padding: 4px 9px; border-radius: 99px; color: var(--color-primary); background: #edf3ee; font-size: 11px; font-weight: 700; }
+.profile-preview-card h3 { margin: 14px 0 6px; font-size: 18px; }
+.profile-preview-card > p { margin: 0; color: var(--color-muted); }
+.profile-preview-card dl { display: grid; gap: 0; margin: 18px 0 0; border-top: 1px solid var(--color-border); }
+.profile-preview-card dl > div { display: grid; grid-template-columns: minmax(130px, .7fr) minmax(0, 1fr); gap: 15px; padding: 11px 0; border-bottom: 1px solid var(--color-border); }
+.profile-preview-card dt { color: var(--color-muted); font-size: 12px; }
+.profile-preview-card dd { margin: 0; font-size: 13px; }
+.account-guide { margin: 18px 0; padding: 20px; border: 1px solid var(--color-border); border-radius: 7px; background: #fafbf9; }
+.account-guide h3 { margin: 0 0 9px; font-size: 15px; }
+.account-guide ol { margin: 0; padding-left: 1.5em; }
+.account-guide li + li { margin-top: 7px; }
+.announcement-list { display: grid; gap: 12px; margin: 16px 0; padding: 0; list-style: none; }
+.announcement-list > li { padding: 17px; border: 1px solid var(--color-border); border-radius: 7px; background: #fff; }
+.announcement-list h3 { margin: 8px 0 4px; font-size: 15px; }
+.announcement-list p { margin: 0; color: var(--color-muted); font-size: 13px; }
 
 @media (max-width: 960px) {
   .mypage-layout { grid-template-columns: minmax(0, 1fr); }
@@ -723,8 +748,12 @@ button, input, select { -webkit-tap-highlight-color: transparent; }
   .mypage-nav,
   .mypage-content { padding: 17px 15px; }
   .mypage-nav { gap: 3px; }
-  .mypage-nav a { padding: 9px 7px; font-size: 12px; }
+  .mypage-nav a { padding: 9px 5px; font-size: 11px; }
   .setting-row { align-items: flex-start; }
+  .profile-preview-card { padding: 17px 14px; }
+  .profile-preview-card dl > div { grid-template-columns: minmax(105px, .8fr) minmax(0, 1fr); gap: 10px; }
+  .account-guide { padding: 16px; }
+  .announcement-list > li { padding: 14px; }
   .member-site .site-footer__links { grid-template-columns: 1fr; gap: 24px; }
   .error-page__inner > p:not(.error-page__code) { font-size: 13px; }
 }

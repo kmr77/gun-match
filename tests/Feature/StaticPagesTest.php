@@ -7,7 +7,7 @@ use Tests\TestCase;
 
 class StaticPagesTest extends TestCase
 {
-    public function test_all_gm007_pages_have_named_routes_and_render(): void
+    public function test_all_public_and_member_pages_have_named_routes_and_render(): void
     {
         $pages = [
             'about' => '/about',
@@ -23,8 +23,13 @@ class StaticPagesTest extends TestCase
             'password.request' => '/forgot-password',
             'mypage' => '/mypage',
             'mypage.profile' => '/mypage/profile',
+            'mypage.profile.public' => '/mypage/profile/public',
+            'mypage.profile.preview' => '/mypage/profile/preview',
             'mypage.settings' => '/mypage/settings',
+            'mypage.security' => '/mypage/security',
+            'mypage.account' => '/mypage/account',
             'mypage.notifications' => '/mypage/notifications',
+            'mypage.announcements' => '/mypage/announcements',
         ];
 
         foreach ($pages as $name => $uri) {
@@ -39,7 +44,8 @@ class StaticPagesTest extends TestCase
         $pageRoutes = [
             'about', 'guide', 'safety', 'prohibited-items', 'faq', 'terms', 'privacy', 'contact',
             'login', 'register', 'password.request', 'mypage', 'mypage.profile',
-            'mypage.settings', 'mypage.notifications',
+            'mypage.profile.public', 'mypage.profile.preview', 'mypage.settings',
+            'mypage.security', 'mypage.account', 'mypage.notifications', 'mypage.announcements',
         ];
         $knownPaths = array_fill_keys(
             array_map(fn (string $name): string => parse_url(route($name), PHP_URL_PATH) ?: '/', ['home', ...$pageRoutes]),
@@ -93,6 +99,28 @@ class StaticPagesTest extends TestCase
         $this->get(route('mypage'))
             ->assertOk()
             ->assertSee('実際の会員情報や通知設定は表示していません');
+
+        $this->get(route('mypage.profile.public'))
+            ->assertOk()
+            ->assertSee('表示名のサンプル')
+            ->assertSee('実在の利用者や個人の情報は含まれていません');
+
+        $this->get(route('mypage.profile.preview'))
+            ->assertOk()
+            ->assertSee('プロフィールは保存・公開されていません');
+
+        $this->get(route('mypage.security'))
+            ->assertOk()
+            ->assertSee('セキュリティ機能は未実装です');
+
+        $this->get(route('mypage.account'))
+            ->assertOk()
+            ->assertSee('アカウント管理は未実装です');
+
+        $this->get(route('mypage.announcements'))
+            ->assertOk()
+            ->assertSee('実際のお知らせや配信履歴ではありません')
+            ->assertSee('お知らせ機能は未実装です');
     }
 
     public function test_unknown_page_uses_custom_not_found_page(): void
