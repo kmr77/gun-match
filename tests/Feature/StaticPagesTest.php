@@ -40,6 +40,49 @@ class StaticPagesTest extends TestCase
         }
     }
 
+    public function test_all_categories_use_the_shared_category_detail_template(): void
+    {
+        $categories = config('gunmatch_categories');
+        $this->assertCount(7, $categories);
+
+        foreach ($categories as $category) {
+            $this->get(route('categories.show', ['slug' => $category['slug']]))
+                ->assertOk()
+                ->assertViewIs('pages.category')
+                ->assertViewHas('category', $category)
+                ->assertSee($category['name'])
+                ->assertSee('assets/img/categories/'.$category['image'])
+                ->assertSee(route('categories.index'));
+        }
+    }
+
+    public function test_category_cards_link_to_the_shared_category_detail_route(): void
+    {
+        $categories = config('gunmatch_categories');
+        $home = $this->get(route('home'))->assertOk();
+        $index = $this->get(route('categories.index'))->assertOk();
+
+        foreach ($categories as $category) {
+            $url = route('categories.show', ['slug' => $category['slug']]);
+            $home->assertSee($url);
+            $index->assertSee($url);
+        }
+    }
+
+    public function test_unknown_category_slug_returns_not_found(): void
+    {
+        $this->get('/categories/not-a-real-category')
+            ->assertNotFound()
+            ->assertSee('ページが見つかりません');
+    }
+
+    public function test_category_detail_route_does_not_change_existing_page_urls(): void
+    {
+        $this->assertSame('/categories', parse_url(route('categories.index'), PHP_URL_PATH));
+        $this->assertSame('/categories/shotgun', parse_url(route('categories.show', 'shotgun'), PHP_URL_PATH));
+        $this->get(route('categories.index'))->assertOk();
+    }
+
     public function test_static_pages_link_only_to_registered_local_routes(): void
     {
         $pageRoutes = [
@@ -50,7 +93,10 @@ class StaticPagesTest extends TestCase
             'mypage.security', 'mypage.account', 'mypage.notifications', 'mypage.announcements',
         ];
         $knownPaths = array_fill_keys(
-            array_map(fn (string $name): string => parse_url(route($name), PHP_URL_PATH) ?: '/', ['home', ...$pageRoutes]),
+            [
+                ...array_map(fn (string $name): string => parse_url(route($name), PHP_URL_PATH) ?: '/', ['home', ...$pageRoutes]),
+                ...array_map(fn (array $category): string => '/categories/'.$category['slug'], config('gunmatch_categories')),
+            ],
             true,
         );
 
@@ -88,6 +134,9 @@ class StaticPagesTest extends TestCase
             ->assertOk()
             ->assertSee('会員認証は未実装です')
             ->assertSee('type="button"', false)
+            ->assertSee('role="group"', false)
+            ->assertSee('disabled', false)
+            ->assertDontSee('<form', false)
             ->assertDontSee('method="POST"', false);
 
         $this->get(route('register'))
@@ -96,11 +145,15 @@ class StaticPagesTest extends TestCase
             ->assertSee('個人会員')
             ->assertSee('銃砲店会員')
             ->assertSee('name="member_type"', false)
-            ->assertSee('aria-describedby="member_type-description"', false);
+            ->assertSee('aria-describedby="member_type-description"', false)
+            ->assertDontSee('<form', false)
+            ->assertSee('disabled', false);
 
         $this->get(route('password.request'))
             ->assertOk()
-            ->assertSee('認証とメール送信は未実装です');
+            ->assertSee('認証とメール送信は未実装です')
+            ->assertDontSee('<form', false)
+            ->assertSee('disabled', false);
 
         $this->get(route('mypage'))
             ->assertOk()

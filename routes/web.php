@@ -7,6 +7,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
 Route::get('/categories', CategoryController::class)->name('categories.index');
+Route::get('/categories/{slug}', [CategoryController::class, 'show'])
+    ->where('slug', '[a-z0-9-]+')
+    ->name('categories.show');
 
 Route::controller(StaticPageController::class)->group(function (): void {
     Route::get('/about', 'information')->defaults('page', 'about')->name('about');

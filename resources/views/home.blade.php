@@ -22,6 +22,7 @@
             <div class="topic-grid">
                 @foreach ($categories as $category)
                     <x-topic-card
+                        :slug="$category['slug']"
                         :name="$category['name']"
                         :image="$category['image']"
                     />

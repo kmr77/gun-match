@@ -54,6 +54,7 @@ php artisan test
 | --- | --- | --- | --- |
 | ブランドTOP | `/` | `home` | TOP・固定の仮データ表示 |
 | カテゴリー一覧 | `/categories` | `categories.index` | 既存7カテゴリーの表示例。掲載・検索・譲渡・取得機能なし |
+| カテゴリー別案内 | `/categories/{slug}` | `categories.show` | 設定データを単一Bladeで表示。案内のみ、取引機能なし |
 | GunMatchについて | `/about` | `about` | 公開案内 |
 | 初めての方・利用ガイド | `/guide` | `guide` | 公開案内 |
 | 安全・法令について | `/safety` | `safety` | 一般的な案内。個別の法的判断なし |
@@ -63,7 +64,7 @@ php artisan test
 | プライバシーポリシー | `/privacy` | `privacy` | 公開前確認中 |
 | お問い合わせ案内 | `/contact` | `contact` | 案内のみ。送信フォームなし |
 | ログイン | `/login` | `login` | 表示のみ。会員認証なし |
-| 新規会員登録 | `/register` | `register` | 個人・事業者の区分を含む表示のみ。登録・保存なし |
+| 新規会員登録 | `/register` | `register` | 個人会員・銃砲店会員の区分を含む表示のみ。登録・保存なし |
 | パスワード再設定案内 | `/forgot-password` | `password.request` | 表示のみ。メール送信なし |
 | マイページTOP | `/mypage` | `mypage` | 共通UI見本。会員データなし |
 | プロフィール編集 | `/mypage/profile` | `mypage.profile` | 表示のみ。保存なし |

@@ -10,6 +10,7 @@
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | GunMatch TOP | `/` | `home` | フロントエンド制作済み（固定表示・仮データ） | site-header, site-footer, section-heading, topic-card, listing-card等 | GM-008: 1440/375確認済み | 未実装（静的表示のため現状不要） | TOPデザインの細部確認 |
 | カテゴリー一覧 | `/categories` | `categories.index` | フロントエンド制作済み（7カテゴリーの表示例） | layouts.app, site-header/footer, page-heading, topic-card | GM-009: 1440/375確認済み | 未実装（現状不要） | 機能を追加する場合は別途仕様・法令確認 |
+| カテゴリー別案内（7種） | `/categories/{slug}` | `categories.show` | 1つの共通Bladeテンプレートで表示 | layouts.app, site-header/footer, page-heading, topic-card | GM-011: 1440/375代表2種確認 | 未実装（情報表示のみ） | 案内内容の公開前確認 |
 | GunMatchについて | `/about` | `about` | フロントエンド制作済み（静的案内） | layouts.app, site-header/footer, page-heading | GM-008: 1440/375確認済み | 未実装（不要） | 公開内容の最終確認 |
 | 初めての方・利用ガイド | `/guide` | `guide` | フロントエンド制作済み（静的案内） | layouts.app, site-header/footer, page-heading | GM-008: 1440/375確認済み | 未実装（不要） | 公開内容の最終確認 |
 | 安全・法令について | `/safety` | `safety` | フロントエンド制作済み（静的案内） | layouts.app, site-header/footer, page-heading | GM-008: 1440/375確認済み | 未実装（不要） | 公開前に専門的・法的確認 |
@@ -19,7 +20,7 @@
 | プライバシーポリシー | `/privacy` | `privacy` | デザインのみ仮実装（準備中表示） | layouts.app, page-heading, feedback/notice | GM-008: 1440/375確認済み | 未実装（静的文書のため不要） | 実際のデータ取扱・運用を確認して本文作成 |
 | お問い合わせ案内 | `/contact` | `contact` | フロントエンド制作済み（案内のみ、フォームなし） | layouts.app, page-heading, feedback/notice | GM-008: 1440/375確認済み | 未実装（受付開始時に要検討） | 運営窓口確定後に案内を更新 |
 | ログイン | `/login` | `login` | デザインのみ仮実装（送信不可） | layouts.app, page-heading, form-field, feedback-message | GM-010: 1440/375確認済み | 未実装（認証・保存時に必要） | 認証方式決定後に実装 |
-| 新規会員登録 | `/register` | `register` | デザインのみ仮実装（個人・事業者共通UI） | layouts.app, page-heading, form-field, feedback-message | GM-010: 1440/375確認済み | 未実装（登録・認証・保存時に必要） | 登録・同意・認証仕様を決定 |
+| 新規会員登録 | `/register` | `register` | デザインのみ仮実装（個人会員・銃砲店会員の共通UI） | layouts.app, page-heading, form-field, feedback-message | GM-011: 1440/320/375/390/430確認済み | 未実装（登録・認証・保存時に必要） | 登録・同意・認証仕様を決定 |
 | パスワード再設定案内 | `/forgot-password` | `password.request` | デザインのみ仮実装（送信不可） | layouts.app, page-heading, form-field, feedback-message | GM-010: 1440/375確認済み | 未実装（認証・メール送信時に必要） | 認証・メール送信仕様を決定 |
 | マイページTOP | `/mypage` | `mypage` | デザインのみ仮実装（会員データなし） | layouts.mypage, page-heading, mypage-nav, feedback-message | GM-010: 1440/375確認済み | 未実装（会員データ連携時に必要） | 認証・表示対象を設計 |
 | プロフィール編集 | `/mypage/profile` | `mypage.profile` | デザインのみ仮実装（保存不可） | layouts.mypage, mypage-nav, form-field, feedback-message | GM-010: 1440/375確認済み | 未実装（保存時に必要） | 保存・公開項目を別途設計 |
@@ -32,13 +33,27 @@
 | お知らせ一覧 | `/mypage/announcements` | `mypage.announcements` | デザインのみ仮実装（固定の仮データ） | layouts.mypage, mypage-nav, announcement-list, feedback-message | GM-010: 1440/375確認済み | 未実装（実告知・既読管理時に必要） | 配信・既読仕様を決定 |
 | Not Found | 存在しないURL | Laravel標準404 | フロントエンド制作済み（GunMatchデザイン） | layouts.app, site-header/footer | GM-008: 1440/375確認済み | 未実装（不要） | なし |
 
+## GM-011 共通画面確認追記（2026-10-26）
+
+- 現行22ページと未知URLの404を、PC 1440px・スマートフォン320/375/390/430pxで確認しました。ページ幅・主要要素の画面外はみ出しはありません。
+- 全ページの内部リンク、名前付きGETルート、ヘッダー・フッター・マイページメニューを再確認しました。既存22ページのURL・ルート名に変更はありません。
+- 会員画面の入力例は送信先のないフォーム要素を表示していたため、GET送信も発生しないグループ表示へ変更しました。実行できないボタンは無効状態とし、ラベル・必須表示・補足説明・入力エラー表示領域は維持しています。
+- 会員登録の区分表記は「個人会員」「銃砲店会員」に統一しました。認証・登録・保存・メール送信などのバックエンドは未実装です。
+- 404ページ自体は期待どおりHTTP 404です。ブラウザーのリソース404ログは、その404 URLを開いた際の表示と区別して評価してください。
+
+## GM-011 カテゴリー別共通テンプレート
+
+- 7カテゴリーは `config/gunmatch_categories.php` の名前・画像・slugを参照し、`pages.category` の単一テンプレートで表示します。
+- TOPとカテゴリー一覧のカードから同じ `categories.show` ルートへ遷移します。`/categories` の既存URLは維持します。
+- ページは表示確認用の一般案内のみで、掲載募集・在庫・取得希望・問い合わせ・取引機能はありません。カテゴリーの案内文言は公開前に確認してください。
+
 ## 以前の計画にある未実装ページ・機能
 
 以下は未制作です。URLとルート名が「未確定」の項目にはリンクを置いていません。公開前の確認が必要な画面・内容は上表の残作業と併せて管理します。
 
 | ページ・機能 | URL/ルート名 | デザイン実装状況 | 共通コンポーネント | PC/SP検証 | バックエンド要否 | 残作業 |
 | --- | --- | --- | --- | --- | --- | --- |
-| カテゴリー別案内ページ | 過去の候補：`/categories/{category}` / `categories.show`（未登録） | 未実装 | なし | 未実施 | 案内のみなら不要 | ページが必要か、内容とURLを決定 |
+| 共通一覧・詳細画面（カテゴリー別案内以外） | URL・ルート名未確定 | 未実装 | listing-card等の既存部品を再利用候補とする | 未実施 | 表示データに応じて必要 | 必要な対象と共通テンプレートを決定 |
 | 一覧ページ（一般の一覧画面候補） | URL・ルート名未確定 | 未実装 | なし | 未実施 | 表示データに応じて必要 | 一覧対象・情報範囲を決定 |
 | 詳細ページ（一般の詳細画面候補） | URL・ルート名未確定 | 未実装 | なし | 未実施 | 表示データに応じて必要 | 対象・表示項目を決定 |
 | 銃器等の出品・取得募集・相手連絡・マッチング | URL・ルート名未確定 | 未実装・今回対象外 | なし | 未実施 | 実装判断前に法令・運用確認が必要 | 仕様・法的確認なしに実装しない |

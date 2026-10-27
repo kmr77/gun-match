@@ -17,7 +17,7 @@
 
             <div class="category-grid" aria-label="カテゴリーの表示例">
                 @foreach ($categories as $category)
-                    <x-topic-card :name="$category['name']" :image="$category['image']" />
+                    <x-topic-card :slug="$category['slug']" :name="$category['name']" :image="$category['image']" />
                 @endforeach
             </div>
 

@@ -12,7 +12,7 @@
             />
             <div class="auth-card">
                 <p class="page-notice" role="note">{{ $page['notice'] }}</p>
-                <form class="preview-form">
+                <div class="preview-form" role="group" aria-label="{{ $page['title'] }}の入力表示例">
                     @foreach ($page['fields'] as $field)
                         <x-form-field
                             :name="$field['name']"
@@ -30,8 +30,8 @@
                     @endif
 
                     <div class="form-error-slot" aria-live="polite">入力エラー表示領域（現在未実装）</div>
-                    <button class="btn btn--primary auth-card__button" type="button">{{ $page['button'] }}</button>
-                </form>
+                    <button class="btn btn--primary auth-card__button" type="button" disabled>{{ $page['button'] }}</button>
+                </div>
 
                 <nav class="auth-links" aria-label="会員メニュー">
                     @foreach ($page['links'] as $link)
