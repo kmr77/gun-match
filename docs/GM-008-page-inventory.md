@@ -11,6 +11,8 @@
 | GunMatch TOP | `/` | `home` | フロントエンド制作済み（固定表示・仮データ） | site-header, site-footer, section-heading, topic-card, listing-card等 | GM-008: 1440/375確認済み | 未実装（静的表示のため現状不要） | TOPデザインの細部確認 |
 | カテゴリー一覧 | `/categories` | `categories.index` | フロントエンド制作済み（7カテゴリーの表示例） | layouts.app, site-header/footer, page-heading, topic-card | GM-009: 1440/375確認済み | 未実装（現状不要） | 機能を追加する場合は別途仕様・法令確認 |
 | カテゴリー別案内（7種） | `/categories/{slug}` | `categories.show` | 1つの共通Bladeテンプレートで表示 | layouts.app, site-header/footer, page-heading, topic-card | GM-011: 1440/375代表2種確認 | 未実装（情報表示のみ） | 案内内容の公開前確認 |
+| アウトドア用品サンプル一覧 | `/outdoor-samples` | `outdoor-samples.index` | 共通一覧Blade（架空の一般用品サンプル） | layouts.app, page-heading, listing-card | GM-012: 1440/375確認予定 | 未実装（表示確認のみ） | なし |
+| アウトドア用品サンプル詳細 | `/outdoor-samples/{slug}` | `outdoor-samples.show` | 共通詳細Blade（識別子で表示を切替） | layouts.app, page-heading, listing-card | GM-012: 1440/375確認予定 | 未実装（表示確認のみ） | なし |
 | GunMatchについて | `/about` | `about` | フロントエンド制作済み（静的案内） | layouts.app, site-header/footer, page-heading | GM-008: 1440/375確認済み | 未実装（不要） | 公開内容の最終確認 |
 | 初めての方・利用ガイド | `/guide` | `guide` | フロントエンド制作済み（静的案内） | layouts.app, site-header/footer, page-heading | GM-008: 1440/375確認済み | 未実装（不要） | 公開内容の最終確認 |
 | 安全・法令について | `/safety` | `safety` | フロントエンド制作済み（静的案内） | layouts.app, site-header/footer, page-heading | GM-008: 1440/375確認済み | 未実装（不要） | 公開前に専門的・法的確認 |
@@ -46,6 +48,11 @@
 - 7カテゴリーは `config/gunmatch_categories.php` の名前・画像・slugを参照し、`pages.category` の単一テンプレートで表示します。
 - TOPとカテゴリー一覧のカードから同じ `categories.show` ルートへ遷移します。`/categories` の既存URLは維持します。
 - ページは表示確認用の一般案内のみで、掲載募集・在庫・取得希望・問い合わせ・取引機能はありません。カテゴリーの案内文言は公開前に確認してください。
+
+## GM-012 共通一覧・詳細テンプレート
+
+- `/outdoor-samples` と `/outdoor-samples/{slug}` はそれぞれ共通一覧・詳細Bladeを使用します。サンプル配列は `config/gunmatch_samples.php` に集約しています。
+- 対象は一般的なアウトドア用品の架空表示データです。価格、募集、購入・譲渡、問い合わせ、取引連絡、マッチング機能はありません。DB・認証・保存処理も未実装です。
 
 ## 以前の計画にある未実装ページ・機能
 

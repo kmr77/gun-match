@@ -1,6 +1,9 @@
-@props(['item', 'mode'])
+@props(['item', 'mode' => null, 'href' => null])
 
 <article class="listing-card">
+    @if ($href)
+        <a class="listing-card__link" href="{{ $href }}">
+    @endif
     <div class="listing-card__media">
         <img
             src="{{ asset('assets/img/dummy/outdoor/' . $item['image']) }}"
@@ -9,11 +12,13 @@
             height="512"
             loading="lazy"
         >
-        <span @class([
-            'listing-card__kind',
-            'listing-card__kind--offer' => $mode === 'offer',
-            'listing-card__kind--wanted' => $mode === 'wanted',
-        ])>{{ $mode === 'offer' ? '譲る' : '探す' }}</span>
+        @if ($mode)
+            <span @class([
+                'listing-card__kind',
+                'listing-card__kind--offer' => $mode === 'offer',
+                'listing-card__kind--wanted' => $mode === 'wanted',
+            ])>{{ $mode === 'offer' ? '譲る' : '探す' }}</span>
+        @endif
         <span class="listing-card__status">仮データ</span>
     </div>
     <div class="listing-card__body">
@@ -21,4 +26,7 @@
         <h3 class="listing-card__title">{{ $item['title'] }}</h3>
         <p class="listing-card__description">{{ $item['description'] }}</p>
     </div>
+    @if ($href)
+        </a>
+    @endif
 </article>

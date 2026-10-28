@@ -11,6 +11,7 @@ class StaticPagesTest extends TestCase
     {
         $pages = [
             'categories.index' => '/categories',
+            'outdoor-samples.index' => '/outdoor-samples',
             'about' => '/about',
             'guide' => '/guide',
             'safety' => '/safety',
@@ -87,6 +88,7 @@ class StaticPagesTest extends TestCase
     {
         $pageRoutes = [
             'categories.index',
+            'outdoor-samples.index',
             'about', 'guide', 'safety', 'prohibited-items', 'faq', 'terms', 'privacy', 'contact',
             'login', 'register', 'password.request', 'mypage', 'mypage.profile',
             'mypage.profile.public', 'mypage.profile.preview', 'mypage.settings',
@@ -96,6 +98,7 @@ class StaticPagesTest extends TestCase
             [
                 ...array_map(fn (string $name): string => parse_url(route($name), PHP_URL_PATH) ?: '/', ['home', ...$pageRoutes]),
                 ...array_map(fn (array $category): string => '/categories/'.$category['slug'], config('gunmatch_categories')),
+                ...array_map(fn (array $item): string => '/outdoor-samples/'.$item['slug'], config('gunmatch_samples.outdoorItems')),
             ],
             true,
         );
@@ -126,6 +129,41 @@ class StaticPagesTest extends TestCase
                 $this->assertArrayHasKey($path, $knownPaths, "Unregistered local link {$href} on {$name}");
             }
         }
+
+    }
+
+    public function test_outdoor_sample_list_and_details_share_their_templates(): void
+    {
+        $items = config('gunmatch_samples.outdoorItems');
+        $this->assertCount(6, $items);
+
+        $list = $this->get(route('outdoor-samples.index'))
+            ->assertOk()
+            ->assertViewIs('pages.outdoor-samples')
+            ->assertSee('架空サンプル')
+            ->assertSee('購入、譲渡、価格提示、問い合わせ、取引連絡、マッチング機能は提供していません。');
+
+        foreach ($items as $item) {
+            $detailUrl = route('outdoor-samples.show', ['slug' => $item['slug']]);
+            $list->assertSee($item['title'])->assertSee($detailUrl);
+
+            $this->get($detailUrl)
+                ->assertOk()
+                ->assertViewIs('pages.outdoor-sample')
+                ->assertViewHas('item', $item)
+                ->assertSee($item['title'])
+                ->assertSee($item['description'])
+                ->assertSee('assets/img/dummy/outdoor/'.$item['image'])
+                ->assertSee('サンプル一覧へ戻る')
+                ->assertDontSee('価格：');
+        }
+    }
+
+    public function test_unknown_outdoor_sample_slug_returns_not_found(): void
+    {
+        $this->get('/outdoor-samples/unknown-sample')
+            ->assertNotFound()
+            ->assertSee('ページが見つかりません');
     }
 
     public function test_member_previews_do_not_submit_or_claim_to_process_data(): void

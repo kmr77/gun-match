@@ -9,96 +9,9 @@ class HomeController extends Controller
     public function __invoke(): View
     {
         $categories = config('gunmatch_categories');
-
-        $offerItems = [
-            [
-                'title' => '撥水シェルジャケット',
-                'category' => 'ウェア',
-                'description' => '軽量タイプのアウトドアジャケット',
-                'image' => 'jacket.svg',
-                'alt' => 'アウトドアジャケットのイラスト',
-            ],
-            [
-                'title' => 'コンパクト双眼鏡',
-                'category' => '光学用品',
-                'description' => '携帯しやすい小型モデル',
-                'image' => 'binoculars.svg',
-                'alt' => '双眼鏡のイラスト',
-            ],
-            [
-                'title' => 'トレッキングバックパック',
-                'category' => 'バッグ',
-                'description' => '日帰り向けの軽量パック',
-                'image' => 'backpack.svg',
-                'alt' => 'バックパックのイラスト',
-            ],
-            [
-                'title' => '野外観察用トレイルカメラ',
-                'category' => '観察用品',
-                'description' => '野外での観察を想定したカメラ',
-                'image' => 'trail-camera.svg',
-                'alt' => 'トレイルカメラのイラスト',
-            ],
-            [
-                'title' => 'セパレートレインウェア',
-                'category' => 'ウェア',
-                'description' => '雨天用の上下セット',
-                'image' => 'rainwear.svg',
-                'alt' => 'レインウェアのイラスト',
-            ],
-            [
-                'title' => '防水トレッキンググローブ',
-                'category' => 'ウェア',
-                'description' => '滑り止め付きのアウトドア手袋',
-                'image' => 'gloves.svg',
-                'alt' => 'アウトドアグローブのイラスト',
-            ],
-        ];
-
-        $wantedItems = [
-            [
-                'title' => '保温フリースジャケット',
-                'category' => 'ウェア',
-                'description' => '保温性のあるアウトドア用フリース',
-                'image' => 'jacket.svg',
-                'alt' => 'アウトドアジャケットのイラスト',
-            ],
-            [
-                'title' => '防水コンパクト双眼鏡',
-                'category' => '光学用品',
-                'description' => '携帯しやすい防水モデル',
-                'image' => 'binoculars.svg',
-                'alt' => '双眼鏡のイラスト',
-            ],
-            [
-                'title' => 'トレッキング用バックパック',
-                'category' => 'バッグ',
-                'description' => '荷物を整理しやすい軽量パック',
-                'image' => 'backpack.svg',
-                'alt' => 'バックパックのイラスト',
-            ],
-            [
-                'title' => '野生動物観察用カメラ',
-                'category' => '観察用品',
-                'description' => '野外観察を想定したトレイルカメラ',
-                'image' => 'trail-camera.svg',
-                'alt' => 'トレイルカメラのイラスト',
-            ],
-            [
-                'title' => '携帯用レインジャケット',
-                'category' => 'ウェア',
-                'description' => '持ち運びやすい雨天用ウェア',
-                'image' => 'rainwear.svg',
-                'alt' => 'レインウェアのイラスト',
-            ],
-            [
-                'title' => '防寒トレッキンググローブ',
-                'category' => 'ウェア',
-                'description' => '手首まで覆うアウトドア手袋',
-                'image' => 'gloves.svg',
-                'alt' => 'アウトドアグローブのイラスト',
-            ],
-        ];
+        $samples = config('gunmatch_samples.home');
+        $offerItems = $samples['offerItems'];
+        $wantedItems = $samples['wantedItems'];
 
         return view('home', compact('categories', 'offerItems', 'wantedItems'));
     }

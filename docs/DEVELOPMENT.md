@@ -55,6 +55,8 @@ php artisan test
 | ブランドTOP | `/` | `home` | TOP・固定の仮データ表示 |
 | カテゴリー一覧 | `/categories` | `categories.index` | 既存7カテゴリーの表示例。掲載・検索・譲渡・取得機能なし |
 | カテゴリー別案内 | `/categories/{slug}` | `categories.show` | 設定データを単一Bladeで表示。案内のみ、取引機能なし |
+| アウトドア用品サンプル一覧 | `/outdoor-samples` | `outdoor-samples.index` | 架空サンプルの表示のみ。取引機能なし |
+| アウトドア用品サンプル詳細 | `/outdoor-samples/{slug}` | `outdoor-samples.show` | 共通詳細表示。価格・問い合わせ・取引機能なし |
 | GunMatchについて | `/about` | `about` | 公開案内 |
 | 初めての方・利用ガイド | `/guide` | `guide` | 公開案内 |
 | 安全・法令について | `/safety` | `safety` | 一般的な案内。個別の法的判断なし |
