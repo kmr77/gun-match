@@ -1,5 +1,12 @@
 <?php
 
+use App\Http\Controllers\Account\ProfileController;
+use App\Http\Controllers\Account\UpdatePasswordController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Auth\EmailVerificationController;
+use App\Http\Controllers\Auth\NewPasswordController;
+use App\Http\Controllers\Auth\PasswordResetLinkController;
+use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OutdoorSampleController;
@@ -26,17 +33,42 @@ Route::controller(StaticPageController::class)->group(function (): void {
     Route::get('/privacy', 'information')->defaults('page', 'privacy')->name('privacy');
     Route::get('/contact', 'information')->defaults('page', 'contact')->name('contact');
 
-    Route::get('/login', 'authPreview')->defaults('page', 'login')->name('login');
-    Route::get('/register', 'authPreview')->defaults('page', 'register')->name('register');
-    Route::get('/forgot-password', 'authPreview')->defaults('page', 'forgot-password')->name('password.request');
+    Route::middleware('guest')->group(function (): void {
+        Route::get('/login', 'authPreview')->defaults('page', 'login')->name('login');
+        Route::post('/login', [AuthenticatedSessionController::class, 'store'])->middleware('throttle:login');
+        Route::get('/register', 'authPreview')->defaults('page', 'register')->name('register');
+        Route::post('/register', [RegisteredUserController::class, 'store'])->middleware('throttle:6,1');
+        Route::get('/forgot-password', 'authPreview')->defaults('page', 'forgot-password')->name('password.request');
+        Route::post('/forgot-password', [PasswordResetLinkController::class, 'store'])
+            ->middleware('throttle:6,1')
+            ->name('password.email');
+        Route::get('/reset-password/{token}', [NewPasswordController::class, 'create'])->name('password.reset');
+        Route::post('/reset-password', [NewPasswordController::class, 'store'])->name('password.update');
+    });
 
-    Route::get('/mypage', 'mypage')->defaults('page', 'home')->name('mypage');
-    Route::get('/mypage/profile', 'mypage')->defaults('page', 'profile')->name('mypage.profile');
-    Route::get('/mypage/profile/public', 'mypage')->defaults('page', 'profile-public')->name('mypage.profile.public');
-    Route::get('/mypage/profile/preview', 'mypage')->defaults('page', 'profile-preview')->name('mypage.profile.preview');
-    Route::get('/mypage/settings', 'mypage')->defaults('page', 'settings')->name('mypage.settings');
-    Route::get('/mypage/security', 'mypage')->defaults('page', 'security')->name('mypage.security');
-    Route::get('/mypage/account', 'mypage')->defaults('page', 'account')->name('mypage.account');
-    Route::get('/mypage/notifications', 'mypage')->defaults('page', 'notifications')->name('mypage.notifications');
-    Route::get('/mypage/announcements', 'mypage')->defaults('page', 'announcements')->name('mypage.announcements');
+    Route::get('/email/verify', [EmailVerificationController::class, 'notice'])
+        ->middleware('auth')
+        ->name('verification.notice');
+    Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])
+        ->middleware(['auth', 'signed', 'throttle:6,1'])
+        ->name('verification.verify');
+    Route::post('/email/verification-notification', [EmailVerificationController::class, 'send'])
+        ->middleware(['auth', 'throttle:6,1'])
+        ->name('verification.send');
+
+    Route::middleware('auth')->group(function (): void {
+        Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
+
+        Route::get('/mypage', 'mypage')->defaults('page', 'home')->name('mypage');
+        Route::get('/mypage/profile', 'mypage')->defaults('page', 'profile')->name('mypage.profile');
+        Route::put('/mypage/profile', [ProfileController::class, 'update'])->name('mypage.profile.update');
+        Route::get('/mypage/profile/public', 'mypage')->defaults('page', 'profile-public')->name('mypage.profile.public');
+        Route::get('/mypage/profile/preview', 'mypage')->defaults('page', 'profile-preview')->name('mypage.profile.preview');
+        Route::get('/mypage/settings', 'mypage')->defaults('page', 'settings')->name('mypage.settings');
+        Route::get('/mypage/security', 'mypage')->defaults('page', 'security')->name('mypage.security');
+        Route::put('/mypage/password', [UpdatePasswordController::class, 'update'])->name('mypage.password.update');
+        Route::get('/mypage/account', 'mypage')->defaults('page', 'account')->name('mypage.account');
+        Route::get('/mypage/notifications', 'mypage')->defaults('page', 'notifications')->name('mypage.notifications');
+        Route::get('/mypage/announcements', 'mypage')->defaults('page', 'announcements')->name('mypage.announcements');
+    });
 });

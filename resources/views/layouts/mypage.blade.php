@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="GunMatchマイページの画面デザイン確認用ページです。">
+    <meta name="description" content="GunMatch会員アカウントとプロフィールを管理します。">
     <title>@yield('title', 'マイページ｜GunMatch')</title>
     <link rel="stylesheet" href="{{ asset('assets/css/gunmatch.css') }}">
     <script src="{{ asset('assets/js/gunmatch.js') }}" defer></script>
@@ -15,14 +15,21 @@
         <div class="container">
             <x-page-heading
                 :title="$title"
-                description="マイページの共通UIを確認するための表示サンプルです。"
+                description="ログイン中の会員アカウントと基本プロフィールを管理します。"
                 :breadcrumbs="[['label' => 'トップ', 'route' => 'home'], ['label' => 'マイページ', 'route' => 'mypage'], ['label' => $title]]"
             />
-            <x-feedback-message
-                type="info"
-                title="画面表示の確認用です"
-                message="会員認証、プロフィール保存、設定変更は未実装です。実際の会員情報や通知設定は表示していません。"
-            />
+            <div class="member-toolbar">
+                @if (session('status'))
+                    <x-feedback-message type="success" title="更新しました" :message="session('status')" />
+                @endif
+                @if ($errors->any())
+                    <x-feedback-message type="error" title="入力内容をご確認ください" message="各項目のエラーを修正して、もう一度送信してください。" />
+                @endif
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button class="btn btn--outline" type="submit">ログアウト</button>
+                </form>
+            </div>
             <div class="mypage-layout">
                 <x-mypage-nav :active="$pageKey" />
                 <section class="mypage-content" aria-labelledby="mypage-content-title">
@@ -30,36 +37,64 @@
 
                     @if ($pageKey === 'home')
                         <div class="empty-state">
-                            <h3>マイページ機能は準備中です</h3>
-                            <p>会員認証と保存機能はまだありません。ここに個人情報や実在の活動履歴は表示されません。</p>
+                            <h3>会員アカウント</h3>
+                            <dl class="account-summary">
+                                <div><dt>会員名</dt><dd>{{ auth()->user()->name }}</dd></div>
+                                <div><dt>メールアドレス</dt><dd>{{ auth()->user()->email }}</dd></div>
+                                <div><dt>会員区分</dt><dd>{{ auth()->user()->member_type->label() }}</dd></div>
+                                <div>
+                                    <dt>メール認証</dt>
+                                    <dd>
+                                        @if (auth()->user()->hasVerifiedEmail())
+                                            認証済み
+                                        @else
+                                            未認証（<a href="{{ route('verification.notice') }}">確認メールを確認</a>）
+                                        @endif
+                                    </dd>
+                                </div>
+                            </dl>
+                            <p>プロフィールやパスワードは各メニューから更新できます。掲載・検索・取引に関する機能は提供していません。</p>
                         </div>
                     @elseif ($pageKey === 'profile')
-                        <p class="member-help">プロフィール項目の画面イメージです。入力・保存はできません。</p>
-                        <x-form-field name="member-name" label="お名前" :required="true" />
-                        <x-form-field name="member-email" label="メールアドレス" type="email" />
-                        <x-feedback-message
-                            type="error"
-                            title="入力エラー表示のサンプル"
-                            message="入力検証は未実装です。この表示はUI確認用で、フォームの入力値は検証・保存されません。"
-                        />
-                        <button class="btn btn--outline" type="button" disabled>保存機能は未実装です</button>
+                        <p class="member-help">会員名とメールアドレスを更新できます。メールアドレスを変更すると、再確認が必要です。</p>
+                        <form method="POST" action="{{ route('mypage.profile.update') }}">
+                            @csrf
+                            @method('PUT')
+                            <x-form-field
+                                name="name"
+                                label="会員名"
+                                :required="true"
+                                :value="auth()->user()->name"
+                                :error="$errors->first('name')"
+                            />
+                            <x-form-field
+                                name="email"
+                                label="メールアドレス"
+                                type="email"
+                                autocomplete="email"
+                                :required="true"
+                                :value="auth()->user()->email"
+                                :error="$errors->first('email')"
+                            />
+                            <button class="btn btn--primary" type="submit">プロフィールを保存</button>
+                        </form>
                         <p class="member-help"><a href="{{ route('mypage.profile.public') }}">公開プロフィール表示</a> ・ <a href="{{ route('mypage.profile.preview') }}">プロフィールプレビュー</a></p>
                     @elseif ($pageKey === 'profile-public' || $pageKey === 'profile-preview')
-                        <p class="member-help">個人情報を含まないプロフィール画面の表示確認用サンプルです。公開・保存されているプロフィールではありません。</p>
+                        <p class="member-help">ご自身の会員名と会員区分を表示しています。公開設定や第三者への公開機能はありません。</p>
                         @if ($pageKey === 'profile-preview')
                             <x-feedback-message
-                                type="success"
-                                title="表示状態のサンプル"
-                                message="これはプレビュー表示の例です。プロフィールは保存・公開されていません。"
+                                type="info"
+                                title="プロフィールプレビュー"
+                                message="現在のアカウント情報を表示しています。第三者には公開されません。"
                             />
                         @endif
                         <article class="profile-preview-card" aria-label="公開プロフィール表示サンプル">
-                            <span class="profile-preview-card__label">プロフィール表示サンプル</span>
-                            <h3>表示名のサンプル</h3>
-                            <p>自己紹介文の表示例です。実在の利用者や個人の情報は含まれていません。</p>
+                            <span class="profile-preview-card__label">{{ auth()->user()->member_type->label() }}</span>
+                            <h3>{{ auth()->user()->name }}</h3>
+                            <p>プロフィールの公開設定は未実装です。</p>
                             <dl>
-                                <div><dt>活動エリア</dt><dd>表示例</dd></div>
-                                <div><dt>プロフィール公開設定</dt><dd>機能未実装</dd></div>
+                                <div><dt>会員区分</dt><dd>{{ auth()->user()->member_type->label() }}</dd></div>
+                                <div><dt>公開設定</dt><dd>非公開</dd></div>
                             </dl>
                         </article>
                         @if ($pageKey === 'profile-preview')
@@ -68,22 +103,42 @@
                             <p class="member-help"><a href="{{ route('mypage.profile') }}">プロフィール編集画面へ</a> ・ <a href="{{ route('mypage.profile.preview') }}">プレビュー表示へ</a></p>
                         @endif
                     @elseif ($pageKey === 'settings')
-                        <p class="member-help">アカウント設定の表示例です。実際の登録情報や変更機能はありません。</p>
-                        <div class="setting-row"><div><h3>ログイン情報</h3><p>メールアドレス・パスワード</p></div><span class="status-pill">未設定</span></div>
-                        <div class="setting-row"><div><h3>アカウント状態</h3><p>会員認証は未実装です</p></div><span class="status-pill">準備中</span></div>
+                        <p class="member-help">登録した会員区分とメール認証の状態です。</p>
+                        <div class="setting-row"><div><h3>会員区分</h3><p>{{ auth()->user()->member_type->label() }}</p></div><span class="status-pill">登録済み</span></div>
+                        <div class="setting-row"><div><h3>メール認証</h3><p>{{ auth()->user()->email }}</p></div><span class="status-pill">{{ auth()->user()->hasVerifiedEmail() ? '認証済み' : '未認証' }}</span></div>
                         <p class="member-help"><a href="{{ route('mypage.security') }}">セキュリティ設定を見る</a> ・ <a href="{{ route('mypage.account') }}">アカウント管理の案内</a></p>
                     @elseif ($pageKey === 'security')
-                        <p class="member-help">セキュリティ項目の表示例です。認証情報やログイン履歴は扱っていません。</p>
-                        <div class="setting-row"><div><h3>パスワード変更</h3><p>会員認証・変更処理は未実装です</p></div><span class="status-pill">利用不可</span></div>
-                        <div class="setting-row"><div><h3>ログイン中の端末</h3><p>セッション管理機能は未実装です</p></div><span class="status-pill">表示なし</span></div>
-                        <div class="setting-row"><div><h3>追加認証</h3><p>追加認証機能は未実装です</p></div><span class="status-pill">未設定</span></div>
-                        <x-feedback-message
-                            type="info"
-                            title="セキュリティ機能は未実装です"
-                            message="この画面では認証・パスワード変更・端末管理を実行できません。"
-                        />
+                        <p class="member-help">現在のパスワードを確認してから、新しいパスワードに変更します。</p>
+                        <form method="POST" action="{{ route('mypage.password.update') }}">
+                            @csrf
+                            @method('PUT')
+                            <x-form-field
+                                name="current_password"
+                                label="現在のパスワード"
+                                type="password"
+                                autocomplete="current-password"
+                                :required="true"
+                                :error="$errors->first('current_password')"
+                            />
+                            <x-form-field
+                                name="password"
+                                label="新しいパスワード（12文字以上）"
+                                type="password"
+                                autocomplete="new-password"
+                                :required="true"
+                                :error="$errors->first('password')"
+                            />
+                            <x-form-field
+                                name="password_confirmation"
+                                label="新しいパスワード（確認）"
+                                type="password"
+                                autocomplete="new-password"
+                                :required="true"
+                            />
+                            <button class="btn btn--primary" type="submit">パスワードを変更</button>
+                        </form>
                     @elseif ($pageKey === 'account')
-                        <p class="member-help">アカウント機能を利用する際に確認する項目の案内です。現在は会員機能を提供していません。</p>
+                        <p class="member-help">アカウント情報はログイン中のご本人のみ更新できます。</p>
                         <section class="account-guide">
                             <h3>アカウントを利用する前に</h3>
                             <ol>
@@ -95,8 +150,8 @@
                         <p class="member-help"><a href="{{ route('terms') }}">利用規約（準備中）</a> ・ <a href="{{ route('privacy') }}">プライバシーポリシー（準備中）</a></p>
                         <x-feedback-message
                             type="info"
-                            title="アカウント管理は未実装です"
-                            message="登録、退会、情報変更、問い合わせの操作は行えません。"
+                            title="提供範囲について"
+                            message="登録情報の更新とパスワード変更を利用できます。退会手続きはまだ提供していません。"
                         />
                     @elseif ($pageKey === 'announcements')
                         <p class="member-help">以下は一覧レイアウト確認用の仮データです。実際のお知らせや配信履歴ではありません。</p>

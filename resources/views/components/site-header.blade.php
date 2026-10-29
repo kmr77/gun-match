@@ -14,6 +14,12 @@
             <a href="{{ route('home') }}#reasons">選ばれる理由</a>
             <a href="{{ route('home') }}#howto">利用の流れ</a>
             <a href="{{ route('safety') }}">法令・安全について</a>
+            @auth
+                <a href="{{ route('mypage') }}">マイページ</a>
+            @else
+                <a href="{{ route('login') }}">ログイン</a>
+                <a href="{{ route('register') }}">新規会員登録</a>
+            @endauth
         </nav>
     </div>
 </header>

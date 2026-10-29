@@ -2,11 +2,15 @@
 
 namespace Tests\Feature;
 
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Route;
 use Tests\TestCase;
 
 class StaticPagesTest extends TestCase
 {
+    use RefreshDatabase;
+
     public function test_all_public_and_member_pages_have_named_routes_and_render(): void
     {
         $pages = [
@@ -34,10 +38,25 @@ class StaticPagesTest extends TestCase
             'mypage.announcements' => '/mypage/announcements',
         ];
 
+        $memberRoutes = [
+            'mypage',
+            'mypage.profile',
+            'mypage.profile.public',
+            'mypage.profile.preview',
+            'mypage.settings',
+            'mypage.security',
+            'mypage.account',
+            'mypage.notifications',
+            'mypage.announcements',
+        ];
+
         foreach ($pages as $name => $uri) {
             $this->assertTrue(Route::has($name), "Missing named route: {$name}");
             $this->assertSame($uri, parse_url(route($name), PHP_URL_PATH));
-            $this->get(route($name))->assertOk();
+            $request = in_array($name, $memberRoutes, true)
+                ? $this->actingAs(User::factory()->create())->get(route($name))
+                : $this->get(route($name));
+            $request->assertOk();
         }
     }
 
@@ -103,8 +122,16 @@ class StaticPagesTest extends TestCase
             true,
         );
 
-        foreach (['home', ...$pageRoutes] as $name) {
-            $html = $this->get(route($name))->assertOk()->getContent();
+        $memberRoutes = array_values(array_filter(
+            $pageRoutes,
+            fn (string $name): bool => str_starts_with($name, 'mypage'),
+        ));
+
+        foreach (['home', ...array_diff($pageRoutes, $memberRoutes), ...$memberRoutes] as $name) {
+            $request = in_array($name, $memberRoutes, true)
+                ? $this->actingAs(User::factory()->create())->get(route($name))
+                : $this->get(route($name));
+            $html = $request->assertOk()->getContent();
             preg_match_all('/href="([^"]+)"/', $html, $matches);
 
             foreach ($matches[1] as $href) {
@@ -166,53 +193,52 @@ class StaticPagesTest extends TestCase
             ->assertSee('ページが見つかりません');
     }
 
-    public function test_member_previews_do_not_submit_or_claim_to_process_data(): void
+    public function test_member_pages_use_real_account_data_and_authentication(): void
     {
         $this->get(route('login'))
             ->assertOk()
-            ->assertSee('会員認証は未実装です')
-            ->assertSee('type="button"', false)
-            ->assertSee('role="group"', false)
-            ->assertSee('disabled', false)
-            ->assertDontSee('<form', false)
-            ->assertDontSee('method="POST"', false);
+            ->assertSee('登録済みのメールアドレスとパスワードでログインしてください。')
+            ->assertSee('method="POST"', false)
+            ->assertSee('name="_token"', false);
 
         $this->get(route('register'))
             ->assertOk()
-            ->assertSee('会員登録・認証・データ保存は未実装です')
+            ->assertSee('メールアドレスの確認が必要です')
             ->assertSee('個人会員')
             ->assertSee('銃砲店会員')
             ->assertSee('name="member_type"', false)
-            ->assertSee('aria-describedby="member_type-description"', false)
-            ->assertDontSee('<form', false)
-            ->assertSee('disabled', false);
+            ->assertSee('method="POST"', false)
+            ->assertSee('name="password_confirmation"', false);
 
         $this->get(route('password.request'))
             ->assertOk()
-            ->assertSee('認証とメール送信は未実装です')
-            ->assertDontSee('<form', false)
-            ->assertSee('disabled', false);
+            ->assertSee('パスワード再設定の案内を送信します。')
+            ->assertSee('method="POST"', false);
 
         $this->get(route('mypage'))
+            ->assertRedirect(route('login'));
+
+        $user = User::factory()->create(['name' => 'ログイン中の会員', 'member_type' => 'business']);
+
+        $this->actingAs($user)->get(route('mypage'))
             ->assertOk()
-            ->assertSee('実際の会員情報や通知設定は表示していません');
+            ->assertSee('ログイン中の会員')
+            ->assertSee('銃砲店会員')
+            ->assertSee($user->email);
 
         $this->get(route('mypage.profile.public'))
             ->assertOk()
-            ->assertSee('表示名のサンプル')
-            ->assertSee('実在の利用者や個人の情報は含まれていません');
+            ->assertSee('ログイン中の会員')
+            ->assertSee('第三者への公開機能はありません');
 
         $this->get(route('mypage.profile.preview'))
             ->assertOk()
-            ->assertSee('プロフィールは保存・公開されていません');
+            ->assertSee('ログイン中の会員');
 
         $this->get(route('mypage.security'))
             ->assertOk()
-            ->assertSee('セキュリティ機能は未実装です');
-
-        $this->get(route('mypage.account'))
-            ->assertOk()
-            ->assertSee('アカウント管理は未実装です');
+            ->assertSee('現在のパスワード')
+            ->assertSee('新しいパスワード');
 
         $this->get(route('mypage.announcements'))
             ->assertOk()
@@ -240,7 +266,7 @@ class StaticPagesTest extends TestCase
         ];
 
         foreach ($pages as $routeName => $activeKey) {
-            $html = $this->get(route($routeName))->assertOk()->getContent();
+            $html = $this->actingAs(User::factory()->create())->get(route($routeName))->assertOk()->getContent();
             preg_match('/<nav class="mypage-nav" aria-label="マイページメニュー">(.*?)<\/nav>/s', $html, $navigation);
             preg_match_all('/<a\b[^>]*>.*?<\/a>/s', $navigation[1] ?? '', $menuLinks);
             $activeLinks = array_values(array_filter(

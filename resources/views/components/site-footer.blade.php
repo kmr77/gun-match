@@ -28,9 +28,12 @@
             </div>
             <div>
                 <h2>会員メニュー</h2>
-                <a href="{{ route('login') }}">ログイン</a>
-                <a href="{{ route('register') }}">新規会員登録</a>
-                <a href="{{ route('mypage') }}">マイページ</a>
+                @auth
+                    <a href="{{ route('mypage') }}">マイページ</a>
+                @else
+                    <a href="{{ route('login') }}">ログイン</a>
+                    <a href="{{ route('register') }}">新規会員登録</a>
+                @endauth
             </div>
         </nav>
     </div>
