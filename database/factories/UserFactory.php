@@ -18,6 +18,11 @@ class UserFactory extends Factory
      */
     protected static ?string $password;
 
+    public function configure(): static
+    {
+        return $this->afterCreating(fn (User $user) => $user->forceFill(['is_active' => true])->save());
+    }
+
     /**
      * Define the model's default state.
      *
@@ -43,5 +48,15 @@ class UserFactory extends Factory
         return $this->state(fn (array $attributes) => [
             'email_verified_at' => null,
         ]);
+    }
+
+    public function administrator(): static
+    {
+        return $this->afterCreating(fn (User $user) => $user->forceFill(['is_admin' => true])->save());
+    }
+
+    public function suspended(): static
+    {
+        return $this->afterCreating(fn (User $user) => $user->forceFill(['is_active' => false])->save());
     }
 }

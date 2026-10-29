@@ -764,6 +764,25 @@ button, input, select { -webkit-tap-highlight-color: transparent; }
 .announcement-list > li { padding: 17px; border: 1px solid var(--color-border); border-radius: 7px; background: #fff; }
 .announcement-list h3 { margin: 8px 0 4px; font-size: 15px; }
 .announcement-list p { margin: 0; color: var(--color-muted); font-size: 13px; }
+.admin-panel { margin-top: 24px; padding: 22px; border: 1px solid var(--color-border); border-radius: 8px; background: #fff; }
+.admin-panel h2 { margin: 0 0 18px; font-size: 20px; }
+.admin-search { display: grid; gap: 8px; margin-bottom: 20px; }
+.admin-search label { font-size: 13px; font-weight: 700; }
+.admin-search__controls { display: flex; flex-wrap: wrap; gap: 8px; }
+.admin-search__controls input { flex: 1 1 240px; min-width: 0; min-height: 44px; padding: 9px 12px; border: 1px solid #cfd5cf; border-radius: 5px; }
+.admin-table-wrap { max-width: 100%; overflow-x: auto; }
+.admin-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.admin-table th, .admin-table td { padding: 11px 10px; border-bottom: 1px solid var(--color-border); text-align: left; vertical-align: middle; }
+.admin-table th { background: #f5f7f4; white-space: nowrap; }
+.admin-table td { overflow-wrap: anywhere; }
+.admin-table td form { margin: 0; }
+.admin-panel nav[role="navigation"] { margin-top: 18px; }
+@media (max-width: 600px) {
+  .admin-panel { padding: 16px 12px; }
+  .admin-panel h2 { font-size: 18px; }
+  .admin-search__controls { align-items: stretch; flex-direction: column; }
+  .admin-search__controls > * { width: 100%; }
+}
 
 @media (max-width: 960px) {
   .mypage-layout { grid-template-columns: minmax(0, 1fr); }

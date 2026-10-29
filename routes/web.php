@@ -4,6 +4,7 @@ use App\Http\Controllers\Account\DestroyAccountController;
 use App\Http\Controllers\Account\ProfileController;
 use App\Http\Controllers\Account\UpdatePasswordController;
 use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\MemberStatusController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Auth\NewPasswordController;
@@ -13,6 +14,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OutdoorSampleController;
 use App\Http\Controllers\StaticPageController;
+use App\Http\Middleware\EnsureAccountIsActive;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
@@ -25,8 +27,16 @@ Route::get('/outdoor-samples/{slug}', [OutdoorSampleController::class, 'show'])
     ->where('slug', '[a-z0-9-]+')
     ->name('outdoor-samples.show');
 Route::get('/admin', AdminDashboardController::class)
-    ->middleware(['auth', 'verified', 'can:access-admin'])
+    ->middleware(['auth', EnsureAccountIsActive::class, 'verified', 'can:access-admin'])
     ->name('admin.dashboard');
+Route::middleware(['auth', EnsureAccountIsActive::class, 'verified', 'can:access-admin'])
+    ->prefix('/admin')
+    ->name('admin.')
+    ->group(function (): void {
+        Route::patch('/members/{user}/status', [MemberStatusController::class, 'update'])
+            ->whereNumber('user')
+            ->name('members.status.update');
+    });
 
 Route::controller(StaticPageController::class)->group(function (): void {
     Route::get('/about', 'information')->defaults('page', 'about')->name('about');
@@ -52,16 +62,16 @@ Route::controller(StaticPageController::class)->group(function (): void {
     });
 
     Route::get('/email/verify', [EmailVerificationController::class, 'notice'])
-        ->middleware('auth')
+        ->middleware(['auth', EnsureAccountIsActive::class])
         ->name('verification.notice');
     Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])
-        ->middleware(['auth', 'signed', 'throttle:6,1'])
+        ->middleware(['auth', EnsureAccountIsActive::class, 'signed', 'throttle:6,1'])
         ->name('verification.verify');
     Route::post('/email/verification-notification', [EmailVerificationController::class, 'send'])
-        ->middleware(['auth', 'throttle:6,1'])
+        ->middleware(['auth', EnsureAccountIsActive::class, 'throttle:6,1'])
         ->name('verification.send');
 
-    Route::middleware('auth')->group(function (): void {
+    Route::middleware(['auth', EnsureAccountIsActive::class])->group(function (): void {
         Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
         Route::get('/mypage', 'mypage')->defaults('page', 'home')->name('mypage');

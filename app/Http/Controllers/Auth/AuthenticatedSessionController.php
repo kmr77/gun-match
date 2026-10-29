@@ -30,6 +30,16 @@ class AuthenticatedSessionController extends Controller
                 ->onlyInput('email');
         }
 
+        if (! $request->user()->is_active) {
+            Auth::guard('web')->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return back()
+                ->withErrors(['email' => 'メールアドレスまたはパスワードが正しくありません。'])
+                ->onlyInput('email');
+        }
+
         $request->session()->regenerate();
 
         return redirect()->intended(route('mypage', absolute: false));

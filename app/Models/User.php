@@ -13,7 +13,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 #[Fillable(['name', 'email', 'password', 'member_type'])]
-#[Hidden(['password', 'remember_token', 'is_admin'])]
+#[Hidden(['password', 'remember_token', 'is_admin', 'is_active'])]
 class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */
@@ -30,6 +30,7 @@ class User extends Authenticatable implements MustVerifyEmail
             'email_verified_at' => 'datetime',
             'member_type' => MemberType::class,
             'is_admin' => 'boolean',
+            'is_active' => 'boolean',
             'password' => 'hashed',
         ];
     }
