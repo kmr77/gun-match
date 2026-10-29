@@ -2,7 +2,7 @@
 
 更新日：2026-10-26
 
-この表は過去のページ制作計画と現行ルートを照合した一覧です。会員登録・認証・基本プロフィール管理はGM-013で実装し、掲載・取引等の業務機能、通知配信、本人確認は未実装です。「未制作」は別表に記載し、実装済みとして扱いません。PC/SP欄には実際に確認した幅と作業番号を記録します。
+この表は過去のページ制作計画と現行ルートを照合した一覧です。会員登録・認証・プロフィール管理・本人による退会申請は実装済みです。管理者ページはアクセス制御のみで、管理機能は未実装です。掲載・取引等の業務機能、通知配信、本人確認は未実装です。「未制作」は別表に記載し、実装済みとして扱いません。PC/SP欄には実際に確認した幅と作業番号を記録します。
 
 ## 現在のページ
 
@@ -30,7 +30,9 @@
 | プロフィールプレビュー | `/mypage/profile/preview` | `mypage.profile.preview` | デザインのみ仮実装（保存・公開なし） | layouts.mypage, mypage-nav, profile-preview-card, feedback-message | GM-010: 1440/375確認済み | 未実装（編集データ連携時に必要） | プレビュー対象データを決定 |
 | アカウント設定 | `/mypage/settings` | `mypage.settings` | デザインのみ仮実装（変更不可） | layouts.mypage, mypage-nav, status-pill | GM-010: 1440/375確認済み | 未実装（設定変更時に必要） | 提供設定項目を決定 |
 | セキュリティ設定 | `/mypage/security` | `mypage.security` | 実装済み（現在のパスワード検証・変更） | layouts.mypage, mypage-nav, form-field | GM-013: Feature検証済み | DB・認証基盤 | なし |
-| アカウント管理のご案内 | `/mypage/account` | `mypage.account` | フロントエンド制作済み（静的案内） | layouts.mypage, mypage-nav, feedback-message | GM-010: 1440/375確認済み | 未実装（現状不要） | 運用確定後に案内を更新 |
+| アカウント管理のご案内 | `/mypage/account` | `mypage.account` | 案内と退会フォームを実装 | layouts.mypage, mypage-nav, form-field, feedback-message | GM-014: 画面表示・削除フロー確認済み | 退会処理を実装（本人確認・個人情報の削除） | ログ・バックアップの保持方針を公開前に確定 |
+| アカウント削除 | `DELETE /mypage/account` | `mypage.account.destroy` | 実装済み（現在のパスワード再確認あり） | layouts.mypage, form-field, feedback-message | GM-014: Feature検証済み | 実装済み（本人のアカウント・セッション・再設定トークン削除） | ログ・バックアップの保持と消去方針を公開前に確定 |
+| 管理者ページ | `/admin` | `admin.dashboard` | デザインのみ仮実装（権限確認用） | layouts.app, page-heading, feedback-message | GM-014: Feature検証済み | 認可基盤のみ実装（管理業務は未実装） | 運用者による安全な権限付与手順・管理業務仕様を確定 |
 | 通知設定 | `/mypage/notifications` | `mypage.notifications` | デザインのみ仮実装（配信・変更なし） | layouts.mypage, mypage-nav, status-pill | GM-010: 1440/375確認済み | 未実装（通知配信時に必要） | 通知種別・配信方式を決定 |
 | お知らせ一覧 | `/mypage/announcements` | `mypage.announcements` | デザインのみ仮実装（固定の仮データ） | layouts.mypage, mypage-nav, announcement-list, feedback-message | GM-010: 1440/375確認済み | 未実装（実告知・既読管理時に必要） | 配信・既読仕様を決定 |
 | Not Found | 存在しないURL | Laravel標準404 | フロントエンド制作済み（GunMatchデザイン） | layouts.app, site-header/footer | GM-008: 1440/375確認済み | 未実装（不要） | なし |

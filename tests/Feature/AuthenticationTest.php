@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\URL;
@@ -131,10 +132,12 @@ class AuthenticationTest extends TestCase
             'name' => '本人の更新後',
             'email' => 'owner@example.test',
             'user_id' => $other->id,
+            'is_admin' => true,
         ])->assertRedirect()->assertSessionHasNoErrors();
 
         $this->assertDatabaseHas('users', ['id' => $member->id, 'name' => '本人の更新後']);
         $this->assertDatabaseHas('users', ['id' => $other->id, 'name' => '別会員', 'email' => 'other@example.test']);
+        $this->assertFalse($member->fresh()->is_admin);
         $this->put('/mypage/profile/'.$other->id, [
             'name' => '改ざん',
             'email' => 'other@example.test',
@@ -167,6 +170,80 @@ class AuthenticationTest extends TestCase
 
         $this->assertNull($member->fresh()->email_verified_at);
         Notification::assertSentTo($member->fresh(), VerifyEmail::class);
+    }
+
+    public function test_email_unverified_members_can_access_basic_account_pages_but_admin_pages_require_verification(): void
+    {
+        $member = User::factory()->unverified()->create();
+
+        $this->actingAs($member)->get(route('mypage'))->assertOk();
+        $this->get(route('mypage.profile'))->assertOk();
+
+        $member->forceFill(['is_admin' => true])->save();
+        $this->get(route('admin.dashboard'))->assertRedirect(route('verification.notice'));
+    }
+
+    public function test_admin_access_is_separate_from_member_type_and_requires_admin_authorization(): void
+    {
+        $member = User::factory()->create(['member_type' => MemberType::GunShop]);
+        $admin = User::factory()->create();
+        $admin->forceFill(['is_admin' => true])->save();
+
+        $this->get(route('admin.dashboard'))->assertRedirect(route('login'));
+        $this->actingAs($member)->get(route('admin.dashboard'))->assertForbidden();
+        $this->actingAs($admin)->get(route('admin.dashboard'))->assertOk()->assertSee('管理者ページ');
+
+        $this->actingAs($admin)->post(route('logout'));
+        $this->post(route('register'), [
+            'member_type' => MemberType::Individual->value,
+            'name' => '一般会員',
+            'email' => 'ordinary@example.test',
+            'password' => 'GunMatch-Test!234',
+            'password_confirmation' => 'GunMatch-Test!234',
+            'is_admin' => true,
+        ])->assertRedirect(route('verification.notice'));
+
+        $ordinary = User::where('email', 'ordinary@example.test')->firstOrFail();
+        $this->assertFalse($ordinary->is_admin);
+        $this->assertArrayNotHasKey('is_admin', $ordinary->toArray());
+    }
+
+    public function test_account_deletion_requires_current_password_and_removes_account_sessions_and_reset_token(): void
+    {
+        $member = User::factory()->create([
+            'email' => 'delete-me@example.test',
+            'password' => 'GunMatch-Delete!234',
+        ]);
+        $other = User::factory()->create(['email' => 'keep-me@example.test']);
+        DB::table('sessions')->insert([
+            'id' => 'another-device-session',
+            'user_id' => $member->id,
+            'payload' => '',
+            'last_activity' => now()->timestamp,
+        ]);
+        DB::table('password_reset_tokens')->insert([
+            'email' => $member->email,
+            'token' => 'stored-token',
+            'created_at' => now(),
+        ]);
+
+        $this->actingAs($member)->from(route('mypage.account'))->delete(route('mypage.account.destroy'), [
+            'password' => 'incorrect',
+        ])->assertRedirect(route('mypage.account'))
+            ->assertSessionHasErrors('password');
+        $this->assertDatabaseHas('users', ['id' => $member->id]);
+
+        $this->delete(route('mypage.account.destroy'), [
+            'password' => 'GunMatch-Delete!234',
+            'user_id' => $other->id,
+        ])->assertRedirect(route('home'))
+            ->assertSessionHas('status', 'アカウントを削除しました。');
+
+        $this->assertGuest();
+        $this->assertDatabaseMissing('users', ['id' => $member->id]);
+        $this->assertDatabaseMissing('sessions', ['user_id' => $member->id]);
+        $this->assertDatabaseMissing('password_reset_tokens', ['email' => $member->email]);
+        $this->assertDatabaseHas('users', ['id' => $other->id, 'email' => 'keep-me@example.test']);
     }
 
     public function test_authenticated_member_can_change_password_after_current_password_check(): void

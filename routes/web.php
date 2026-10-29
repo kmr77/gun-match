@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\Account\DestroyAccountController;
 use App\Http\Controllers\Account\ProfileController;
 use App\Http\Controllers\Account\UpdatePasswordController;
+use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Auth\NewPasswordController;
@@ -22,6 +24,9 @@ Route::get('/outdoor-samples', [OutdoorSampleController::class, 'index'])->name(
 Route::get('/outdoor-samples/{slug}', [OutdoorSampleController::class, 'show'])
     ->where('slug', '[a-z0-9-]+')
     ->name('outdoor-samples.show');
+Route::get('/admin', AdminDashboardController::class)
+    ->middleware(['auth', 'verified', 'can:access-admin'])
+    ->name('admin.dashboard');
 
 Route::controller(StaticPageController::class)->group(function (): void {
     Route::get('/about', 'information')->defaults('page', 'about')->name('about');
@@ -68,6 +73,9 @@ Route::controller(StaticPageController::class)->group(function (): void {
         Route::get('/mypage/security', 'mypage')->defaults('page', 'security')->name('mypage.security');
         Route::put('/mypage/password', [UpdatePasswordController::class, 'update'])->name('mypage.password.update');
         Route::get('/mypage/account', 'mypage')->defaults('page', 'account')->name('mypage.account');
+        Route::delete('/mypage/account', [DestroyAccountController::class, 'destroy'])
+            ->middleware('throttle:3,1')
+            ->name('mypage.account.destroy');
         Route::get('/mypage/notifications', 'mypage')->defaults('page', 'notifications')->name('mypage.notifications');
         Route::get('/mypage/announcements', 'mypage')->defaults('page', 'announcements')->name('mypage.announcements');
     });

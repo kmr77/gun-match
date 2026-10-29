@@ -138,7 +138,7 @@
                             <button class="btn btn--primary" type="submit">パスワードを変更</button>
                         </form>
                     @elseif ($pageKey === 'account')
-                        <p class="member-help">アカウント情報はログイン中のご本人のみ更新できます。</p>
+                        <p class="member-help">アカウント情報はログイン中のご本人のみ更新できます。メールアドレス未確認の場合も、登録情報の確認・変更と退会申請は利用できます。管理者画面はメール確認済みの管理者に限り利用できます。</p>
                         <section class="account-guide">
                             <h3>アカウントを利用する前に</h3>
                             <ol>
@@ -148,11 +148,23 @@
                             </ol>
                         </section>
                         <p class="member-help"><a href="{{ route('terms') }}">利用規約（準備中）</a> ・ <a href="{{ route('privacy') }}">プライバシーポリシー（準備中）</a></p>
-                        <x-feedback-message
-                            type="info"
-                            title="提供範囲について"
-                            message="登録情報の更新とパスワード変更を利用できます。退会手続きはまだ提供していません。"
-                        />
+                        <section class="account-guide account-guide--danger" aria-labelledby="account-delete-title">
+                            <h3 id="account-delete-title">アカウントの削除</h3>
+                            <p>退会すると会員名、メールアドレス、会員区分、パスワードなどのアカウント情報を削除します。この操作は取り消せません。</p>
+                            <form method="POST" action="{{ route('mypage.account.destroy') }}">
+                                @csrf
+                                @method('DELETE')
+                                <x-form-field
+                                    name="password"
+                                    label="現在のパスワード"
+                                    type="password"
+                                    autocomplete="current-password"
+                                    :required="true"
+                                    :error="$errors->first('password')"
+                                />
+                                <button class="btn btn--danger" type="submit">アカウントを削除する</button>
+                            </form>
+                        </section>
                     @elseif ($pageKey === 'announcements')
                         <p class="member-help">以下は一覧レイアウト確認用の仮データです。実際のお知らせや配信履歴ではありません。</p>
                         <ul class="announcement-list">
