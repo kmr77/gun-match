@@ -4,6 +4,7 @@ use App\Http\Controllers\Account\DestroyAccountController;
 use App\Http\Controllers\Account\ProfileController;
 use App\Http\Controllers\Account\UpdatePasswordController;
 use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\MemberDetailsController;
 use App\Http\Controllers\Admin\MemberStatusController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\EmailVerificationController;
@@ -33,6 +34,9 @@ Route::middleware(['auth', EnsureAccountIsActive::class, 'verified', 'can:access
     ->prefix('/admin')
     ->name('admin.')
     ->group(function (): void {
+        Route::get('/members/{user}', MemberDetailsController::class)
+            ->whereNumber('user')
+            ->name('members.show');
         Route::patch('/members/{user}/status', [MemberStatusController::class, 'update'])
             ->whereNumber('user')
             ->name('members.status.update');

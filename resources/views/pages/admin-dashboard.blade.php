@@ -46,7 +46,7 @@
                         <tbody>
                             @forelse ($members as $member)
                                 <tr>
-                                    <td>{{ $member->name }}</td>
+                                    <td><a href="{{ route('admin.members.show', $member) }}">{{ $member->name }}</a></td>
                                     <td>{{ $member->email }}</td>
                                     <td>{{ $member->member_type->label() }}</td>
                                     <td><time datetime="{{ $member->created_at->toIso8601String() }}">{{ $member->created_at->format('Y-m-d H:i') }}</time></td>

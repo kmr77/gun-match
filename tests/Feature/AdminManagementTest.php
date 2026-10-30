@@ -31,6 +31,69 @@ class AdminManagementTest extends TestCase
             ->assertDontSee('unrelated@example.test');
     }
 
+    public function test_admin_can_view_member_details_and_only_that_members_activity(): void
+    {
+        $admin = User::factory()->administrator()->create();
+        $member = User::factory()->unverified()->create([
+            'name' => '詳細確認会員',
+            'email' => 'member-detail@example.test',
+            'member_type' => 'business',
+        ]);
+        $otherMember = User::factory()->create(['email' => 'other-detail@example.test']);
+        DB::table('admin_activity_logs')->insert([
+            [
+                'actor_user_id' => $admin->id,
+                'target_user_id' => $member->id,
+                'action' => 'member.suspended',
+                'details' => json_encode(['from' => 'active', 'to' => 'suspended']),
+                'ip_address' => '127.0.0.1',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'actor_user_id' => $admin->id,
+                'target_user_id' => $otherMember->id,
+                'action' => 'member.activated',
+                'details' => json_encode(['from' => 'suspended', 'to' => 'active']),
+                'ip_address' => '127.0.0.1',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+        ]);
+
+        $this->actingAs($admin)
+            ->get(route('admin.members.show', $member))
+            ->assertOk()
+            ->assertSee((string) $member->id)
+            ->assertSee($member->name)
+            ->assertSee($member->email)
+            ->assertSee('銃砲店会員')
+            ->assertSee('未認証')
+            ->assertSee('管理者権限')
+            ->assertSee('利用停止')
+            ->assertSee('会員一覧へ戻る')
+            ->assertSee('会員停止')
+            ->assertDontSee('会員再開')
+            ->assertDontSee($otherMember->email);
+
+        $this->actingAs($admin)
+            ->get(route('admin.dashboard'))
+            ->assertSee(route('admin.members.show', $member));
+    }
+
+    public function test_only_verified_admins_can_view_member_details_and_missing_members_return_404(): void
+    {
+        $member = User::factory()->create();
+        $admin = User::factory()->administrator()->create();
+        $unverifiedAdmin = User::factory()->administrator()->unverified()->create();
+
+        $this->get(route('admin.members.show', $member))->assertRedirect(route('login'));
+        $this->actingAs($member)->get(route('admin.members.show', $member))->assertForbidden();
+        $this->actingAs($unverifiedAdmin)->get(route('admin.members.show', $member))
+            ->assertRedirect(route('verification.notice'));
+        $this->actingAs($admin)->get(route('admin.members.show', 999999))->assertNotFound();
+    }
+
     public function test_only_an_active_verified_admin_can_search_or_change_member_status(): void
     {
         $member = User::factory()->create();
