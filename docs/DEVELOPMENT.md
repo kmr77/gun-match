@@ -43,6 +43,8 @@ php artisan serve --host=127.0.0.1 --port=8000
 
 管理者ページ `/admin` では会員総数・有効会員数・停止中会員数、検索可能な会員一覧、管理操作履歴を確認できます。会員名から `/admin/members/{user}` の詳細ページを開き、既存の会員情報と対象会員の操作履歴を確認できます。両ページは認証済み・有効・メール確認済みの管理者に限定されています。管理操作のデザインと集計は既存データを利用し、新しいテーブルは作成しません。
 
+`/contact` はログイン不要の一般運営問い合わせフォームです。CSRF、サーバー側入力検証、IP単位の送信回数制限（5回/分）を適用し、問い合わせ本文は `contact_inquiries` に保存します。管理者は `/admin/contact-inquiries` から確認し、未対応・対応中・対応済みを設定できます。対応済みへ変更した日時を保存し、他の状態へ戻すと対応日時を解除します。自動返信・添付・会員間のメッセージ機能はありません。個人情報を含む問い合わせの保持・削除期間は公開前に運用方針として確定してください。
+
 管理者会員の検索は、名前・メールアドレスに対する `LOWER(...) LIKE ?` のバインドクエリを使用します。会員状態と操作履歴のマイグレーションはLaravel Schema Builderのboolean、foreignId、text、通常の複合indexを使い、SQLite固有SQLは追加していません。MySQLでも一般的な型に対応する設計ですが、本番MySQLへの接続・マイグレーション・照合順序・バックアップ復元試験は未実施です。MySQL採用時は本番同等のステージングで検証してください。
 
 ## 検証コマンド
@@ -89,6 +91,8 @@ php artisan test
 | 管理者会員管理 | `/admin` | `admin.dashboard` | メール確認済みかつ有効な管理者のみ。名前・メール検索、会員状態、登録日時、メール認証状態、直近の操作履歴を表示 |
 | 管理者会員詳細 | `/admin/members/{user}` | `admin.members.show` | 管理者専用。会員情報・対象会員の操作履歴・既存の状態変更操作を表示 |
 | 会員状態変更 | `PATCH /admin/members/{user}/status` | `admin.members.status.update` | 管理者専用。停止時にDBセッションを削除し、履歴を保存 |
+| お問い合わせ | `/contact`、`POST /contact` | `contact`、`contact.store` | ログイン不要、検証・CSRF・送信制限付きでDB保存 |
+| お問い合わせ管理 | `/admin/contact-inquiries` | `admin.contact-inquiries.index` | 管理者専用の一覧・詳細・対応状態更新 |
 | 公開プロフィール | `/mypage/profile/public` | `mypage.profile.public` | 個人情報を含まない表示サンプル |
 | プロフィールプレビュー | `/mypage/profile/preview` | `mypage.profile.preview` | 保存・公開されない表示例 |
 | アカウント設定 | `/mypage/settings` | `mypage.settings` | 表示のみ。変更なし |

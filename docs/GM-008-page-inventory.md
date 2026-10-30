@@ -20,7 +20,7 @@
 | よくある質問 | `/faq` | `faq` | フロントエンド制作済み（静的FAQ） | layouts.app, page-heading, details/summary | GM-008: 1440/375確認済み | 未実装（不要） | 内容の最終確認 |
 | 利用規約 | `/terms` | `terms` | デザインのみ仮実装（準備中表示） | layouts.app, page-heading, feedback/notice | GM-008: 1440/375確認済み | 未実装（静的文書のため不要） | 運営情報・提供条件・法的事項を確認して本文作成 |
 | プライバシーポリシー | `/privacy` | `privacy` | デザインのみ仮実装（準備中表示） | layouts.app, page-heading, feedback/notice | GM-008: 1440/375確認済み | 未実装（静的文書のため不要） | 実際のデータ取扱・運用を確認して本文作成 |
-| お問い合わせ案内 | `/contact` | `contact` | フロントエンド制作済み（案内のみ、フォームなし） | layouts.app, page-heading, feedback/notice | GM-008: 1440/375確認済み | 未実装（受付開始時に要検討） | 運営窓口確定後に案内を更新 |
+| お問い合わせ | `/contact` | `contact` | 一般利用者向け受付フォーム・完了表示を実装 | layouts.app, page-heading, form-field, feedback-message | GM-019: Feature・375px送信確認 | DB保存済み（contact_inquiries）、メール返信なし | 問い合わせ情報の保持・削除期間を公開前に決定 |
 | ログイン | `/login` | `login` | 実装済み（Laravelセッション認証） | layouts.app, page-heading, form-field, feedback-message | GM-013: Feature検証済み | DB接続・認証基盤 | メール送信設定を本番用に構成 |
 | 新規会員登録 | `/register` | `register` | 実装済み（個人会員・銃砲店会員） | layouts.app, page-heading, form-field, feedback-message | GM-013: Feature検証済み | DB接続・認証基盤 | 利用規約・プライバシー公開前確認 |
 | パスワード再設定案内 | `/forgot-password` | `password.request` | 実装済み（Laravel Password Broker） | layouts.app, page-heading, form-field, feedback-message | GM-013: Feature検証済み | DBとメール配信設定 | 本番メール配信を設定 |
@@ -35,6 +35,8 @@
 | 管理者会員管理 | `/admin` | `admin.dashboard` | 会員数集計、検索、会員状態・認証状態表示、操作履歴を実装 | layouts.app, page-heading, feedback-message, admin-table, admin-summary | GM-018: Feature・375px表示確認 | 会員検索・状態変更・監査履歴を実装 | 管理者権限はCLI付与。運用監視・ログ保持方針を確定 |
 | 管理者会員状態変更 | `PATCH /admin/members/{user}/status` | `admin.members.status.update` | 管理画面の有効化・停止操作 | layouts.app, admin-table, CSRF form | GM-015: Feature検証済み | 停止時のセッション無効化と監査履歴を実装 | 管理者アカウント運用ルールを確定 |
 | 管理者会員詳細 | `/admin/members/{user}` | `admin.members.show` | 共通詳細Bladeで会員情報・対象会員の監査履歴・状態操作を表示 | layouts.app, page-heading, feedback-message, admin-table | GM-017: Feature・画面遷移確認、GM-018: 375px表示確認 | 既存会員・監査履歴テーブルを利用 | 管理者権限はCLI付与。運用監視・ログ保持方針を確定 |
+| 管理者お問い合わせ一覧 | `/admin/contact-inquiries` | `admin.contact-inquiries.index` | 受付日時・送信者・件名・対応状態の一覧 | layouts.app, page-heading, admin-table | GM-019: Feature・375pxブラウザー確認 | contact_inquiriesテーブル | 問い合わせ情報の保持・削除期間を決定 |
+| 管理者お問い合わせ詳細 | `/admin/contact-inquiries/{contactInquiry}` | `admin.contact-inquiries.show` | 送信内容・対応状態・対応日時の表示と状態更新 | layouts.app, page-heading, feedback-message, admin-table | GM-019: Feature・375pxブラウザー確認 | contact_inquiriesテーブル | 問い合わせ情報の保持・削除期間を決定 |
 | 通知設定 | `/mypage/notifications` | `mypage.notifications` | デザインのみ仮実装（配信・変更なし） | layouts.mypage, mypage-nav, status-pill | GM-010: 1440/375確認済み | 未実装（通知配信時に必要） | 通知種別・配信方式を決定 |
 | お知らせ一覧 | `/mypage/announcements` | `mypage.announcements` | デザインのみ仮実装（固定の仮データ） | layouts.mypage, mypage-nav, announcement-list, feedback-message | GM-010: 1440/375確認済み | 未実装（実告知・既読管理時に必要） | 配信・既読仕様を決定 |
 | Not Found | 存在しないURL | Laravel標準404 | フロントエンド制作済み（GunMatchデザイン） | layouts.app, site-header/footer | GM-008: 1440/375確認済み | 未実装（不要） | なし |

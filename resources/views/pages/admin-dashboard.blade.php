@@ -10,6 +10,7 @@
                 description="会員アカウントの検索・状態管理と、管理操作履歴を確認できます。"
                 :breadcrumbs="[['label' => 'トップ', 'route' => 'home'], ['label' => '管理者ページ']]"
             />
+            <p><a class="btn btn--outline" href="{{ route('admin.contact-inquiries.index') }}">お問い合わせ管理</a></p>
             @if (session('status'))
                 <x-feedback-message type="success" title="更新しました" :message="session('status')" />
             @endif

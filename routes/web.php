@@ -4,6 +4,7 @@ use App\Http\Controllers\Account\DestroyAccountController;
 use App\Http\Controllers\Account\ProfileController;
 use App\Http\Controllers\Account\UpdatePasswordController;
 use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\ContactInquiryController;
 use App\Http\Controllers\Admin\MemberDetailsController;
 use App\Http\Controllers\Admin\MemberStatusController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
@@ -12,6 +13,7 @@ use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OutdoorSampleController;
 use App\Http\Controllers\StaticPageController;
@@ -27,13 +29,18 @@ Route::get('/outdoor-samples', [OutdoorSampleController::class, 'index'])->name(
 Route::get('/outdoor-samples/{slug}', [OutdoorSampleController::class, 'show'])
     ->where('slug', '[a-z0-9-]+')
     ->name('outdoor-samples.show');
-Route::get('/admin', AdminDashboardController::class)
-    ->middleware(['auth', EnsureAccountIsActive::class, 'verified', 'can:access-admin'])
-    ->name('admin.dashboard');
 Route::middleware(['auth', EnsureAccountIsActive::class, 'verified', 'can:access-admin'])
     ->prefix('/admin')
     ->name('admin.')
     ->group(function (): void {
+        Route::get('/', AdminDashboardController::class)->name('dashboard');
+        Route::get('/contact-inquiries', [ContactInquiryController::class, 'index'])->name('contact-inquiries.index');
+        Route::get('/contact-inquiries/{contactInquiry}', [ContactInquiryController::class, 'show'])
+            ->whereNumber('contactInquiry')
+            ->name('contact-inquiries.show');
+        Route::patch('/contact-inquiries/{contactInquiry}', [ContactInquiryController::class, 'update'])
+            ->whereNumber('contactInquiry')
+            ->name('contact-inquiries.update');
         Route::get('/members/{user}', MemberDetailsController::class)
             ->whereNumber('user')
             ->name('members.show');
@@ -50,7 +57,6 @@ Route::controller(StaticPageController::class)->group(function (): void {
     Route::get('/faq', 'information')->defaults('page', 'faq')->name('faq');
     Route::get('/terms', 'information')->defaults('page', 'terms')->name('terms');
     Route::get('/privacy', 'information')->defaults('page', 'privacy')->name('privacy');
-    Route::get('/contact', 'information')->defaults('page', 'contact')->name('contact');
 
     Route::middleware('guest')->group(function (): void {
         Route::get('/login', 'authPreview')->defaults('page', 'login')->name('login');
@@ -64,6 +70,11 @@ Route::controller(StaticPageController::class)->group(function (): void {
         Route::get('/reset-password/{token}', [NewPasswordController::class, 'create'])->name('password.reset');
         Route::post('/reset-password', [NewPasswordController::class, 'store'])->name('password.update');
     });
+
+    Route::get('/contact', [ContactController::class, 'create'])->name('contact');
+    Route::post('/contact', [ContactController::class, 'store'])
+        ->middleware('throttle:5,1')
+        ->name('contact.store');
 
     Route::get('/email/verify', [EmailVerificationController::class, 'notice'])
         ->middleware(['auth', EnsureAccountIsActive::class])
