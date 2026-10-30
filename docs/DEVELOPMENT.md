@@ -41,6 +41,8 @@ php artisan serve --host=127.0.0.1 --port=8000
 
 管理者権限はWebフォームから設定できません。信頼できるサーバー上のCLIで `php artisan gunmatch:admin member@example.com` を実行し、対象メールアドレスと確認プロンプトを確認してから承認します。解除は `php artisan gunmatch:admin member@example.com --revoke` です。停止中・メール未確認会員への付与と、最後の有効な管理者権限の解除は拒否され、操作履歴へ記録されます。CLIを実行できるOS／デプロイ権限は限定し、対象メールアドレスと権限変更を別担当者が確認する運用を推奨します。`is_admin` を会員区分（個人会員・銃砲店会員）から変更・推定してはいけません。
 
+管理者ページ `/admin` では会員総数・有効会員数・停止中会員数、検索可能な会員一覧、管理操作履歴を確認できます。会員名から `/admin/members/{user}` の詳細ページを開き、既存の会員情報と対象会員の操作履歴を確認できます。両ページは認証済み・有効・メール確認済みの管理者に限定されています。管理操作のデザインと集計は既存データを利用し、新しいテーブルは作成しません。
+
 管理者会員の検索は、名前・メールアドレスに対する `LOWER(...) LIKE ?` のバインドクエリを使用します。会員状態と操作履歴のマイグレーションはLaravel Schema Builderのboolean、foreignId、text、通常の複合indexを使い、SQLite固有SQLは追加していません。MySQLでも一般的な型に対応する設計ですが、本番MySQLへの接続・マイグレーション・照合順序・バックアップ復元試験は未実施です。MySQL採用時は本番同等のステージングで検証してください。
 
 ## 検証コマンド
@@ -85,6 +87,7 @@ php artisan test
 | プロフィール編集 | `/mypage/profile` | `mypage.profile` | 認証中の本人情報のみ更新 |
 | アカウント削除 | `DELETE /mypage/account` | `mypage.account.destroy` | 現在のパスワード再確認、関連セッション・再設定トークンを無効化して本人アカウントを削除 |
 | 管理者会員管理 | `/admin` | `admin.dashboard` | メール確認済みかつ有効な管理者のみ。名前・メール検索、会員状態、登録日時、メール認証状態、直近の操作履歴を表示 |
+| 管理者会員詳細 | `/admin/members/{user}` | `admin.members.show` | 管理者専用。会員情報・対象会員の操作履歴・既存の状態変更操作を表示 |
 | 会員状態変更 | `PATCH /admin/members/{user}/status` | `admin.members.status.update` | 管理者専用。停止時にDBセッションを削除し、履歴を保存 |
 | 公開プロフィール | `/mypage/profile/public` | `mypage.profile.public` | 個人情報を含まない表示サンプル |
 | プロフィールプレビュー | `/mypage/profile/preview` | `mypage.profile.preview` | 保存・公開されない表示例 |

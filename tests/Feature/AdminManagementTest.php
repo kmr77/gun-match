@@ -27,8 +27,40 @@ class AdminManagementTest extends TestCase
             ->assertSee($match->email)
             ->assertSee('銃砲店会員')
             ->assertSee('未認証')
+            ->assertSee('会員総数')
+            ->assertSee('有効会員数')
+            ->assertSee('停止中会員数')
+            ->assertSee('メール認証状態')
+            ->assertSee('利用状態')
             ->assertSee('name="_token"', false)
             ->assertDontSee('unrelated@example.test');
+    }
+
+    public function test_admin_search_displays_a_specific_message_when_no_members_match(): void
+    {
+        $admin = User::factory()->administrator()->create();
+
+        $this->actingAs($admin)
+            ->get(route('admin.dashboard', ['search' => 'no-such-member']))
+            ->assertOk()
+            ->assertSee('検索条件に一致する会員はいません。');
+    }
+
+    public function test_admin_summary_shows_total_active_and_suspended_member_counts(): void
+    {
+        $admin = User::factory()->administrator()->create();
+        User::factory()->create();
+        User::factory()->suspended()->create();
+
+        $this->actingAs($admin)
+            ->get(route('admin.dashboard'))
+            ->assertOk()
+            ->assertSee('会員総数')
+            ->assertSee('<strong>3</strong>', false)
+            ->assertSee('有効会員数')
+            ->assertSee('<strong>2</strong>', false)
+            ->assertSee('停止中会員数')
+            ->assertSee('<strong>1</strong>', false);
     }
 
     public function test_admin_can_view_member_details_and_only_that_members_activity(): void

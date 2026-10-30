@@ -35,6 +35,12 @@ class AdminDashboardController extends Controller
             ->limit(20)
             ->get();
 
-        return view('pages.admin-dashboard', compact('members', 'activityLogs', 'search'));
+        $memberCounts = [
+            'total' => User::query()->count(),
+            'active' => User::query()->where('is_active', true)->count(),
+            'suspended' => User::query()->where('is_active', false)->count(),
+        ];
+
+        return view('pages.admin-dashboard', compact('members', 'activityLogs', 'search', 'memberCounts'));
     }
 }

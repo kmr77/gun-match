@@ -17,6 +17,21 @@
                 <x-feedback-message type="error" title="処理を完了できません" :message="$errors->first()" />
             @endif
 
+            <section class="admin-summary" aria-label="会員数">
+                <div class="admin-summary__item">
+                    <span>会員総数</span>
+                    <strong>{{ number_format($memberCounts['total']) }}</strong>
+                </div>
+                <div class="admin-summary__item">
+                    <span>有効会員数</span>
+                    <strong>{{ number_format($memberCounts['active']) }}</strong>
+                </div>
+                <div class="admin-summary__item">
+                    <span>停止中会員数</span>
+                    <strong>{{ number_format($memberCounts['suspended']) }}</strong>
+                </div>
+            </section>
+
             <section class="admin-panel" aria-labelledby="admin-members-title">
                 <h2 id="admin-members-title">会員管理</h2>
                 <form method="GET" action="{{ route('admin.dashboard') }}" class="admin-search">
@@ -38,8 +53,8 @@
                                 <th scope="col">メールアドレス</th>
                                 <th scope="col">会員区分</th>
                                 <th scope="col">登録日時</th>
-                                <th scope="col">メール認証</th>
-                                <th scope="col">アカウント状態</th>
+                                <th scope="col">メール認証状態</th>
+                                <th scope="col">利用状態</th>
                                 <th scope="col">操作</th>
                             </tr>
                         </thead>
@@ -68,7 +83,11 @@
                                     </td>
                                 </tr>
                             @empty
-                                <tr><td colspan="7">該当する会員はいません。</td></tr>
+                                <tr>
+                                    <td colspan="7">
+                                        {{ $search !== '' ? '検索条件に一致する会員はいません。' : '登録されている会員はいません。' }}
+                                    </td>
+                                </tr>
                             @endforelse
                         </tbody>
                     </table>
