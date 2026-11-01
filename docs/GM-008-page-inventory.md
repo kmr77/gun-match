@@ -38,7 +38,10 @@
 | 管理者お問い合わせ一覧 | `/admin/contact-inquiries` | `admin.contact-inquiries.index` | 受付日時・送信者・件名・対応状態の一覧 | layouts.app, page-heading, admin-table | GM-019: Feature・375pxブラウザー確認 | contact_inquiriesテーブル | 問い合わせ情報の保持・削除期間を決定 |
 | 管理者お問い合わせ詳細 | `/admin/contact-inquiries/{contactInquiry}` | `admin.contact-inquiries.show` | 送信内容・対応状態・対応日時の表示と状態更新 | layouts.app, page-heading, feedback-message, admin-table | GM-019: Feature・375pxブラウザー確認 | contact_inquiriesテーブル | 問い合わせ情報の保持・削除期間を決定 |
 | 通知設定 | `/mypage/notifications` | `mypage.notifications` | デザインのみ仮実装（配信・変更なし） | layouts.mypage, mypage-nav, status-pill | GM-010: 1440/375確認済み | 未実装（通知配信時に必要） | 通知種別・配信方式を決定 |
-| お知らせ一覧 | `/mypage/announcements` | `mypage.announcements` | デザインのみ仮実装（固定の仮データ） | layouts.mypage, mypage-nav, announcement-list, feedback-message | GM-010: 1440/375確認済み | 未実装（実告知・既読管理時に必要） | 配信・既読仕様を決定 |
+| マイページお知らせ一覧 | `/mypage/announcements` | `mypage.announcements` | DBから公開済みのお知らせを表示 | layouts.mypage, mypage-nav, announcement-list | GM-020: Feature・375px表示確認 | announcementsテーブルを利用 | 既読管理・通知配信は未実装 |
+| 公開お知らせ一覧 | `/announcements` | `announcements.index` | 公開済み・公開日時到来分を新しい順に表示 | layouts.app, page-heading, announcement-list | GM-020: Feature・375px表示確認 | announcementsテーブルを利用 | 通知配信は対象外 |
+| 公開お知らせ詳細 | `/announcements/{announcement}` | `announcements.show` | 公開済みかつ公開日時到来後のみ本文を表示 | layouts.app, page-heading, content-panel | GM-020: Feature・375px表示確認 | announcementsテーブルを利用 | 通知配信は対象外 |
+| 管理者お知らせ管理 | `/admin/announcements` | `admin.announcements.index` | 管理者専用の一覧・作成・編集・削除、下書き・公開管理 | layouts.app, page-heading, feedback-message, admin-table, form-field | GM-020: Feature・375pxブラウザー確認 | announcementsテーブル | 通知配信・既読管理は対象外 |
 | Not Found | 存在しないURL | Laravel標準404 | フロントエンド制作済み（GunMatchデザイン） | layouts.app, site-header/footer | GM-008: 1440/375確認済み | 未実装（不要） | なし |
 
 ## GM-011 共通画面確認追記（2026-10-26）

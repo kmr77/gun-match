@@ -10,6 +10,7 @@
         <nav class="site-footer__links" aria-label="フッターナビゲーション">
             <div>
                 <h2>GunMatch</h2>
+                <a href="{{ route('announcements.index') }}">お知らせ</a>
                 <a href="{{ route('home') }}#categories">カテゴリー</a>
                 <a href="{{ route('categories.index') }}">カテゴリー一覧</a>
                 <a href="{{ route('home') }}#reasons">選ばれる理由</a>

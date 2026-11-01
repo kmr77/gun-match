@@ -4,9 +4,11 @@ use App\Http\Controllers\Account\DestroyAccountController;
 use App\Http\Controllers\Account\ProfileController;
 use App\Http\Controllers\Account\UpdatePasswordController;
 use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\AnnouncementController as AdminAnnouncementController;
 use App\Http\Controllers\Admin\ContactInquiryController;
 use App\Http\Controllers\Admin\MemberDetailsController;
 use App\Http\Controllers\Admin\MemberStatusController;
+use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Auth\NewPasswordController;
@@ -29,6 +31,10 @@ Route::get('/outdoor-samples', [OutdoorSampleController::class, 'index'])->name(
 Route::get('/outdoor-samples/{slug}', [OutdoorSampleController::class, 'show'])
     ->where('slug', '[a-z0-9-]+')
     ->name('outdoor-samples.show');
+Route::get('/announcements', [AnnouncementController::class, 'index'])->name('announcements.index');
+Route::get('/announcements/{announcement}', [AnnouncementController::class, 'show'])
+    ->whereNumber('announcement')
+    ->name('announcements.show');
 Route::middleware(['auth', EnsureAccountIsActive::class, 'verified', 'can:access-admin'])
     ->prefix('/admin')
     ->name('admin.')
@@ -41,6 +47,18 @@ Route::middleware(['auth', EnsureAccountIsActive::class, 'verified', 'can:access
         Route::patch('/contact-inquiries/{contactInquiry}', [ContactInquiryController::class, 'update'])
             ->whereNumber('contactInquiry')
             ->name('contact-inquiries.update');
+        Route::get('/announcements', [AdminAnnouncementController::class, 'index'])->name('announcements.index');
+        Route::get('/announcements/create', [AdminAnnouncementController::class, 'create'])->name('announcements.create');
+        Route::post('/announcements', [AdminAnnouncementController::class, 'store'])->name('announcements.store');
+        Route::get('/announcements/{announcement}/edit', [AdminAnnouncementController::class, 'edit'])
+            ->whereNumber('announcement')
+            ->name('announcements.edit');
+        Route::put('/announcements/{announcement}', [AdminAnnouncementController::class, 'update'])
+            ->whereNumber('announcement')
+            ->name('announcements.update');
+        Route::delete('/announcements/{announcement}', [AdminAnnouncementController::class, 'destroy'])
+            ->whereNumber('announcement')
+            ->name('announcements.destroy');
         Route::get('/members/{user}', MemberDetailsController::class)
             ->whereNumber('user')
             ->name('members.show');

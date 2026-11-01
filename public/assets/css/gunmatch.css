@@ -764,6 +764,8 @@ button, input, select { -webkit-tap-highlight-color: transparent; }
 .announcement-list > li { padding: 17px; border: 1px solid var(--color-border); border-radius: 7px; background: #fff; }
 .announcement-list h3 { margin: 8px 0 4px; font-size: 15px; }
 .announcement-list p { margin: 0; color: var(--color-muted); font-size: 13px; }
+.announcement-list time, .announcement-detail time { color: var(--color-muted); font-size: 13px; }
+.announcement-detail > p { margin-bottom: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
 .admin-summary { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-top: 24px; }
 .admin-summary__item { display: grid; gap: 6px; padding: 16px 18px; border: 1px solid var(--color-border); border-radius: 8px; background: #fff; }
 .admin-summary__item span { color: var(--color-muted); font-size: 13px; font-weight: 700; }

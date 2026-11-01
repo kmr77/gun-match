@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Announcement;
 use Illuminate\Contracts\View\View;
 
 class StaticPageController extends Controller
@@ -44,9 +45,19 @@ class StaticPageController extends Controller
 
         abort_unless(array_key_exists($page, $titles), 404);
 
-        return view('pages.mypage', [
+        $data = [
             'pageKey' => $page,
             'title' => $titles[$page],
-        ]);
+        ];
+
+        if ($page === 'announcements') {
+            $data['announcements'] = Announcement::query()
+                ->published()
+                ->orderByDesc('published_at')
+                ->orderByDesc('id')
+                ->paginate(10);
+        }
+
+        return view('pages.mypage', $data);
     }
 }

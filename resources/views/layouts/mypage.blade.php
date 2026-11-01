@@ -166,24 +166,19 @@
                             </form>
                         </section>
                     @elseif ($pageKey === 'announcements')
-                        <p class="member-help">以下は一覧レイアウト確認用の仮データです。実際のお知らせや配信履歴ではありません。</p>
                         <ul class="announcement-list">
-                            <li>
-                                <span class="status-pill">表示サンプル</span>
-                                <h3>お知らせタイトルの表示例</h3>
-                                <p>サービスのお知らせを表示する行のサンプルです。実際の告知ではありません。</p>
-                            </li>
-                            <li>
-                                <span class="status-pill">表示サンプル</span>
-                                <h3>メンテナンス案内の表示例</h3>
-                                <p>日付や本文を含むお知らせ一覧の表示確認用です。実際の予定を示すものではありません。</p>
-                            </li>
+                            @forelse ($announcements as $announcement)
+                                <li>
+                                    <time datetime="{{ $announcement->published_at->toIso8601String() }}">{{ $announcement->published_at->format('Y年m月d日 H:i') }}</time>
+                                    <h3><a href="{{ route('announcements.show', $announcement) }}">{{ $announcement->title }}</a></h3>
+                                    <p>{{ \Illuminate\Support\Str::limit($announcement->body, 180) }}</p>
+                                </li>
+                            @empty
+                                <li>現在公開中のお知らせはありません。</li>
+                            @endforelse
                         </ul>
-                        <x-feedback-message
-                            type="info"
-                            title="お知らせ機能は未実装です"
-                            message="通知の配信・既読管理・お知らせの登録機能はありません。"
-                        />
+                        {{ $announcements->links() }}
+                        <p class="member-help"><a href="{{ route('announcements.index') }}">お知らせ一覧を開く</a></p>
                     @else
                         <p class="member-help">通知設定の表示例です。通知の配信・変更機能はありません。</p>
                         <div class="setting-row"><div><h3>お知らせ</h3><p>サイトに関するお知らせ</p></div><span class="status-pill">未設定</span></div>

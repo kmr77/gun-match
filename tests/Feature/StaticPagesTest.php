@@ -107,7 +107,7 @@ class StaticPagesTest extends TestCase
     {
         $pageRoutes = [
             'categories.index',
-            'outdoor-samples.index',
+            'outdoor-samples.index', 'announcements.index',
             'about', 'guide', 'safety', 'prohibited-items', 'faq', 'terms', 'privacy', 'contact',
             'login', 'register', 'password.request', 'mypage', 'mypage.profile',
             'mypage.profile.public', 'mypage.profile.preview', 'mypage.settings',
@@ -242,8 +242,8 @@ class StaticPagesTest extends TestCase
 
         $this->get(route('mypage.announcements'))
             ->assertOk()
-            ->assertSee('実際のお知らせや配信履歴ではありません')
-            ->assertSee('お知らせ機能は未実装です');
+            ->assertSee('現在公開中のお知らせはありません。')
+            ->assertDontSee('お知らせ機能は未実装です');
 
         $this->get(route('mypage.profile.preview'))
             ->assertOk()
