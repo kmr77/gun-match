@@ -23,10 +23,16 @@ class StaticPageController extends Controller
         $content = config("gunmatch_pages.auth.{$page}");
         abort_if($content === null, 404);
 
-        return view('pages.auth-preview', [
+        $data = [
             'page' => $content,
             'pageKey' => $page,
-        ]);
+        ];
+
+        if ($page === 'register') {
+            $data['prefectures'] = config('gunmatch_registration.prefectures');
+        }
+
+        return view('pages.auth-preview', $data);
     }
 
     public function mypage(string $page): View

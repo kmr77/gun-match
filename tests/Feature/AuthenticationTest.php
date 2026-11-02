@@ -23,8 +23,11 @@ class AuthenticationTest extends TestCase
 
         $response = $this->post(route('register'), [
             'member_type' => MemberType::Individual->value,
+            'legal_name' => '山田太郎',
             'name' => 'テスト会員',
             'email' => 'member@example.test',
+            'prefecture' => '東京都',
+            'birth_date' => now()->subYears(30)->toDateString(),
             'password' => 'GunMatch-Test!234',
             'password_confirmation' => 'GunMatch-Test!234',
         ]);
@@ -44,8 +47,11 @@ class AuthenticationTest extends TestCase
     {
         $this->post(route('register'), [
             'member_type' => MemberType::GunShop->value,
+            'legal_name' => '銃砲店担当者',
             'name' => 'テスト銃砲店',
             'email' => 'shop@example.test',
+            'prefecture' => '大阪府',
+            'birth_date' => now()->subYears(40)->toDateString(),
             'password' => 'GunMatch-Shop!234',
             'password_confirmation' => 'GunMatch-Shop!234',
         ])->assertRedirect(route('verification.notice'));
@@ -62,8 +68,11 @@ class AuthenticationTest extends TestCase
 
         $this->from(route('register'))->post(route('register'), [
             'member_type' => 'unknown',
+            'legal_name' => 'New Member',
             'name' => 'New Member',
             'email' => 'EXISTING@example.test',
+            'prefecture' => '東京都',
+            'birth_date' => now()->subYears(30)->toDateString(),
             'password' => 'short',
             'password_confirmation' => 'different',
         ])
@@ -129,8 +138,11 @@ class AuthenticationTest extends TestCase
         $other = User::factory()->create(['name' => '別会員', 'email' => 'other@example.test']);
 
         $this->actingAs($member)->put(route('mypage.profile.update'), [
+            'legal_name' => '本人の本名',
             'name' => '本人の更新後',
             'email' => 'owner@example.test',
+            'prefecture' => '東京都',
+            'birth_date' => now()->subYears(30)->toDateString(),
             'user_id' => $other->id,
             'is_admin' => true,
         ])->assertRedirect()->assertSessionHasNoErrors();
@@ -150,8 +162,11 @@ class AuthenticationTest extends TestCase
         User::factory()->create(['email' => 'taken@example.test']);
 
         $this->actingAs($member)->from(route('mypage.profile'))->put(route('mypage.profile.update'), [
+            'legal_name' => '本人の本名',
             'name' => '',
             'email' => 'TAKEN@example.test',
+            'prefecture' => '東京都',
+            'birth_date' => now()->subYears(30)->toDateString(),
         ])->assertRedirect(route('mypage.profile'))
             ->assertSessionHasErrors(['name', 'email']);
 
@@ -164,8 +179,11 @@ class AuthenticationTest extends TestCase
         $member = User::factory()->create(['email' => 'verified@example.test']);
 
         $this->actingAs($member)->put(route('mypage.profile.update'), [
+            'legal_name' => '本人の本名',
             'name' => $member->name,
             'email' => 'new-address@example.test',
+            'prefecture' => '東京都',
+            'birth_date' => now()->subYears(30)->toDateString(),
         ])->assertRedirect()->assertSessionHas('status');
 
         $this->assertNull($member->fresh()->email_verified_at);
@@ -196,8 +214,11 @@ class AuthenticationTest extends TestCase
         $this->actingAs($admin)->post(route('logout'));
         $this->post(route('register'), [
             'member_type' => MemberType::Individual->value,
+            'legal_name' => '一般会員本名',
             'name' => '一般会員',
             'email' => 'ordinary@example.test',
+            'prefecture' => '東京都',
+            'birth_date' => now()->subYears(30)->toDateString(),
             'password' => 'GunMatch-Test!234',
             'password_confirmation' => 'GunMatch-Test!234',
             'is_admin' => true,

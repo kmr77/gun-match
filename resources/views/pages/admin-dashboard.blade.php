@@ -40,7 +40,7 @@
             <section class="admin-panel" aria-labelledby="admin-members-title">
                 <h2 id="admin-members-title">会員管理</h2>
                 <form method="GET" action="{{ route('admin.dashboard') }}" class="admin-search">
-                    <label for="member-search">会員名またはメールアドレス</label>
+                    <label for="member-search">表示名またはメールアドレス</label>
                     <div class="admin-search__controls">
                         <input id="member-search" name="search" type="search" value="{{ $search }}" maxlength="100">
                         <button class="btn btn--primary" type="submit">検索</button>
@@ -54,7 +54,7 @@
                     <table class="admin-table">
                         <thead>
                             <tr>
-                                <th scope="col">会員名</th>
+                                <th scope="col">表示名</th>
                                 <th scope="col">メールアドレス</th>
                                 <th scope="col">会員区分</th>
                                 <th scope="col">登録日時</th>

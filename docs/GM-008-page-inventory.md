@@ -23,10 +23,10 @@
 | お問い合わせ | `/contact` | `contact` | 一般利用者向け受付フォーム・完了表示を実装 | layouts.app, page-heading, form-field, feedback-message | GM-019: Feature・375px送信確認 | DB保存済み（contact_inquiries）、メール返信なし | 問い合わせ情報の保持・削除期間を公開前に決定 |
 | 会員通報フォーム | `/mypage/reports/create`、`POST /mypage/reports` | `mypage.reports.create`、`mypage.reports.store` | ログイン会員専用の通報受付フォーム | layouts.app, page-heading, form-field, feedback-message | GM-021: Feature・PC/SP基本表示確認 | DB保存済み（abuse_reports）、送信制限あり | 通報情報の保持・削除期間を決定 |
 | ログイン | `/login` | `login` | 実装済み（Laravelセッション認証） | layouts.app, page-heading, form-field, feedback-message | GM-013: Feature検証済み | DB接続・認証基盤 | メール送信設定を本番用に構成 |
-| 新規会員登録 | `/register` | `register` | 実装済み（個人会員・銃砲店会員） | layouts.app, page-heading, form-field, feedback-message | GM-013: Feature検証済み | DB接続・認証基盤 | 利用規約・プライバシー公開前確認 |
+| 新規会員登録 | `/register` | `register` | 本名・表示名・メール・都道府県・生年月日（18歳以上）・電話番号・所持許可自己申告・会員区分 | layouts.app, page-heading, form-field, feedback-message | GM-025: Feature検証 | DB接続・認証基盤 | SMS実配送・規約本文・電話番号と自己申告の必須性を要確認 |
 | パスワード再設定案内 | `/forgot-password` | `password.request` | 実装済み（Laravel Password Broker） | layouts.app, page-heading, form-field, feedback-message | GM-013: Feature検証済み | DBとメール配信設定 | 本番メール配信を設定 |
 | マイページTOP | `/mypage` | `mypage` | 実装済み（本人の会員情報表示） | layouts.mypage, page-heading, mypage-nav, feedback-message | GM-013: Feature検証済み | DB・認証基盤 | なし |
-| プロフィール編集 | `/mypage/profile` | `mypage.profile` | 実装済み（本人情報を更新） | layouts.mypage, mypage-nav, form-field, feedback-message | GM-013: Feature検証済み | DB・認証基盤 | 追加公開プロフィール項目は未定 |
+| プロフィール編集 | `/mypage/profile` | `mypage.profile` | 本人の登録情報を更新、変更カラム名のみ監査 | layouts.mypage, mypage-nav, form-field, feedback-message | GM-025: Feature検証 | DB・認証基盤 | SMS確認、公開プロフィール項目は未確定 |
 | 公開プロフィール | `/mypage/profile/public` | `mypage.profile.public` | デザインのみ仮実装（個人情報のない例） | layouts.mypage, mypage-nav, profile-preview-card | GM-010: 1440/375確認済み | 未実装（実プロフィール表示時に必要） | 公開仕様・表示項目を決定 |
 | プロフィールプレビュー | `/mypage/profile/preview` | `mypage.profile.preview` | デザインのみ仮実装（保存・公開なし） | layouts.mypage, mypage-nav, profile-preview-card, feedback-message | GM-010: 1440/375確認済み | 未実装（編集データ連携時に必要） | プレビュー対象データを決定 |
 | アカウント設定 | `/mypage/settings` | `mypage.settings` | デザインのみ仮実装（変更不可） | layouts.mypage, mypage-nav, status-pill | GM-010: 1440/375確認済み | 未実装（設定変更時に必要） | 提供設定項目を決定 |

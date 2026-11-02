@@ -39,9 +39,22 @@
                         <div class="empty-state">
                             <h3>会員アカウント</h3>
                             <dl class="account-summary">
-                                <div><dt>会員名</dt><dd>{{ auth()->user()->name }}</dd></div>
+                                <div><dt>表示名</dt><dd>{{ auth()->user()->name }}</dd></div>
                                 <div><dt>メールアドレス</dt><dd>{{ auth()->user()->email }}</dd></div>
                                 <div><dt>会員区分</dt><dd>{{ auth()->user()->member_type->label() }}</dd></div>
+                                <div><dt>本名</dt><dd>{{ auth()->user()->legal_name ?: '未登録。プロフィールから入力してください。' }}</dd></div>
+                                <div><dt>都道府県</dt><dd>{{ auth()->user()->prefecture ?: '未登録。プロフィールから入力してください。' }}</dd></div>
+                                <div><dt>生年月日</dt><dd>{{ auth()->user()->birth_date?->format('Y年n月j日') ?: '未登録。プロフィールから入力してください。' }}</dd></div>
+                                <div>
+                                    <dt>所持許可</dt>
+                                    <dd>
+                                        @if (auth()->user()->has_firearm_permit === null)
+                                            未回答
+                                        @else
+                                            {{ auth()->user()->has_firearm_permit ? '所持している（自己申告）' : '所持していない（自己申告）' }}
+                                        @endif
+                                    </dd>
+                                </div>
                                 <div>
                                     <dt>メール認証</dt>
                                     <dd>
@@ -56,13 +69,20 @@
                             <p>プロフィールやパスワードは各メニューから更新できます。掲載・検索・取引に関する機能は提供していません。</p>
                         </div>
                     @elseif ($pageKey === 'profile')
-                        <p class="member-help">会員名とメールアドレスを更新できます。メールアドレスを変更すると、再確認が必要です。</p>
+                        <p class="member-help">本名・表示名などを更新できます。本名、メールアドレス、生年月日、都道府県、電話番号、所持許可の自己申告は公開プロフィールに表示されません。メールアドレスを変更すると、再確認が必要です。電話番号を入力してもSMS認証済みにはなりません。</p>
                         <form method="POST" action="{{ route('mypage.profile.update') }}">
                             @csrf
                             @method('PUT')
                             <x-form-field
+                                name="legal_name"
+                                label="本名（一般公開されません）"
+                                :required="true"
+                                :value="auth()->user()->legal_name"
+                                :error="$errors->first('legal_name')"
+                            />
+                            <x-form-field
                                 name="name"
-                                label="会員名"
+                                label="表示名"
                                 :required="true"
                                 :value="auth()->user()->name"
                                 :error="$errors->first('name')"
@@ -76,11 +96,44 @@
                                 :value="auth()->user()->email"
                                 :error="$errors->first('email')"
                             />
+                            <x-form-field
+                                name="prefecture"
+                                label="都道府県"
+                                type="select"
+                                :required="true"
+                                :options="config('gunmatch_registration.prefectures')"
+                                :value="auth()->user()->prefecture"
+                                :error="$errors->first('prefecture')"
+                            />
+                            <x-form-field
+                                name="birth_date"
+                                label="生年月日（18歳以上）"
+                                type="date"
+                                :required="true"
+                                :value="auth()->user()->birth_date?->format('Y-m-d')"
+                                :error="$errors->first('birth_date')"
+                            />
+                            <x-form-field
+                                name="phone"
+                                label="電話番号（任意・SMS認証未実装）"
+                                type="tel"
+                                autocomplete="tel"
+                                :value="auth()->user()->phone"
+                                :error="$errors->first('phone')"
+                            />
+                            <x-form-field
+                                name="has_firearm_permit"
+                                label="所持許可の有無（自己申告・任意）"
+                                type="select"
+                                :options="['1' => '所持している（自己申告）', '0' => '所持していない（自己申告）']"
+                                :value="auth()->user()->has_firearm_permit === null ? null : (auth()->user()->has_firearm_permit ? '1' : '0')"
+                                :error="$errors->first('has_firearm_permit')"
+                            />
                             <button class="btn btn--primary" type="submit">プロフィールを保存</button>
                         </form>
                         <p class="member-help"><a href="{{ route('mypage.profile.public') }}">公開プロフィール表示</a> ・ <a href="{{ route('mypage.profile.preview') }}">プロフィールプレビュー</a></p>
                     @elseif ($pageKey === 'profile-public' || $pageKey === 'profile-preview')
-                        <p class="member-help">ご自身の会員名と会員区分を表示しています。公開設定や第三者への公開機能はありません。</p>
+                        <p class="member-help">ご自身の表示名と会員区分を表示しています。公開設定や第三者への公開機能はありません。</p>
                         @if ($pageKey === 'profile-preview')
                             <x-feedback-message
                                 type="info"
@@ -150,7 +203,7 @@
                         <p class="member-help"><a href="{{ route('terms') }}">利用規約（準備中）</a> ・ <a href="{{ route('privacy') }}">プライバシーポリシー（準備中）</a></p>
                         <section class="account-guide account-guide--danger" aria-labelledby="account-delete-title">
                             <h3 id="account-delete-title">アカウントの削除</h3>
-                            <p>退会すると会員名、メールアドレス、会員区分、パスワードなどのアカウント情報を削除します。この操作は取り消せません。</p>
+                            <p>退会すると表示名、本名、メールアドレス、会員区分、パスワードなどのアカウント情報を削除します。この操作は取り消せません。</p>
                             <form method="POST" action="{{ route('mypage.account.destroy') }}">
                                 @csrf
                                 @method('DELETE')

@@ -15,10 +15,28 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'password', 'member_type'])]
+#[Fillable([
+    'name',
+    'email',
+    'password',
+    'member_type',
+    'legal_name',
+    'prefecture',
+    'birth_date',
+    'phone',
+    'has_firearm_permit',
+])]
 #[Hidden([
     'password',
     'remember_token',
+    'email',
+    'email_verified_at',
+    'legal_name',
+    'prefecture',
+    'birth_date',
+    'phone',
+    'phone_verified_at',
+    'has_firearm_permit',
     'is_admin',
     'is_active',
     'verification_status',
@@ -49,6 +67,9 @@ class User extends Authenticatable implements MustVerifyEmail
             'is_admin' => 'boolean',
             'is_active' => 'boolean',
             'password' => 'hashed',
+            'birth_date' => 'date',
+            'phone_verified_at' => 'datetime',
+            'has_firearm_permit' => 'boolean',
             'verified_at' => 'datetime',
             'reviewed_at' => 'datetime',
         ];

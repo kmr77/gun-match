@@ -32,14 +32,19 @@
                         <input type="hidden" name="token" value="{{ $token }}">
                     @endif
                     @foreach ($page['fields'] as $field)
+                        @php
+                            $options = $field['name'] === 'prefecture'
+                                ? $prefectures
+                                : ($field['options'] ?? []);
+                        @endphp
                         <x-form-field
                             :name="$field['name']"
                             :label="$field['label']"
                             :type="$field['type']"
                             :autocomplete="$field['autocomplete']"
-                            :required="true"
+                            :required="$field['required'] ?? true"
                             :description="$field['description'] ?? null"
-                            :options="$field['options'] ?? []"
+                            :options="$options"
                             :value="$field['name'] === 'email' ? ($email ?? null) : null"
                             :error="$errors->first($field['name'])"
                         />

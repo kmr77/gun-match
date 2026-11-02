@@ -22,7 +22,7 @@
             @if ($error) aria-invalid="true" @endif
             @if ($required) required @endif
         >
-            <option value="" @selected(old($name, $value) === null || old($name, $value) === '') disabled>選択してください</option>
+            <option value="" @selected(old($name, $value) === null || old($name, $value) === '') @disabled($required)>選択してください</option>
             @foreach ($options as $optionValue => $option)
                 <option value="{{ $optionValue }}" @selected(old($name, $value) === (string) $optionValue)>{{ $option }}</option>
             @endforeach

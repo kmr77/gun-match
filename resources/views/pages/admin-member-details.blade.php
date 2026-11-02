@@ -23,7 +23,7 @@
                     <table class="admin-table">
                         <tbody>
                             <tr><th scope="row">会員ID</th><td>{{ $user->id }}</td></tr>
-                            <tr><th scope="row">氏名</th><td>{{ $user->name }}</td></tr>
+                            <tr><th scope="row">表示名</th><td>{{ $user->name }}</td></tr>
                             <tr><th scope="row">メールアドレス</th><td>{{ $user->email }}</td></tr>
                             <tr><th scope="row">会員区分</th><td>{{ $user->member_type->label() }}</td></tr>
                             <tr>
