@@ -31,9 +31,11 @@ php artisan serve --host=127.0.0.1 --port=8000
 
 ブラウザで http://127.0.0.1:8000 を開きます。MAMPから配信する場合、PHP 8.3以上を選択し、DocumentRootをこのプロジェクトの `public/` に設定してください。プロジェクトルートをそのまま公開しないでください。
 
-開発用DBは既存の `.env` 設定に従いSQLite（`database/database.sqlite`）を使用します。DBファイルがない場合は `touch database/database.sqlite` で空ファイルを作成してから `php artisan migrate` を実行してください。マイグレーションで会員・パスワード再設定・セッションの各テーブルを作成します。現在のローカル環境は `SESSION_DRIVER=database` を使用しています。`.env` のAPP_KEYや既存DB接続設定を上書きしないでください。
+ローカルの通常接続先はMAMP MySQL 8.0.40のGunMatch専用DB `gunmatch_dev_gm023`（ポート `8889`）です。Git管理対象外の `.env` では `DB_CONNECTION=mysql`、`DB_HOST=127.0.0.1`、`DB_PORT=8889`、`DB_DATABASE=gunmatch_dev_gm023` とし、`DB_USERNAME`・`DB_PASSWORD` はMAMPのローカル設定に合わせてください。接続情報をソースコードやGit管理ファイルへ記載しないでください。
 
-SQLiteの既存DBと設定は保持します。MAMPのローカルMySQL 8.0.40はポート `8889` で稼働し、GunMatch専用の空の検証DB `gunmatch_dev_gm023` を作成して全マイグレーションとLaravel全テストを確認済みです。MySQLを利用する場合は、Git管理対象外のローカル `.env` の `DB_CONNECTION=mysql`、`DB_HOST=127.0.0.1`、`DB_PORT=8889`、`DB_DATABASE=gunmatch_dev_gm023` と、MAMPのローカル設定から取得する `DB_USERNAME`・`DB_PASSWORD` を設定します。認証情報をソースコードやGit管理ファイルへ記載しないでください。SQLiteへ戻す場合は `DB_CONNECTION=sqlite` とし、`DB_DATABASE` をSQLiteファイルのパスへ戻します。設定を切り替えた後は `php artisan config:clear` を実行してください。テストは明示的に指定した専用MySQL DBだけを対象とし、他サイトのDBへは接続・変更していません。
+SQLiteの `database/database.sqlite` は削除・初期化せず、GM-024時点のデータをそのままバックアップとして保持します。既存の会員・管理者とアプリケーションデータは専用のMySQL開発DBへ移行しています。SQLiteへ戻す場合は `.env` の `DB_CONNECTION=sqlite`、`DB_DATABASE=database/database.sqlite`（またはSQLiteファイルの絶対パス）に切り替え、`php artisan config:clear` を実行してください。設定を確実に反映するため、起動中の `php artisan serve` も再起動してください。
+
+自動テストは通常の `phpunit.xml` によりSQLiteメモリDBを使います。MySQLでテストするときは `phpunit.mysql.xml` を指定してください。この設定は接続先をテスト専用の `gunmatch_test_gm024` に固定し、認証情報はローカル `.env` から読み込みます。各Featureテストの `RefreshDatabase` はこのテスト専用DBを対象にします。MySQL開発DBをテスト設定として指定したり、テスト用設定を使わずに破壊的なテストを実行したりしないでください。
 
 会員認証にはLaravel標準のセッションGuard、パスワードBroker、署名付きメール確認を使用します。ローカルのメール設定はログ出力用で、本番メール配信は未設定です。利用規約・プライバシーポリシーと運営情報の確認が完了するまで、公開環境で会員情報を収集しないでください。
 
@@ -53,7 +55,7 @@ SQLiteの既存DBと設定は保持します。MAMPのローカルMySQL 8.0.40�
 
 ログイン中の会員は `/mypage/reports/create` から規約違反・不正利用・安全上の懸念などを運営へ通報できます。送信者IDと受付日時をシステム側で記録し、入力検証・CSRF対策・5回/分の送信制限を適用します。通報内容は `abuse_reports` に保存され、一般会員向けの一覧・詳細画面はありません。管理者は `/admin/reports` から通報者・通報内容を確認し、対応状態と管理メモを記録できます。担当管理者・対応日時を保存し、対応記録は既存の `admin_activity_logs` に `report.updated` として監査記録します。通報情報の保持・削除期間は公開前に運用方針として確定してください。
 
-管理者会員の検索は、名前・メールアドレスに対する `LOWER(...) LIKE ?` のバインドクエリを使用します。会員状態、操作履歴、問い合わせ、お知らせ、通報、会員確認審査のマイグレーションはLaravel Schema Builderの一般的な型・外部キー・インデックスを使い、SQLite固有SQLは追加していません。MAMP MySQL 8.0.40では全11マイグレーションとLaravel全55テスト（1,537 assertions）が成功し、SQLiteでも同じ全テストが成功しました。MySQLの `utf8mb4_unicode_ci` とSQLiteでは文字列比較・照合順序の挙動が異なり得るため、メールアドレスはアプリケーションで小文字化し、検索では `LOWER` を使用しています。本番MySQLへの接続、実データ移行、照合順序・バックアップ復元試験は未実施です。本番採用時は本番同等のステージングで検証してください。
+管理者会員の検索は、名前・メールアドレスに対する `LOWER(...) LIKE ?` のバインドクエリを使用します。会員状態、操作履歴、問い合わせ、お知らせ、通報、会員確認審査のマイグレーションはLaravel Schema Builderの一般的な型・外部キー・インデックスを使い、SQLite固有SQLは追加していません。MAMP MySQL 8.0.40では開発DBに全11マイグレーションが適用済みで、専用MySQLテストDB上のLaravel全55テスト（1,537 assertions）が成功しました。SQLiteメモリDBでも同じ全テストが成功しました。MySQLの `utf8mb4_unicode_ci` とSQLiteでは文字列比較・照合順序の挙動が異なり得るため、メールアドレスはアプリケーションで小文字化し、検索では `LOWER` を使用しています。本番MySQLへの接続、実データ移行、照合順序・バックアップ復元試験は未実施です。本番採用時は本番同等のステージングで検証してください。
 
 ## 検証コマンド
 
