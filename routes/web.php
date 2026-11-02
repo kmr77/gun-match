@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\AnnouncementController as AdminAnnouncementContro
 use App\Http\Controllers\Admin\ContactInquiryController;
 use App\Http\Controllers\Admin\MemberDetailsController;
 use App\Http\Controllers\Admin\MemberStatusController;
+use App\Http\Controllers\Admin\ReportController as AdminReportController;
 use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\EmailVerificationController;
@@ -17,6 +18,7 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\MemberReportController;
 use App\Http\Controllers\OutdoorSampleController;
 use App\Http\Controllers\StaticPageController;
 use App\Http\Middleware\EnsureAccountIsActive;
@@ -47,6 +49,13 @@ Route::middleware(['auth', EnsureAccountIsActive::class, 'verified', 'can:access
         Route::patch('/contact-inquiries/{contactInquiry}', [ContactInquiryController::class, 'update'])
             ->whereNumber('contactInquiry')
             ->name('contact-inquiries.update');
+        Route::get('/reports', [AdminReportController::class, 'index'])->name('reports.index');
+        Route::get('/reports/{report}', [AdminReportController::class, 'show'])
+            ->whereNumber('report')
+            ->name('reports.show');
+        Route::patch('/reports/{report}', [AdminReportController::class, 'update'])
+            ->whereNumber('report')
+            ->name('reports.update');
         Route::get('/announcements', [AdminAnnouncementController::class, 'index'])->name('announcements.index');
         Route::get('/announcements/create', [AdminAnnouncementController::class, 'create'])->name('announcements.create');
         Route::post('/announcements', [AdminAnnouncementController::class, 'store'])->name('announcements.store');
@@ -106,6 +115,10 @@ Route::controller(StaticPageController::class)->group(function (): void {
 
     Route::middleware(['auth', EnsureAccountIsActive::class])->group(function (): void {
         Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
+        Route::get('/mypage/reports/create', [MemberReportController::class, 'create'])->name('mypage.reports.create');
+        Route::post('/mypage/reports', [MemberReportController::class, 'store'])
+            ->middleware('throttle:5,1')
+            ->name('mypage.reports.store');
 
         Route::get('/mypage', 'mypage')->defaults('page', 'home')->name('mypage');
         Route::get('/mypage/profile', 'mypage')->defaults('page', 'profile')->name('mypage.profile');

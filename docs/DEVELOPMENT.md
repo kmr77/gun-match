@@ -47,6 +47,8 @@ php artisan serve --host=127.0.0.1 --port=8000
 
 管理者のお知らせ管理は `/admin/announcements` で行い、下書きの作成・編集・削除、公開状態と公開日時を設定できます。公開一覧 `/announcements`、詳細 `/announcements/{announcement}`、ログイン必須の `/mypage/announcements` は公開状態かつ公開日時到来済みの情報のみを新しい順で表示します。お知らせは `announcements` テーブルに保存し、メール一斉配信・プッシュ通知・既読管理は実装していません。
 
+ログイン中の会員は `/mypage/reports/create` から規約違反・不正利用・安全上の懸念などを運営へ通報できます。送信者IDと受付日時をシステム側で記録し、入力検証・CSRF対策・5回/分の送信制限を適用します。通報内容は `abuse_reports` に保存され、一般会員向けの一覧・詳細画面はありません。管理者は `/admin/reports` から通報者・通報内容を確認し、対応状態と管理メモを記録できます。担当管理者・対応日時を保存し、対応記録は既存の `admin_activity_logs` に `report.updated` として監査記録します。通報情報の保持・削除期間は公開前に運用方針として確定してください。
+
 管理者会員の検索は、名前・メールアドレスに対する `LOWER(...) LIKE ?` のバインドクエリを使用します。会員状態と操作履歴のマイグレーションはLaravel Schema Builderのboolean、foreignId、text、通常の複合indexを使い、SQLite固有SQLは追加していません。MySQLでも一般的な型に対応する設計ですが、本番MySQLへの接続・マイグレーション・照合順序・バックアップ復元試験は未実施です。MySQL採用時は本番同等のステージングで検証してください。
 
 ## 検証コマンド
@@ -95,6 +97,8 @@ php artisan test
 | 会員状態変更 | `PATCH /admin/members/{user}/status` | `admin.members.status.update` | 管理者専用。停止時にDBセッションを削除し、履歴を保存 |
 | お問い合わせ | `/contact`、`POST /contact` | `contact`、`contact.store` | ログイン不要、検証・CSRF・送信制限付きでDB保存 |
 | お問い合わせ管理 | `/admin/contact-inquiries` | `admin.contact-inquiries.index` | 管理者専用の一覧・詳細・対応状態更新 |
+| 会員通報フォーム | `/mypage/reports/create`、`POST /mypage/reports` | `mypage.reports.create`、`mypage.reports.store` | ログイン会員専用。一般公開なし、送信回数制限あり |
+| 管理者通報管理 | `/admin/reports`、`/admin/reports/{report}` | `admin.reports.index`、`admin.reports.show`、`admin.reports.update` | 管理者専用。状態・管理メモ・担当者を記録し、既存監査履歴へ記録 |
 | 公開お知らせ一覧・詳細 | `/announcements`、`/announcements/{announcement}` | `announcements.index`、`announcements.show` | 公開済みかつ公開日時到来済みのお知らせのみ表示 |
 | マイページお知らせ | `/mypage/announcements` | `mypage.announcements` | 公開済みお知らせを共通データから表示 |
 | 管理者お知らせ管理 | `/admin/announcements` | `admin.announcements.index` | 管理者専用の作成・編集・削除・公開状態管理 |
@@ -104,7 +108,7 @@ php artisan test
 | セキュリティ設定 | `/mypage/security` | `mypage.security` | 現在のパスワードを検証して変更 |
 | アカウント管理案内 | `/mypage/account` | `mypage.account` | 静的な案内。操作なし |
 | 通知設定 | `/mypage/notifications` | `mypage.notifications` | 表示のみ。配信・変更なし |
-| お知らせ一覧 | `/mypage/announcements` | `mypage.announcements` | 固定の表示確認用仮データ |
+| お知らせ一覧 | `/mypage/announcements` | `mypage.announcements` | 公開済みお知らせを共通データから表示 |
 | Not Found | 存在しないURL | Laravel標準404 | `resources/views/errors/404.blade.php` |
 | Laravelヘルスチェック | `/up` | `healthcheck` | フレームワーク提供 |
 
@@ -121,7 +125,7 @@ php artisan test
 
 会員認証基盤のローカル検証では、`php artisan test` を使用します。DBマイグレーションを戻す `migrate:rollback` や `migrate:fresh` は既存データを消去する可能性があるため、明示的な承認なしに実行しないでください。
 
-会員認証・プロフィール管理以外の売買募集・銃器/銃身のマッチング・取引問い合わせ・通知配信・決済等の業務処理は実装しません。
+会員認証・プロフィール管理以外の売買募集・銃器/銃身のマッチング・取引問い合わせ・通知配信・決済等の業務処理は実装しません。運営への一般問い合わせと規約違反等の通報はそれぞれ独立した受付・管理機能であり、会員間のメッセージ機能ではありません。
 
 ## Git管理
 

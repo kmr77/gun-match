@@ -112,6 +112,7 @@ class StaticPagesTest extends TestCase
             'login', 'register', 'password.request', 'mypage', 'mypage.profile',
             'mypage.profile.public', 'mypage.profile.preview', 'mypage.settings',
             'mypage.security', 'mypage.account', 'mypage.notifications', 'mypage.announcements',
+            'mypage.reports.create',
         ];
         $knownPaths = array_fill_keys(
             [

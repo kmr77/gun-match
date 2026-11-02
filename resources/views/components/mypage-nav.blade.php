@@ -11,4 +11,5 @@
     <a @class(['is-active' => $active === 'account']) href="{{ route('mypage.account') }}" @if ($active === 'account') aria-current="page" @endif><span aria-hidden="true">▤</span> アカウント管理のご案内</a>
     <a @class(['is-active' => $active === 'notifications']) href="{{ route('mypage.notifications') }}" @if ($active === 'notifications') aria-current="page" @endif><span aria-hidden="true">♧</span> 通知設定</a>
     <a @class(['is-active' => $active === 'announcements']) href="{{ route('mypage.announcements') }}" @if ($active === 'announcements') aria-current="page" @endif><span aria-hidden="true">▤</span> お知らせ一覧</a>
+    <a href="{{ route('mypage.reports.create') }}"><span aria-hidden="true">⚑</span> 運営への通報</a>
 </nav>

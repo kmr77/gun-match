@@ -12,6 +12,7 @@
             />
             <p>
                 <a class="btn btn--outline" href="{{ route('admin.contact-inquiries.index') }}">お問い合わせ管理</a>
+                <a class="btn btn--outline" href="{{ route('admin.reports.index') }}">通報管理</a>
                 <a class="btn btn--outline" href="{{ route('admin.announcements.index') }}">お知らせ管理</a>
             </p>
             @if (session('status'))
