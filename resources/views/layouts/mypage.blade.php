@@ -55,21 +55,13 @@
                                         @endif
                                     </dd>
                                 </div>
-                                <div>
-                                    <dt>メール認証</dt>
-                                    <dd>
-                                        @if (auth()->user()->hasVerifiedEmail())
-                                            認証済み
-                                        @else
-                                            未認証（<a href="{{ route('verification.notice') }}">確認メールを確認</a>）
-                                        @endif
-                                    </dd>
-                                </div>
+                                <div><dt>メール認証</dt><dd>認証済み</dd></div>
+                                <div><dt>電話番号確認</dt><dd>確認済み（本人確認審査とは別です）</dd></div>
                             </dl>
                             <p>プロフィールやパスワードは各メニューから更新できます。掲載・検索・取引に関する機能は提供していません。</p>
                         </div>
                     @elseif ($pageKey === 'profile')
-                        <p class="member-help">本名・表示名などを更新できます。本名、メールアドレス、生年月日、都道府県、電話番号、所持許可の自己申告は公開プロフィールに表示されません。メールアドレスを変更すると、再確認が必要です。電話番号を入力してもSMS認証済みにはなりません。</p>
+                        <p class="member-help">本名・表示名などを更新できます。本名、メールアドレス、生年月日、都道府県、電話番号、所持許可の自己申告は公開プロフィールに表示されません。メールアドレスを変更するとメール再確認が必要です。電話番号を変更するとSMS認証状態がリセットされ、再確認が必要です。</p>
                         <form method="POST" action="{{ route('mypage.profile.update') }}">
                             @csrf
                             @method('PUT')
@@ -115,9 +107,10 @@
                             />
                             <x-form-field
                                 name="phone"
-                                label="電話番号（任意・SMS認証未実装）"
+                                label="電話番号"
                                 type="tel"
                                 autocomplete="tel"
+                                :required="true"
                                 :value="auth()->user()->phone"
                                 :error="$errors->first('phone')"
                             />

@@ -157,8 +157,12 @@ class AdminMemberVerificationTest extends TestCase
             ])->assertRedirect(route('verification.notice'));
 
         $this->actingAs($member)->put(route('mypage.profile.update'), [
+            'legal_name' => '会員本人',
             'name' => $member->name,
             'email' => $member->email,
+            'prefecture' => '東京都',
+            'birth_date' => '1990-01-01',
+            'phone' => $member->phone,
             'verification_status' => 'verified',
             'verification_type' => 'identity',
             'verification_method' => '自己確認',

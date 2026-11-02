@@ -40,6 +40,7 @@ class RegistrationProfileSpecificationTest extends TestCase
             'email',
             'prefecture',
             'birth_date',
+            'phone',
         ]);
     }
 
@@ -113,6 +114,7 @@ class RegistrationProfileSpecificationTest extends TestCase
             'birth_date' => '1989-12-31',
             'phone' => '075-1234-5678',
             'has_firearm_permit' => '1',
+            'phone_verified_at' => now(),
             'member_type' => MemberType::GunShop->value,
             'is_admin' => false,
             'user_id' => $other->id,
@@ -124,6 +126,7 @@ class RegistrationProfileSpecificationTest extends TestCase
         $this->assertSame('京都府', $user->prefecture);
         $this->assertSame('1989-12-31', $user->birth_date->toDateString());
         $this->assertSame('075-1234-5678', $user->phone);
+        $this->assertNull($user->phone_verified_at);
         $this->assertTrue($user->has_firearm_permit);
         $this->assertSame(MemberType::Individual, $user->member_type);
         $this->assertTrue($user->is_admin);
@@ -193,6 +196,7 @@ class RegistrationProfileSpecificationTest extends TestCase
             'legal_name' => '会員本名',
             'name' => '会員表示名',
             'email' => 'member@example.test',
+            'phone' => '+819012345678',
             'prefecture' => '東京都',
             'birth_date' => now()->subYears(30)->toDateString(),
             'password' => 'GunMatch-Test!234',

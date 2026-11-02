@@ -26,6 +26,7 @@ class AuthenticationTest extends TestCase
             'legal_name' => '山田太郎',
             'name' => 'テスト会員',
             'email' => 'member@example.test',
+            'phone' => '+819012345678',
             'prefecture' => '東京都',
             'birth_date' => now()->subYears(30)->toDateString(),
             'password' => 'GunMatch-Test!234',
@@ -50,6 +51,7 @@ class AuthenticationTest extends TestCase
             'legal_name' => '銃砲店担当者',
             'name' => 'テスト銃砲店',
             'email' => 'shop@example.test',
+            'phone' => '+819012345678',
             'prefecture' => '大阪府',
             'birth_date' => now()->subYears(40)->toDateString(),
             'password' => 'GunMatch-Shop!234',
@@ -77,7 +79,7 @@ class AuthenticationTest extends TestCase
             'password_confirmation' => 'different',
         ])
             ->assertRedirect(route('register'))
-            ->assertSessionHasErrors(['member_type', 'email', 'password']);
+            ->assertSessionHasErrors(['member_type', 'email', 'phone', 'password']);
 
         $this->assertDatabaseCount('users', 1);
     }
@@ -143,6 +145,7 @@ class AuthenticationTest extends TestCase
             'email' => 'owner@example.test',
             'prefecture' => '東京都',
             'birth_date' => now()->subYears(30)->toDateString(),
+            'phone' => $member->phone,
             'user_id' => $other->id,
             'is_admin' => true,
         ])->assertRedirect()->assertSessionHasNoErrors();
@@ -167,6 +170,7 @@ class AuthenticationTest extends TestCase
             'email' => 'TAKEN@example.test',
             'prefecture' => '東京都',
             'birth_date' => now()->subYears(30)->toDateString(),
+            'phone' => $member->phone,
         ])->assertRedirect(route('mypage.profile'))
             ->assertSessionHasErrors(['name', 'email']);
 
@@ -184,6 +188,7 @@ class AuthenticationTest extends TestCase
             'email' => 'new-address@example.test',
             'prefecture' => '東京都',
             'birth_date' => now()->subYears(30)->toDateString(),
+            'phone' => $member->phone,
         ])->assertRedirect()->assertSessionHas('status');
 
         $this->assertNull($member->fresh()->email_verified_at);
@@ -194,7 +199,7 @@ class AuthenticationTest extends TestCase
     {
         $member = User::factory()->unverified()->create();
 
-        $this->actingAs($member)->get(route('mypage'))->assertOk();
+        $this->actingAs($member)->get(route('mypage'))->assertRedirect(route('verification.notice'));
         $this->get(route('mypage.profile'))->assertOk();
 
         $member->forceFill(['is_admin' => true])->save();
@@ -219,6 +224,7 @@ class AuthenticationTest extends TestCase
             'email' => 'ordinary@example.test',
             'prefecture' => '東京都',
             'birth_date' => now()->subYears(30)->toDateString(),
+            'phone' => '+819012345678',
             'password' => 'GunMatch-Test!234',
             'password_confirmation' => 'GunMatch-Test!234',
             'is_admin' => true,

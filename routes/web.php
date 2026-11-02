@@ -15,6 +15,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
+use App\Http\Controllers\Auth\PhoneVerificationController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ContactController;
@@ -23,6 +24,7 @@ use App\Http\Controllers\MemberReportController;
 use App\Http\Controllers\OutdoorSampleController;
 use App\Http\Controllers\StaticPageController;
 use App\Http\Middleware\EnsureAccountIsActive;
+use App\Http\Middleware\EnsureMemberVerificationComplete;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
@@ -38,7 +40,7 @@ Route::get('/announcements', [AnnouncementController::class, 'index'])->name('an
 Route::get('/announcements/{announcement}', [AnnouncementController::class, 'show'])
     ->whereNumber('announcement')
     ->name('announcements.show');
-Route::middleware(['auth', EnsureAccountIsActive::class, 'verified', 'can:access-admin'])
+Route::middleware(['auth', EnsureAccountIsActive::class, 'verified', EnsureMemberVerificationComplete::class, 'can:access-admin'])
     ->prefix('/admin')
     ->name('admin.')
     ->group(function (): void {
@@ -119,24 +121,36 @@ Route::controller(StaticPageController::class)->group(function (): void {
 
     Route::middleware(['auth', EnsureAccountIsActive::class])->group(function (): void {
         Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
-        Route::get('/mypage/reports/create', [MemberReportController::class, 'create'])->name('mypage.reports.create');
-        Route::post('/mypage/reports', [MemberReportController::class, 'store'])
-            ->middleware('throttle:5,1')
-            ->name('mypage.reports.store');
-
-        Route::get('/mypage', 'mypage')->defaults('page', 'home')->name('mypage');
+        Route::get('/phone/verify', [PhoneVerificationController::class, 'notice'])
+            ->middleware('verified')
+            ->name('phone-verification.notice');
+        Route::post('/phone/verify/send', [PhoneVerificationController::class, 'send'])
+            ->middleware(['verified', 'throttle:3,1'])
+            ->name('phone-verification.send');
+        Route::post('/phone/verify', [PhoneVerificationController::class, 'verify'])
+            ->middleware(['verified', 'throttle:6,1'])
+            ->name('phone-verification.verify');
         Route::get('/mypage/profile', 'mypage')->defaults('page', 'profile')->name('mypage.profile');
         Route::put('/mypage/profile', [ProfileController::class, 'update'])->name('mypage.profile.update');
-        Route::get('/mypage/profile/public', 'mypage')->defaults('page', 'profile-public')->name('mypage.profile.public');
-        Route::get('/mypage/profile/preview', 'mypage')->defaults('page', 'profile-preview')->name('mypage.profile.preview');
-        Route::get('/mypage/settings', 'mypage')->defaults('page', 'settings')->name('mypage.settings');
-        Route::get('/mypage/security', 'mypage')->defaults('page', 'security')->name('mypage.security');
-        Route::put('/mypage/password', [UpdatePasswordController::class, 'update'])->name('mypage.password.update');
-        Route::get('/mypage/account', 'mypage')->defaults('page', 'account')->name('mypage.account');
-        Route::delete('/mypage/account', [DestroyAccountController::class, 'destroy'])
-            ->middleware('throttle:3,1')
-            ->name('mypage.account.destroy');
-        Route::get('/mypage/notifications', 'mypage')->defaults('page', 'notifications')->name('mypage.notifications');
-        Route::get('/mypage/announcements', 'mypage')->defaults('page', 'announcements')->name('mypage.announcements');
+
+        Route::middleware(EnsureMemberVerificationComplete::class)->group(function (): void {
+            Route::get('/mypage/reports/create', [MemberReportController::class, 'create'])->name('mypage.reports.create');
+            Route::post('/mypage/reports', [MemberReportController::class, 'store'])
+                ->middleware('throttle:5,1')
+                ->name('mypage.reports.store');
+
+            Route::get('/mypage', 'mypage')->defaults('page', 'home')->name('mypage');
+            Route::get('/mypage/profile/public', 'mypage')->defaults('page', 'profile-public')->name('mypage.profile.public');
+            Route::get('/mypage/profile/preview', 'mypage')->defaults('page', 'profile-preview')->name('mypage.profile.preview');
+            Route::get('/mypage/settings', 'mypage')->defaults('page', 'settings')->name('mypage.settings');
+            Route::get('/mypage/security', 'mypage')->defaults('page', 'security')->name('mypage.security');
+            Route::put('/mypage/password', [UpdatePasswordController::class, 'update'])->name('mypage.password.update');
+            Route::get('/mypage/account', 'mypage')->defaults('page', 'account')->name('mypage.account');
+            Route::delete('/mypage/account', [DestroyAccountController::class, 'destroy'])
+                ->middleware('throttle:3,1')
+                ->name('mypage.account.destroy');
+            Route::get('/mypage/notifications', 'mypage')->defaults('page', 'notifications')->name('mypage.notifications');
+            Route::get('/mypage/announcements', 'mypage')->defaults('page', 'announcements')->name('mypage.announcements');
+        });
     });
 });

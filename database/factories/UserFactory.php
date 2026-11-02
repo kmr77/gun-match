@@ -37,6 +37,8 @@ class UserFactory extends Factory
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
             'member_type' => MemberType::Individual->value,
+            'phone' => '+819012345678',
+            'phone_verified_at' => now(),
         ];
     }
 

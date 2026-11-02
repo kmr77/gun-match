@@ -204,7 +204,8 @@ class StaticPagesTest extends TestCase
 
         $this->get(route('register'))
             ->assertOk()
-            ->assertSee('メールアドレスの確認が必要です')
+            ->assertSee('メールアドレスと電話番号の確認が必要です')
+            ->assertSee('電話番号')
             ->assertSee('個人会員')
             ->assertSee('銃砲店会員')
             ->assertSee('name="member_type"', false)

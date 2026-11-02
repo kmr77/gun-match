@@ -29,7 +29,7 @@ class RegisteredUserController extends Controller
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email'],
             'prefecture' => ['required', Rule::in(array_keys(config('gunmatch_registration.prefectures')))],
             'birth_date' => ['required', 'date', 'before_or_equal:'.$eligibleBirthDate],
-            'phone' => ['nullable', 'string', 'max:30'],
+            'phone' => ['required', 'string', 'max:30'],
             'has_firearm_permit' => ['nullable', 'boolean'],
             'password' => ['required', 'confirmed', Password::min(12)],
         ], [
@@ -47,6 +47,8 @@ class RegisteredUserController extends Controller
             'birth_date.required' => '生年月日を入力してください。',
             'birth_date.date' => '有効な生年月日を入力してください。',
             'birth_date.before_or_equal' => '18歳未満の方は会員登録できません。',
+            'phone.required' => '電話番号を入力してください。',
+            'phone.max' => '電話番号は30文字以内で入力してください。',
             'has_firearm_permit.boolean' => '所持許可の自己申告を選択してください。',
             'password.required' => 'パスワードを入力してください。',
             'password.confirmed' => 'パスワードが一致しません。',

@@ -42,7 +42,14 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('mypage', absolute: false));
+        $destination = match (true) {
+            ! $request->user()->hasVerifiedEmail() => route('verification.notice', absolute: false),
+            ! $request->user()->phone => route('mypage.profile', absolute: false),
+            ! $request->user()->phone_verified_at => route('phone-verification.notice', absolute: false),
+            default => route('mypage', absolute: false),
+        };
+
+        return redirect()->intended($destination);
     }
 
     public function destroy(Request $request): RedirectResponse

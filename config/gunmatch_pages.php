@@ -182,7 +182,7 @@ return [
         'register' => [
             'title' => '新規会員登録',
             'description' => '会員区分と基本情報を入力してアカウントを作成してください。',
-            'notice' => '登録後、メールアドレスの確認が必要です。パスワードは安全にハッシュ化して保存します。',
+            'notice' => '登録後、メールアドレスと電話番号の確認が必要です。パスワードは安全にハッシュ化して保存します。',
             'button' => '会員登録',
             'fields' => [
                 [
@@ -201,7 +201,7 @@ return [
                 ['name' => 'email', 'label' => 'メールアドレス', 'type' => 'email', 'autocomplete' => 'email'],
                 ['name' => 'prefecture', 'label' => '都道府県', 'type' => 'select', 'autocomplete' => 'address-level1', 'options' => []],
                 ['name' => 'birth_date', 'label' => '生年月日', 'type' => 'date', 'autocomplete' => 'bday', 'description' => '18歳未満の方は登録できません。'],
-                ['name' => 'phone', 'label' => '電話番号（任意）', 'type' => 'tel', 'autocomplete' => 'tel', 'description' => 'SMS認証は未実装です。電話番号の入力だけで認証済みにはなりません。', 'required' => false],
+                ['name' => 'phone', 'label' => '電話番号', 'type' => 'tel', 'autocomplete' => 'tel', 'description' => '登録後にSMSで確認します。SMS確認は本人確認審査とは別です。'],
                 ['name' => 'has_firearm_permit', 'label' => '所持許可の有無（自己申告・任意）', 'type' => 'select', 'autocomplete' => null, 'description' => '運営による確認済み状態を示すものではありません。', 'options' => ['1' => '所持している（自己申告）', '0' => '所持していない（自己申告）'], 'required' => false],
                 ['name' => 'password', 'label' => 'パスワード', 'type' => 'password', 'autocomplete' => 'new-password'],
                 ['name' => 'password_confirmation', 'label' => 'パスワード（確認）', 'type' => 'password', 'autocomplete' => 'new-password'],
