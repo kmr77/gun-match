@@ -2,7 +2,7 @@
 
 更新日：2026-11-02
 
-この表は過去のページ制作計画と現行ルートを照合した一覧です。会員登録・認証・プロフィール管理・本人による退会申請、管理者向け会員検索・状態管理・操作履歴・会員詳細、運営問い合わせ、お知らせ管理、会員通報を実装済みです。管理者権限の付与・解除はCLI専用です。掲載・取引等の業務機能、通知配信、本人確認は未実装です。「未制作」は別表に記載し、実装済みとして扱いません。PC/SP欄には実際に確認した幅と作業番号を記録します。
+この表は過去のページ制作計画と現行ルートを照合した一覧です。会員登録・認証・プロフィール管理・本人による退会申請、管理者向け会員検索・状態管理・操作履歴・会員詳細と確認審査、運営問い合わせ、お知らせ管理、会員通報を実装済みです。管理者権限の付与・解除はCLI専用です。掲載・取引等の業務機能、通知配信は未実装です。「未制作」は別表に記載し、実装済みとして扱いません。PC/SP欄には実際に確認した幅と作業番号を記録します。
 
 ## 現在のページ
 
@@ -37,7 +37,7 @@
 | 管理者通報管理一覧 | `/admin/reports` | `admin.reports.index` | 管理者専用の受付日時・通報者・種類・状態一覧 | layouts.app, page-heading, admin-table | GM-021: Feature・PC/SP基本表示確認 | abuse_reports、既存 admin_activity_logs | 通報情報の保持・削除期間を決定 |
 | 管理者通報詳細 | `/admin/reports/{report}` | `admin.reports.show`、`admin.reports.update` | 通報者参照、詳細・管理メモ・状態・担当管理者・対応日時を管理 | layouts.app, page-heading, contact-detail, form-field, feedback-message | GM-021: Feature・PC/SP基本表示確認 | 状態・対応記録・監査履歴を実装 | 運営の通報対応手順と保持期間を確定 |
 | 管理者会員状態変更 | `PATCH /admin/members/{user}/status` | `admin.members.status.update` | 管理画面の有効化・停止操作 | layouts.app, admin-table, CSRF form | GM-015: Feature検証済み | 停止時のセッション無効化と監査履歴を実装 | 管理者アカウント運用ルールを確定 |
-| 管理者会員詳細 | `/admin/members/{user}` | `admin.members.show` | 共通詳細Bladeで会員情報・対象会員の監査履歴・状態操作を表示 | layouts.app, page-heading, feedback-message, admin-table | GM-017: Feature・画面遷移確認、GM-018: 375px表示確認 | 既存会員・監査履歴テーブルを利用 | 管理者権限はCLI付与。運用監視・ログ保持方針を確定 |
+| 管理者会員詳細・確認審査 | `/admin/members/{user}`、`PATCH /admin/members/{user}/verification` | `admin.members.show`、`admin.members.verification.update` | 会員情報・利用状態・確認状態・審査記録・状態変更履歴を共通詳細Bladeに表示 | layouts.app, page-heading, feedback-message, admin-table, form-field | GM-017/018の基本画面、GM-022の確認審査Feature検証 | usersへ確認状態等を追加、監査履歴は既存 admin_activity_logs を利用 | 審査運用・保持期間を確定。本人確認画像・証明書番号は収集しない |
 | 管理者お問い合わせ一覧 | `/admin/contact-inquiries` | `admin.contact-inquiries.index` | 受付日時・送信者・件名・対応状態の一覧 | layouts.app, page-heading, admin-table | GM-019: Feature・375pxブラウザー確認 | contact_inquiriesテーブル | 問い合わせ情報の保持・削除期間を決定 |
 | 管理者お問い合わせ詳細 | `/admin/contact-inquiries/{contactInquiry}` | `admin.contact-inquiries.show` | 送信内容・対応状態・対応日時の表示と状態更新 | layouts.app, page-heading, feedback-message, admin-table | GM-019: Feature・375pxブラウザー確認 | contact_inquiriesテーブル | 問い合わせ情報の保持・削除期間を決定 |
 | 通知設定 | `/mypage/notifications` | `mypage.notifications` | デザインのみ仮実装（配信・変更なし） | layouts.mypage, mypage-nav, status-pill | GM-010: 1440/375確認済み | 未実装（通知配信時に必要） | 通知種別・配信方式を決定 |

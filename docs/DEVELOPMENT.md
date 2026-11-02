@@ -43,6 +43,8 @@ php artisan serve --host=127.0.0.1 --port=8000
 
 管理者ページ `/admin` では会員総数・有効会員数・停止中会員数、検索可能な会員一覧、管理操作履歴を確認できます。会員名から `/admin/members/{user}` の詳細ページを開き、既存の会員情報と対象会員の操作履歴を確認できます。両ページは認証済み・有効・メール確認済みの管理者に限定されています。管理操作のデザインと集計は既存データを利用し、新しいテーブルは作成しません。
 
+会員詳細では本人確認・事業者確認の状態を未確認・確認待ち・確認済み・差戻しで管理します。既存会員と新規会員の初期状態は未確認です。会員本人が状態を変更する機能はなく、確認済みへの変更には実際に行った確認方法と確認日を管理者が入力します。審査担当者・審査日時・管理者用メモ・最終確認日時は `users` に記録し、状態変更履歴は既存の `admin_activity_logs` に保存します。監査履歴には状態・区分・記録有無のみを保存し、審査メモや確認方法の本文は複製しません。本人確認書類の画像、許可証画像、証明書番号は収集・保存しません。
+
 `/contact` はログイン不要の一般運営問い合わせフォームです。CSRF、サーバー側入力検証、IP単位の送信回数制限（5回/分）を適用し、問い合わせ本文は `contact_inquiries` に保存します。管理者は `/admin/contact-inquiries` から確認し、未対応・対応中・対応済みを設定できます。対応済みへ変更した日時を保存し、他の状態へ戻すと対応日時を解除します。自動返信・添付・会員間のメッセージ機能はありません。個人情報を含む問い合わせの保持・削除期間は公開前に運用方針として確定してください。
 
 管理者のお知らせ管理は `/admin/announcements` で行い、下書きの作成・編集・削除、公開状態と公開日時を設定できます。公開一覧 `/announcements`、詳細 `/announcements/{announcement}`、ログイン必須の `/mypage/announcements` は公開状態かつ公開日時到来済みの情報のみを新しい順で表示します。お知らせは `announcements` テーブルに保存し、メール一斉配信・プッシュ通知・既読管理は実装していません。
@@ -102,6 +104,7 @@ php artisan test
 | 公開お知らせ一覧・詳細 | `/announcements`、`/announcements/{announcement}` | `announcements.index`、`announcements.show` | 公開済みかつ公開日時到来済みのお知らせのみ表示 |
 | マイページお知らせ | `/mypage/announcements` | `mypage.announcements` | 公開済みお知らせを共通データから表示 |
 | 管理者お知らせ管理 | `/admin/announcements` | `admin.announcements.index` | 管理者専用の作成・編集・削除・公開状態管理 |
+| 会員確認・審査管理 | `/admin/members/{user}`、`PATCH /admin/members/{user}/verification` | `admin.members.show`、`admin.members.verification.update` | 管理者専用。確認状態・区分・担当者・確認方法／日・管理メモと状態変更履歴 |
 | 公開プロフィール | `/mypage/profile/public` | `mypage.profile.public` | 個人情報を含まない表示サンプル |
 | プロフィールプレビュー | `/mypage/profile/preview` | `mypage.profile.preview` | 保存・公開されない表示例 |
 | アカウント設定 | `/mypage/settings` | `mypage.settings` | 表示のみ。変更なし |

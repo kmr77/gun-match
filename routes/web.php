@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\AnnouncementController as AdminAnnouncementContro
 use App\Http\Controllers\Admin\ContactInquiryController;
 use App\Http\Controllers\Admin\MemberDetailsController;
 use App\Http\Controllers\Admin\MemberStatusController;
+use App\Http\Controllers\Admin\MemberVerificationController;
 use App\Http\Controllers\Admin\ReportController as AdminReportController;
 use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
@@ -74,6 +75,9 @@ Route::middleware(['auth', EnsureAccountIsActive::class, 'verified', 'can:access
         Route::patch('/members/{user}/status', [MemberStatusController::class, 'update'])
             ->whereNumber('user')
             ->name('members.status.update');
+        Route::patch('/members/{user}/verification', [MemberVerificationController::class, 'update'])
+            ->whereNumber('user')
+            ->name('members.verification.update');
     });
 
 Route::controller(StaticPageController::class)->group(function (): void {
