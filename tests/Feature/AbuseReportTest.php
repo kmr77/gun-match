@@ -148,4 +148,41 @@ class AbuseReportTest extends TestCase
         $this->assertSame('completed', $report->fresh()->status);
         $this->assertSame(2, AdminActivityLog::query()->where('action', 'report.updated')->count());
     }
+
+    public function test_admin_report_pages_remain_available_after_reporter_account_deletion(): void
+    {
+        $reporter = User::factory()->create([
+            'email' => 'former-member@example.test',
+            'password' => 'GunMatch-Former!234',
+        ]);
+        $report = AbuseReport::create([
+            'reporter_user_id' => $reporter->id,
+            'type' => 'other',
+            'target_information' => '削除後も確認する対象',
+            'details' => '通報本文の参照整合性確認',
+        ]);
+        $reportId = $report->id;
+
+        $this->actingAs($reporter)->delete(route('mypage.account.destroy'), [
+            'password' => 'GunMatch-Former!234',
+        ])->assertRedirect(route('home'));
+
+        $this->assertDatabaseHas('abuse_reports', [
+            'id' => $reportId,
+            'reporter_user_id' => null,
+        ]);
+
+        $admin = User::factory()->administrator()->create();
+        $this->actingAs($admin)
+            ->get(route('admin.reports.index'))
+            ->assertOk()
+            ->assertSee('削除済み会員')
+            ->assertSee(route('admin.reports.show', $reportId));
+
+        $this->get(route('admin.reports.show', $reportId))
+            ->assertOk()
+            ->assertSee('通報本文の参照整合性確認')
+            ->assertSee('削除済み会員')
+            ->assertDontSee('former-member@example.test');
+    }
 }

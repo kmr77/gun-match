@@ -242,6 +242,40 @@ class AuthenticationTest extends TestCase
             'password' => 'GunMatch-Delete!234',
         ]);
         $other = User::factory()->create(['email' => 'keep-me@example.test']);
+        $reportId = DB::table('abuse_reports')->insertGetId([
+            'reporter_user_id' => $member->id,
+            'type' => 'other',
+            'target_information' => '対象ページ',
+            'details' => '削除時の関連整合性テスト',
+            'status' => 'pending',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $inquiryId = DB::table('contact_inquiries')->insertGetId([
+            'name' => 'テスト問い合わせ者',
+            'email' => 'visitor@example.test',
+            'subject' => '保持確認',
+            'message' => '独立した問い合わせレコードの保持確認',
+            'status' => 'pending',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $activityId = DB::table('admin_activity_logs')->insertGetId([
+            'actor_user_id' => $member->id,
+            'target_user_id' => $member->id,
+            'action' => 'member.profile_updated',
+            'details' => json_encode(['changed_fields' => ['name']], JSON_THROW_ON_ERROR),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        DB::table('sms_verification_challenges')->insert([
+            'user_id' => $member->id,
+            'phone_hash' => hash('sha256', 'test-phone'),
+            'code_hash' => hash('sha256', 'test-code'),
+            'expires_at' => now()->addMinutes(5),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
         DB::table('sessions')->insert([
             'id' => 'another-device-session',
             'user_id' => $member->id,
@@ -270,7 +304,29 @@ class AuthenticationTest extends TestCase
         $this->assertDatabaseMissing('users', ['id' => $member->id]);
         $this->assertDatabaseMissing('sessions', ['user_id' => $member->id]);
         $this->assertDatabaseMissing('password_reset_tokens', ['email' => $member->email]);
+        $this->assertDatabaseMissing('sms_verification_challenges', ['user_id' => $member->id]);
+        $this->assertDatabaseHas('abuse_reports', [
+            'id' => $reportId,
+            'reporter_user_id' => null,
+            'details' => '削除時の関連整合性テスト',
+        ]);
+        $this->assertDatabaseHas('admin_activity_logs', [
+            'id' => $activityId,
+            'actor_user_id' => null,
+            'target_user_id' => null,
+            'action' => 'member.profile_updated',
+        ]);
+        $this->assertDatabaseHas('contact_inquiries', [
+            'id' => $inquiryId,
+            'email' => 'visitor@example.test',
+        ]);
         $this->assertDatabaseHas('users', ['id' => $other->id, 'email' => 'keep-me@example.test']);
+
+        $this->from(route('login'))->post(route('login'), [
+            'email' => 'delete-me@example.test',
+            'password' => 'GunMatch-Delete!234',
+        ])->assertRedirect(route('login'))->assertSessionHasErrors('email');
+        $this->assertGuest();
     }
 
     public function test_authenticated_member_can_change_password_after_current_password_check(): void
