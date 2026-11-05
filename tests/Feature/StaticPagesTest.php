@@ -199,6 +199,8 @@ class StaticPagesTest extends TestCase
         $this->get(route('login'))
             ->assertOk()
             ->assertSee('登録済みのメールアドレスとパスワードでログインしてください。')
+            ->assertSee('メール確認・電話番号確認が未完了の場合は、ログイン後に次の確認手続きへ案内されます。')
+            ->assertSee('SMS送信事業者は未設定のため、実際のSMS配送はできません。')
             ->assertSee('method="POST"', false)
             ->assertSee('name="_token"', false);
 
@@ -231,7 +233,9 @@ class StaticPagesTest extends TestCase
         $this->get(route('mypage.profile.public'))
             ->assertOk()
             ->assertSee('ログイン中の会員')
-            ->assertSee('第三者への公開機能はありません');
+            ->assertSee('プロフィール表示サンプル')
+            ->assertSee('第三者への公開機能はありません')
+            ->assertDontSee('公開プロフィール</a>');
 
         $this->get(route('mypage.profile.preview'))
             ->assertOk()
@@ -247,10 +251,74 @@ class StaticPagesTest extends TestCase
             ->assertSee('現在公開中のお知らせはありません。')
             ->assertDontSee('お知らせ機能は未実装です');
 
+        $this->get(route('mypage.settings'))
+            ->assertOk()
+            ->assertSee('会員区分')
+            ->assertSee('会員確認審査')
+            ->assertSee('未確認')
+            ->assertSee('メール認証')
+            ->assertSee('電話番号確認（SMS）')
+            ->assertSee('本人確認・事業者確認審査や所持許可の確認とは別です');
+
+        $this->get(route('mypage.notifications'))
+            ->assertOk()
+            ->assertSee('通知設定（準備中）')
+            ->assertSee('通知の配信・変更機能はありません');
+
         $this->get(route('mypage.profile.preview'))
             ->assertOk()
-            ->assertSee('公開プロフィール表示へ')
-            ->assertDontSee('プレビュー表示へ');
+            ->assertSee('プロフィール表示サンプルへ')
+            ->assertSee('第三者には公開されません');
+    }
+
+    public function test_email_and_phone_verification_pages_explain_the_next_required_action(): void
+    {
+        $unverified = User::factory()->unverified()->create([
+            'phone' => null,
+            'phone_verified_at' => null,
+        ]);
+
+        $this->actingAs($unverified)
+            ->get(route('verification.notice'))
+            ->assertOk()
+            ->assertSee('通常利用の前にSMSによる電話番号確認が必要です')
+            ->assertSee(route('mypage.profile'))
+            ->assertDontSee('マイページへ</a>');
+
+        $emailVerifiedWithoutPhone = User::factory()->create([
+            'phone' => null,
+            'phone_verified_at' => null,
+        ]);
+
+        $this->actingAs($emailVerifiedWithoutPhone)
+            ->get(route('verification.notice'))
+            ->assertOk()
+            ->assertSee('メールアドレスは確認済みです')
+            ->assertSee('次にプロフィールで電話番号を登録してください')
+            ->assertSee(route('mypage.profile'));
+
+        $emailVerifiedWithPhone = User::factory()->create([
+            'phone_verified_at' => null,
+        ]);
+
+        $this->actingAs($emailVerifiedWithPhone)
+            ->get(route('phone-verification.notice'))
+            ->assertOk()
+            ->assertSee('実際のSMS配送はできません')
+            ->assertSee('確認済みになりません')
+            ->assertSee('本人確認審査・事業者確認審査とは別です');
+    }
+
+    public function test_faq_reflects_the_available_general_contact_form(): void
+    {
+        $this->get(route('faq'))
+            ->assertOk()
+            ->assertSee('運営への一般的なお問い合わせフォームを利用できます')
+            ->assertDontSee('送信フォームや問い合わせ対応窓口はまだ用意されていません');
+
+        $this->get(route('contact'))
+            ->assertOk()
+            ->assertSee('お問い合わせ内容');
     }
 
     public function test_mypage_navigation_marks_each_current_page_once(): void

@@ -23,11 +23,11 @@
 | お問い合わせ | `/contact` | `contact` | 一般利用者向け受付フォーム・完了表示を実装 | layouts.app, page-heading, form-field, feedback-message | GM-019: Feature・375px送信確認 | DB保存済み（contact_inquiries）、メール返信なし | 問い合わせ情報の保持・削除期間を公開前に決定 |
 | 会員通報フォーム | `/mypage/reports/create`、`POST /mypage/reports` | `mypage.reports.create`、`mypage.reports.store` | ログイン会員専用の通報受付フォーム | layouts.app, page-heading, form-field, feedback-message | GM-021: Feature・PC/SP基本表示確認 | DB保存済み（abuse_reports）、送信制限あり | 通報情報の保持・削除期間を決定 |
 | ログイン | `/login` | `login` | 実装済み（Laravelセッション認証） | layouts.app, page-heading, form-field, feedback-message | GM-013: Feature検証済み | DB接続・認証基盤 | メール送信設定を本番用に構成 |
-| 新規会員登録 | `/register` | `register` | 本名・表示名・メール・都道府県・生年月日（18歳以上）・電話番号・所持許可自己申告・会員区分 | layouts.app, page-heading, form-field, feedback-message | GM-025: Feature検証 | DB接続・認証基盤 | SMS実配送・規約本文・電話番号と自己申告の必須性を要確認 |
+| 新規会員登録 | `/register` | `register` | 本名・表示名・メール・都道府県・生年月日（18歳以上）・電話番号・所持許可自己申告・会員区分 | layouts.app, page-heading, form-field, feedback-message | GM-025: Feature検証 | DB接続・認証基盤 | SMS送信事業者未選定・実配送未実装、規約本文は準備中 |
 | パスワード再設定案内 | `/forgot-password` | `password.request` | 実装済み（Laravel Password Broker） | layouts.app, page-heading, form-field, feedback-message | GM-013: Feature検証済み | DBとメール配信設定 | 本番メール配信を設定 |
 | マイページTOP | `/mypage` | `mypage` | 実装済み（本人の会員情報表示） | layouts.mypage, page-heading, mypage-nav, feedback-message | GM-013: Feature検証済み | DB・認証基盤 | なし |
 | プロフィール編集 | `/mypage/profile` | `mypage.profile` | 本人の登録情報を更新、変更カラム名のみ監査 | layouts.mypage, mypage-nav, form-field, feedback-message | GM-025: Feature検証 | DB・認証基盤 | SMS確認、公開プロフィール項目は未確定 |
-| 公開プロフィール | `/mypage/profile/public` | `mypage.profile.public` | デザインのみ仮実装（個人情報のない例） | layouts.mypage, mypage-nav, profile-preview-card | GM-010: 1440/375確認済み | 未実装（実プロフィール表示時に必要） | 公開仕様・表示項目を決定 |
+| プロフィール表示サンプル（本人のみ） | `/mypage/profile/public` | `mypage.profile.public` | 本人の表示名・会員区分だけを表示。第三者向け公開機能は未実装 | layouts.mypage, mypage-nav, profile-preview-card | GM-027: 変更箇所の表示確認 | 未実装（第三者向けプロフィール公開） | 公開仕様・表示項目を決定するまで公開機能を案内しない |
 | プロフィールプレビュー | `/mypage/profile/preview` | `mypage.profile.preview` | デザインのみ仮実装（保存・公開なし） | layouts.mypage, mypage-nav, profile-preview-card, feedback-message | GM-010: 1440/375確認済み | 未実装（編集データ連携時に必要） | プレビュー対象データを決定 |
 | アカウント設定 | `/mypage/settings` | `mypage.settings` | デザインのみ仮実装（変更不可） | layouts.mypage, mypage-nav, status-pill | GM-010: 1440/375確認済み | 未実装（設定変更時に必要） | 提供設定項目を決定 |
 | セキュリティ設定 | `/mypage/security` | `mypage.security` | 実装済み（現在のパスワード検証・変更） | layouts.mypage, mypage-nav, form-field | GM-013: Feature検証済み | DB・認証基盤 | なし |
@@ -40,7 +40,14 @@
 | 管理者会員詳細・確認審査 | `/admin/members/{user}`、`PATCH /admin/members/{user}/verification` | `admin.members.show`、`admin.members.verification.update` | 会員情報・利用状態・確認状態・審査記録・状態変更履歴を共通詳細Bladeに表示 | layouts.app, page-heading, feedback-message, admin-table, form-field | GM-017/018の基本画面、GM-022の確認審査Feature検証 | usersへ確認状態等を追加、監査履歴は既存 admin_activity_logs を利用 | 審査運用・保持期間を確定。本人確認画像・証明書番号は収集しない |
 | 管理者お問い合わせ一覧 | `/admin/contact-inquiries` | `admin.contact-inquiries.index` | 受付日時・送信者・件名・対応状態の一覧 | layouts.app, page-heading, admin-table | GM-019: Feature・375pxブラウザー確認 | contact_inquiriesテーブル | 問い合わせ情報の保持・削除期間を決定 |
 | 管理者お問い合わせ詳細 | `/admin/contact-inquiries/{contactInquiry}` | `admin.contact-inquiries.show` | 送信内容・対応状態・対応日時の表示と状態更新 | layouts.app, page-heading, feedback-message, admin-table | GM-019: Feature・375pxブラウザー確認 | contact_inquiriesテーブル | 問い合わせ情報の保持・削除期間を決定 |
-| 通知設定 | `/mypage/notifications` | `mypage.notifications` | デザインのみ仮実装（配信・変更なし） | layouts.mypage, mypage-nav, status-pill | GM-010: 1440/375確認済み | 未実装（通知配信時に必要） | 通知種別・配信方式を決定 |
+| 通知設定（準備中） | `/mypage/notifications` | `mypage.notifications` | 表示例のみ（配信・変更なし） | layouts.mypage, mypage-nav, status-pill | GM-027: 変更箇所の表示確認 | 未実装（通知配信時に必要） | 通知種別・配信方式を決定 |
+
+## GM-027 表示仕様の照合
+
+- TOPの掲載カードは架空のデザイン確認用サンプルと明示し、掲載・取得募集・取引機能が稼働中に見える見出し・バッジを外しました。
+- FAQ、ログイン、メール・電話確認、プロフィール表示、通知設定の案内を現行実装に合わせました。
+- 会員設定では会員区分・運営の確認審査・メール認証・SMS電話確認を別々に表示します。
+- TOP・公開案内・認証ページはGM-027でPC 1440px／スマートフォン375pxのブラウザー表示を確認し、マイページの変更箇所はFeatureテストで表示を確認しました。銃器の掲載・取引機能、第三者向けプロフィール公開、通知配信、実SMS配送は未実装のままです。
 | マイページお知らせ一覧 | `/mypage/announcements` | `mypage.announcements` | DBから公開済みのお知らせを表示 | layouts.mypage, mypage-nav, announcement-list | GM-020: Feature・375px表示確認 | announcementsテーブルを利用 | 既読管理・通知配信は未実装 |
 | 公開お知らせ一覧 | `/announcements` | `announcements.index` | 公開済み・公開日時到来分を新しい順に表示 | layouts.app, page-heading, announcement-list | GM-020: Feature・375px表示確認 | announcementsテーブルを利用 | 通知配信は対象外 |
 | 公開お知らせ詳細 | `/announcements/{announcement}` | `announcements.show` | 公開済みかつ公開日時到来後のみ本文を表示 | layouts.app, page-heading, content-panel | GM-020: Feature・375px表示確認 | announcementsテーブルを利用 | 通知配信は対象外 |

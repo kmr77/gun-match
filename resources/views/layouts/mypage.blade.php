@@ -61,7 +61,7 @@
                             <p>プロフィールやパスワードは各メニューから更新できます。掲載・検索・取引に関する機能は提供していません。</p>
                         </div>
                     @elseif ($pageKey === 'profile')
-                        <p class="member-help">本名・表示名などを更新できます。本名、メールアドレス、生年月日、都道府県、電話番号、所持許可の自己申告は公開プロフィールに表示されません。メールアドレスを変更するとメール再確認が必要です。電話番号を変更するとSMS認証状態がリセットされ、再確認が必要です。</p>
+                        <p class="member-help">本名・表示名などを更新できます。本名、メールアドレス、生年月日、都道府県、電話番号、所持許可の自己申告は一般公開されません。第三者向けプロフィール公開機能は未実装です。メールアドレスを変更するとメール再確認が必要です。電話番号を変更するとSMS認証状態がリセットされ、再確認が必要です。</p>
                         <form method="POST" action="{{ route('mypage.profile.update') }}">
                             @csrf
                             @method('PUT')
@@ -124,9 +124,9 @@
                             />
                             <button class="btn btn--primary" type="submit">プロフィールを保存</button>
                         </form>
-                        <p class="member-help"><a href="{{ route('mypage.profile.public') }}">公開プロフィール表示</a> ・ <a href="{{ route('mypage.profile.preview') }}">プロフィールプレビュー</a></p>
+                        <p class="member-help"><a href="{{ route('mypage.profile.public') }}">プロフィール表示サンプル</a> ・ <a href="{{ route('mypage.profile.preview') }}">プロフィールプレビュー（本人のみ）</a></p>
                     @elseif ($pageKey === 'profile-public' || $pageKey === 'profile-preview')
-                        <p class="member-help">ご自身の表示名と会員区分を表示しています。公開設定や第三者への公開機能はありません。</p>
+                        <p class="member-help">ご自身の表示名と会員区分を表示するサンプルです。公開設定や第三者への公開機能はありません。</p>
                         @if ($pageKey === 'profile-preview')
                             <x-feedback-message
                                 type="info"
@@ -134,24 +134,26 @@
                                 message="現在のアカウント情報を表示しています。第三者には公開されません。"
                             />
                         @endif
-                        <article class="profile-preview-card" aria-label="公開プロフィール表示サンプル">
+                        <article class="profile-preview-card" aria-label="本人のみが確認できるプロフィール表示サンプル">
                             <span class="profile-preview-card__label">{{ auth()->user()->member_type->label() }}</span>
                             <h3>{{ auth()->user()->name }}</h3>
-                            <p>プロフィールの公開設定は未実装です。</p>
+                            <p>第三者向けプロフィール公開機能は未実装です。</p>
                             <dl>
                                 <div><dt>会員区分</dt><dd>{{ auth()->user()->member_type->label() }}</dd></div>
-                                <div><dt>公開設定</dt><dd>非公開</dd></div>
+                                <div><dt>第三者への公開</dt><dd>未実装</dd></div>
                             </dl>
                         </article>
                         @if ($pageKey === 'profile-preview')
-                            <p class="member-help"><a href="{{ route('mypage.profile') }}">プロフィール編集画面へ</a> ・ <a href="{{ route('mypage.profile.public') }}">公開プロフィール表示へ</a></p>
+                            <p class="member-help"><a href="{{ route('mypage.profile') }}">プロフィール編集画面へ</a> ・ <a href="{{ route('mypage.profile.public') }}">プロフィール表示サンプルへ</a></p>
                         @else
-                            <p class="member-help"><a href="{{ route('mypage.profile') }}">プロフィール編集画面へ</a> ・ <a href="{{ route('mypage.profile.preview') }}">プレビュー表示へ</a></p>
+                            <p class="member-help"><a href="{{ route('mypage.profile') }}">プロフィール編集画面へ</a> ・ <a href="{{ route('mypage.profile.preview') }}">本人用プレビューへ</a></p>
                         @endif
                     @elseif ($pageKey === 'settings')
-                        <p class="member-help">登録した会員区分とメール認証の状態です。</p>
+                        <p class="member-help">会員区分、運営による会員確認審査、メール・電話番号の認証状態をそれぞれ表示します。SMSによる電話確認は本人確認・事業者確認審査や所持許可の確認とは別です。</p>
                         <div class="setting-row"><div><h3>会員区分</h3><p>{{ auth()->user()->member_type->label() }}</p></div><span class="status-pill">登録済み</span></div>
+                        <div class="setting-row"><div><h3>会員確認審査</h3><p>本人または事業者に関する運営の確認状況</p></div><span class="status-pill">{{ auth()->user()->verification_status?->label() ?? '未確認' }}</span></div>
                         <div class="setting-row"><div><h3>メール認証</h3><p>{{ auth()->user()->email }}</p></div><span class="status-pill">{{ auth()->user()->hasVerifiedEmail() ? '認証済み' : '未認証' }}</span></div>
+                        <div class="setting-row"><div><h3>電話番号確認（SMS）</h3><p>{{ auth()->user()->phone ?: '電話番号未登録' }}</p></div><span class="status-pill">{{ auth()->user()->phone_verified_at ? '確認済み' : '未確認' }}</span></div>
                         <p class="member-help"><a href="{{ route('mypage.security') }}">セキュリティ設定を見る</a> ・ <a href="{{ route('mypage.account') }}">アカウント管理の案内</a></p>
                     @elseif ($pageKey === 'security')
                         <p class="member-help">現在のパスワードを確認してから、新しいパスワードに変更します。</p>
@@ -184,7 +186,7 @@
                             <button class="btn btn--primary" type="submit">パスワードを変更</button>
                         </form>
                     @elseif ($pageKey === 'account')
-                        <p class="member-help">アカウント情報はログイン中のご本人のみ更新できます。メールアドレス未確認の場合も、登録情報の確認・変更と退会申請は利用できます。管理者画面はメール確認済みの管理者に限り利用できます。</p>
+                        <p class="member-help">アカウント情報はログイン中のご本人のみ更新できます。メール確認が未完了の場合はプロフィール補完とメール確認を先に行ってください。電話番号確認も通常の会員機能を使う前に必要です。管理者画面も本番環境ではメール・電話番号の両方を確認した管理者に限り利用できます。</p>
                         <section class="account-guide">
                             <h3>アカウントを利用する前に</h3>
                             <ol>

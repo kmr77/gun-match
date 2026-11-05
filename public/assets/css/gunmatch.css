@@ -454,6 +454,7 @@ button, input, select { -webkit-tap-highlight-color: transparent; }
   line-height: 1.38;
 }
 .brand-site .hero__lead { max-width: 620px; margin-top: 18px; font-size: 15px; line-height: 1.9; }
+.brand-site .hero__availability { max-width: 620px; margin: 10px 0 0; color: #fff; font-size: 12px; font-weight: 700; line-height: 1.75; text-shadow: 0 1px 5px rgba(0, 0, 0, .7); }
 .brand-site .hero__note { right: max(7vw, calc((100vw - 1200px) / 2)); top: 40%; }
 .brand-site .topics-section { padding: 24px 0 32px; background: #fff; }
 .brand-site .section-heading { margin-bottom: 18px; }
@@ -590,6 +591,7 @@ button, input, select { -webkit-tap-highlight-color: transparent; }
   .brand-site .hero__eyebrow { font-size: 9px; letter-spacing: .1em; }
   .brand-site .hero h1 { font-size: clamp(27px, 7.2vw, 31px); letter-spacing: .015em; }
   .brand-site .hero__lead { max-width: 100%; margin: 17px 0 0; font-size: 13px; }
+  .brand-site .hero__availability { margin-top: 12px; font-size: 11px; }
   .brand-site .hero__note { display: none; }
   .brand-site .topics-section { padding: 30px 0 32px; }
   .brand-site .section-heading { min-width: 0; flex-wrap: wrap; margin-bottom: 14px; }

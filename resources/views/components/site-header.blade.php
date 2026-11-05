@@ -11,8 +11,8 @@
         <nav class="main-nav" id="primary-navigation" aria-label="メインナビゲーション" data-navigation>
             <a href="{{ route('home') }}#page-top">トップ</a>
             <a href="{{ route('home') }}#categories">カテゴリー</a>
-            <a href="{{ route('home') }}#reasons">選ばれる理由</a>
-            <a href="{{ route('home') }}#howto">利用の流れ</a>
+            <a href="{{ route('home') }}#reasons">GunMatchの基本姿勢</a>
+            <a href="{{ route('home') }}#howto">大切にすること</a>
             <a href="{{ route('safety') }}">法令・安全について</a>
             @auth
                 <a href="{{ route('mypage') }}">マイページ</a>

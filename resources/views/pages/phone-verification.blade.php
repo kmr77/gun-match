@@ -17,7 +17,7 @@
                 <p class="page-notice" role="note">
                     確認対象：{{ auth()->user()->phone }}。電話番号の確認は、本人確認審査や所持許可の確認とは別です。
                 </p>
-                <p class="member-help">認証コードは5分間有効です。送信にはSMS事業者の設定が必要です。設定がない場合、電話番号は確認済みになりません。</p>
+                <p class="member-help">認証コードは5分間有効です。現在、SMS送信事業者は未設定のため、実際のSMS配送はできません。送信に失敗した場合も電話番号は確認済みになりません。SMS確認は本人確認審査・事業者確認審査とは別です。</p>
                 @error('phone')
                     <p class="form-field__error" role="alert">{{ $message }}</p>
                 @enderror

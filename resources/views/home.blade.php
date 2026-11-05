@@ -4,9 +4,10 @@
     <section class="hero" aria-labelledby="hero-title">
         <div class="container hero__inner">
             <div class="hero__copy">
-                <p class="hero__eyebrow">HUNTING &amp; SHOOTING MARKETPLACE</p>
-                <h1 id="hero-title">狩猟の道具と人をつなぐ<br>マーケットプレイス</h1>
+                <p class="hero__eyebrow">GUNMATCH｜HUNTING &amp; SHOOTING</p>
+                <h1 id="hero-title">狩猟の道具と人をつなぐ</h1>
                 <p class="hero__lead">狩猟の道具と人をつなぐ、GunMatch。</p>
+                <p class="hero__availability">銃器等の掲載・検索・譲渡・取得募集・マッチング機能は現在提供していません。</p>
             </div>
         </div>
         <span class="hero__note" aria-hidden="true">狩猟を、<br>もっと身近に。</span>
@@ -15,10 +16,11 @@
     <section class="section topics-section" id="categories" aria-labelledby="categories-title">
         <div class="container">
             <x-section-heading
-                title="カテゴリー"
+                title="カテゴリー案内"
                 id="categories-title"
                 kicker="HUNTING & SHOOTING"
             />
+            <p class="demo-notice">カテゴリーはGunMatchが想定する内容の紹介です。現在、銃器等の掲載・検索・譲渡・取得を支援する機能はありません。</p>
             <div class="topic-grid">
                 @foreach ($categories as $category)
                     <x-topic-card
@@ -34,16 +36,14 @@
     <section class="section listings-section" id="offer-items" aria-labelledby="offer-items-title">
         <div class="container">
             <x-section-heading
-                title="新着の「譲る」（売りたい）"
+                title="カードの表示サンプル（架空データ）"
                 id="offer-items-title"
-                badge="譲"
-                badge-variant="offer"
-                kicker="仮データ"
+                kicker="デザイン確認用"
             />
-            <p class="demo-notice">一般的なアウトドア用品の仮データです。実在の商品・募集ではありません。</p>
+            <p class="demo-notice">一般的なアウトドア用品を使った架空の表示例です。実在の商品・募集ではなく、譲渡・購入や問い合わせはできません。</p>
             <div class="listing-grid">
                 @foreach ($offerItems as $item)
-                    <x-listing-card :item="$item" mode="offer" />
+                    <x-listing-card :item="$item" />
                 @endforeach
             </div>
         </div>
@@ -52,16 +52,14 @@
     <section class="section listings-section listings-section--wanted" id="wanted-items" aria-labelledby="wanted-items-title">
         <div class="container">
             <x-section-heading
-                title="新着の「探す」（買いたい）"
+                title="カードの表示サンプル（架空データ）"
                 id="wanted-items-title"
-                badge="探"
-                badge-variant="wanted"
-                kicker="仮データ"
+                kicker="デザイン確認用"
             />
-            <p class="demo-notice">一般的なアウトドア用品の仮データです。実在の商品・募集ではありません。</p>
+            <p class="demo-notice">一般的なアウトドア用品を使った架空の表示例です。実在の商品・募集ではなく、取得希望の登録や取引はできません。</p>
             <div class="listing-grid">
                 @foreach ($wantedItems as $item)
-                    <x-listing-card :item="$item" mode="wanted" />
+                    <x-listing-card :item="$item" />
                 @endforeach
             </div>
         </div>
@@ -69,8 +67,8 @@
 
     <section class="features" id="reasons" aria-labelledby="reasons-title">
         <div class="container">
-            <h2 id="reasons-title">GunMatchが選ばれる理由</h2>
-            <p class="features__lead">法令への配慮と安全な狩猟文化を大切にします。</p>
+            <h2 id="reasons-title">GunMatchが大切にすること</h2>
+            <p class="features__lead">法令への配慮と安全を大切にする方針です。</p>
             <div class="features-grid">
                 <x-feature-card title="法令を大切に" description="銃器等に関わる法令を理解し、遵守する姿勢を大切にします。">
                     <x-slot:icon>
@@ -80,7 +78,7 @@
                         </svg>
                     </x-slot:icon>
                 </x-feature-card>
-                <x-feature-card title="情報をわかりやすく" description="道具や狩猟にまつわる情報を、正確で分かりやすく伝えることを目指します。">
+                <x-feature-card title="情報をわかりやすく" description="狩猟に関わる法令や安全について、正確で分かりやすい案内を目指します。">
                     <x-slot:icon>
                         <svg viewBox="0 0 40 40" fill="none">
                             <path d="M10 5h14l7 7v23H10V5Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
@@ -98,7 +96,7 @@
                         </svg>
                     </x-slot:icon>
                 </x-feature-card>
-                <x-feature-card title="趣味を通じたつながり" description="同じ趣味を楽しむ人々の交流を大切にするブランドです。">
+                <x-feature-card title="人と道具に向き合う" description="狩猟に関わる人や道具をテーマに、法令と安全を大切にする姿勢を掲げています。">
                     <x-slot:icon>
                         <svg viewBox="0 0 40 40" fill="none">
                             <circle cx="20" cy="13" r="5" stroke="currentColor" stroke-width="2"/>
@@ -113,10 +111,10 @@
 
     <section class="howto" id="howto" aria-labelledby="howto-title">
         <div class="container">
-            <x-section-heading title="利用の流れ" id="howto-title" />
+            <x-section-heading title="GunMatchの基本姿勢" id="howto-title" />
             <div class="howto__panel">
                 <ol class="steps">
-                    <x-flow-step number="1" title="GunMatchを知る" description="GunMatchのブランドや、大切にしている価値観をご紹介します。">
+                    <x-flow-step number="1" title="ブランドの考え方" description="GunMatchが大切にする価値観をご紹介します。">
                         <x-slot:icon>
                             <svg class="step__icon" viewBox="0 0 40 40" fill="none" aria-hidden="true">
                                 <circle cx="14" cy="12" r="6" stroke="currentColor" stroke-width="2"/>
@@ -132,7 +130,7 @@
                             </svg>
                         </x-slot:icon>
                     </x-flow-step>
-                    <x-flow-step number="3" title="安全に楽しむ" description="狩猟を楽しむ際は、安全と責任を第一に行動してください。">
+                    <x-flow-step number="3" title="安全と責任" description="狩猟に関わる際は、安全と責任を第一に行動してください。">
                         <x-slot:icon>
                             <svg class="step__icon" viewBox="0 0 40 40" fill="none" aria-hidden="true">
                                 <path d="M6 9h28v19H19l-8 6v-6H6V9Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
@@ -149,8 +147,8 @@
     <section class="bottom-banner" aria-labelledby="bottom-banner-title">
         <div class="container bottom-banner__inner">
             <div class="bottom-banner__copy">
-                <h2 id="bottom-banner-title">狩猟という共通の趣味が、新しい出会いをつくる。</h2>
-                <p>狩猟を楽しむ人々に寄り添うGunMatch。</p>
+                <h2 id="bottom-banner-title">狩猟の道具と人に向き合うGunMatch。</h2>
+                <p>法令と安全を大切にするブランドとして、現在の提供状況をご案内しています。</p>
             </div>
         </div>
     </section>

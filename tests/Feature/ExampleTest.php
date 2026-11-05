@@ -14,7 +14,7 @@ class ExampleTest extends TestCase
         $response
             ->assertOk()
             ->assertSee('狩猟の道具と人をつなぐ')
-            ->assertSee('HUNTING & SHOOTING MARKETPLACE')
+            ->assertSee('GUNMATCH｜HUNTING &amp; SHOOTING', false)
             ->assertSee('狩猟の道具と人をつなぐ、GunMatch。')
             ->assertSee('散弾銃')
             ->assertSee('ライフル')
@@ -24,14 +24,15 @@ class ExampleTest extends TestCase
             ->assertSee('アクセサリー')
             ->assertSee('無可動銃')
             ->assertSee(asset('assets/img/categories/category_shotgun.png'))
-            ->assertSee('新着の「譲る」（売りたい）')
-            ->assertSee('新着の「探す」（買いたい）')
+            ->assertSee('カードの表示サンプル（架空データ）')
             ->assertSee('撥水シェルジャケット')
             ->assertSee('保温フリースジャケット')
             ->assertSee(asset('assets/img/dummy/outdoor/jacket.svg'))
             ->assertSee(asset('assets/img/dummy/outdoor/gloves.svg'))
-            ->assertSee('一般的なアウトドア用品の仮データです。実在の商品・募集ではありません。')
+            ->assertSee('一般的なアウトドア用品を使った架空の表示例です。実在の商品・募集ではなく、譲渡・購入や問い合わせはできません。')
             ->assertDontSee('listing-card__link')
+            ->assertDontSee('新着の「譲る」')
+            ->assertDontSee('新着の「探す」')
             ->assertDontSee('弾薬');
 
         $response->assertSeeInOrder([
@@ -45,20 +46,20 @@ class ExampleTest extends TestCase
 
         $html = $response->getContent();
         $this->assertSame(12, substr_count($html, 'class="listing-card"'));
-        $this->assertSame(6, substr_count($html, 'listing-card__kind--offer'));
-        $this->assertSame(6, substr_count($html, 'listing-card__kind--wanted'));
+        $this->assertSame(0, substr_count($html, 'listing-card__kind--offer'));
+        $this->assertSame(0, substr_count($html, 'listing-card__kind--wanted'));
 
         $response
-            ->assertSee('GunMatchが選ばれる理由')
+            ->assertSee('GunMatchが大切にすること')
             ->assertSee('法令を大切に')
             ->assertSee('情報をわかりやすく')
             ->assertSee('安全を第一に')
-            ->assertSee('趣味を通じたつながり')
-            ->assertSee('利用の流れ')
-            ->assertSee('GunMatchを知る')
+            ->assertSee('人と道具に向き合う')
+            ->assertSee('GunMatchの基本姿勢')
+            ->assertSee('ブランドの考え方')
             ->assertSee('法令を確認する')
-            ->assertSee('安全に楽しむ')
-            ->assertSee('狩猟という共通の趣味が、新しい出会いをつくる。')
+            ->assertSee('安全と責任')
+            ->assertSee('狩猟の道具と人に向き合うGunMatch。')
             ->assertDontSee(asset('assets/img/branding/banner-hunting.webp'))
             ->assertSee('GunMatch｜狩猟の道具と人をつなぐ')
             ->assertDontSee('構想されたプロジェクトです')
@@ -67,6 +68,10 @@ class ExampleTest extends TestCase
             ->assertDontSee('本人確認済み')
             ->assertDontSee('許可証確認済み')
             ->assertDontSee('HUNTING & OUTDOOR GUIDE')
+            ->assertDontSee('MARKETPLACE')
+            ->assertDontSee('利用の流れ')
+            ->assertDontSee('譲る</span>')
+            ->assertDontSee('探す</span>')
             ->assertDontSee('狩猟・アウトドアの情報ガイド')
             ->assertDontSee('検索する')
             ->assertDontSee('新規登録');

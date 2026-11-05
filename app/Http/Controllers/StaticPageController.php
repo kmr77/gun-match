@@ -40,12 +40,12 @@ class StaticPageController extends Controller
         $titles = [
             'home' => 'マイページ',
             'profile' => 'プロフィール編集',
-            'profile-public' => '公開プロフィール',
+            'profile-public' => 'プロフィール表示サンプル',
             'profile-preview' => 'プロフィールプレビュー',
             'settings' => 'アカウント設定',
             'security' => 'セキュリティ設定',
             'account' => 'アカウント管理のご案内',
-            'notifications' => '通知設定',
+            'notifications' => '通知設定（準備中）',
             'announcements' => 'お知らせ一覧',
         ];
 
