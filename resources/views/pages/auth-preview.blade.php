@@ -15,6 +15,9 @@
                 @if (session('status'))
                     <x-feedback-message type="success" title="処理が完了しました" :message="session('status')" />
                 @endif
+                @if (session('mail_delivery_error'))
+                    <x-feedback-message type="error" title="メールを送信できませんでした" :message="session('mail_delivery_error')" />
+                @endif
                 @if ($errors->any())
                     <x-feedback-message type="error" title="入力内容をご確認ください" message="各項目のエラーを修正して、もう一度送信してください。" />
                 @endif

@@ -9,8 +9,10 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 
 class RegisteredUserController extends Controller
 {
@@ -61,10 +63,21 @@ class RegisteredUserController extends Controller
             'has_firearm_permit' => $validated['has_firearm_permit'] ?? null,
         ]);
 
-        event(new Registered($user));
+        $mailDeliveryFailed = false;
+        try {
+            event(new Registered($user));
+        } catch (TransportExceptionInterface) {
+            $mailDeliveryFailed = true;
+            Log::warning('Authentication email delivery failed.', ['flow' => 'registration_verification']);
+        }
+
         Auth::login($user);
         $request->session()->regenerate();
 
-        return redirect()->route('verification.notice');
+        $response = redirect()->route('verification.notice');
+
+        return $mailDeliveryFailed
+            ? $response->with('mail_delivery_error', '確認メールを送信できませんでした。時間をおいて再送してください。')
+            : $response;
     }
 }

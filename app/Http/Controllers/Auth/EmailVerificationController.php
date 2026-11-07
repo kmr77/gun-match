@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 
 class EmailVerificationController extends Controller
 {
@@ -32,7 +34,13 @@ class EmailVerificationController extends Controller
             return back()->with('status', 'メールアドレスはすでに確認済みです。');
         }
 
-        $request->user()->sendEmailVerificationNotification();
+        try {
+            $request->user()->sendEmailVerificationNotification();
+        } catch (TransportExceptionInterface) {
+            Log::warning('Authentication email delivery failed.', ['flow' => 'email_verification']);
+
+            return back()->with('mail_delivery_error', '確認メールを送信できませんでした。時間をおいて再送してください。');
+        }
 
         return back()->with('status', '確認メールを送信しました。');
     }

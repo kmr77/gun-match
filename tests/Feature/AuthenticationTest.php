@@ -10,6 +10,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\URL;
 use Tests\TestCase;
 
@@ -383,6 +384,15 @@ class AuthenticationTest extends TestCase
 
         $this->assertTrue(Hash::check('GunMatch-Reset!234', $user->fresh()->password));
         $this->assertDatabaseCount('password_reset_tokens', 0);
+
+        $this->from(route('password.request'))->post(route('password.update'), [
+            'token' => $token,
+            'email' => $user->email,
+            'password' => 'GunMatch-Reused!234',
+            'password_confirmation' => 'GunMatch-Reused!234',
+        ])->assertRedirect(route('password.request'))
+            ->assertSessionHasErrors('email');
+        $this->assertTrue(Hash::check('GunMatch-Reset!234', $user->fresh()->password));
     }
 
     public function test_invalid_or_expired_password_reset_tokens_are_rejected(): void
@@ -400,6 +410,21 @@ class AuthenticationTest extends TestCase
             ->assertSessionHasErrors('email');
 
         $this->assertFalse(Hash::check('GunMatch-Reset!234', $user->fresh()->password));
+
+        $expiredToken = Password::createToken($user);
+        DB::table('password_reset_tokens')
+            ->where('email', $user->email)
+            ->update(['created_at' => now()->subMinutes(config('auth.passwords.users.expire') + 1)]);
+
+        $this->from(route('password.request'))->post(route('password.update'), [
+            'token' => $expiredToken,
+            'email' => $user->email,
+            'password' => 'GunMatch-Expired!234',
+            'password_confirmation' => 'GunMatch-Expired!234',
+        ])->assertRedirect(route('password.request'))
+            ->assertSessionHasErrors('email');
+
+        $this->assertFalse(Hash::check('GunMatch-Expired!234', $user->fresh()->password));
     }
 
     public function test_email_verification_uses_signed_links_and_can_be_resent(): void
@@ -421,5 +446,25 @@ class AuthenticationTest extends TestCase
 
         $this->get($url)->assertRedirect(route('mypage'))->assertSessionHas('status');
         $this->assertNotNull($user->fresh()->email_verified_at);
+    }
+
+    public function test_email_verification_rejects_expired_and_other_members_signed_links(): void
+    {
+        $user = User::factory()->unverified()->create();
+        $other = User::factory()->unverified()->create();
+        $parameters = ['id' => $user->id, 'hash' => sha1($user->getEmailForVerification())];
+        $expiredUrl = URL::temporarySignedRoute('verification.verify', now()->subMinute(), $parameters);
+        $validUrl = URL::temporarySignedRoute('verification.verify', now()->addMinutes(30), $parameters);
+        $invalidUrl = str_replace('signature=', 'signature=x', $validUrl);
+
+        $this->actingAs($user)->get($expiredUrl)->assertForbidden();
+        $this->get($invalidUrl)->assertForbidden();
+        $this->actingAs($other)->get($validUrl)->assertForbidden();
+        $this->assertNull($user->fresh()->email_verified_at);
+        $this->assertNull($other->fresh()->email_verified_at);
+
+        auth()->logout();
+        $this->get($validUrl)->assertRedirect(route('login'));
+        $this->assertNull($user->fresh()->email_verified_at);
     }
 }
