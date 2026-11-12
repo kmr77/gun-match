@@ -36,6 +36,27 @@ php artisan serve --host=127.0.0.1 --port=8000
 
 SQLiteの `database/database.sqlite` は削除・初期化せず、GM-024時点のデータをそのままバックアップとして保持します。既存の会員・管理者とアプリケーションデータは専用のMySQL開発DBへ移行しています。SQLiteへ戻す場合は `.env` の `DB_CONNECTION=sqlite`、`DB_DATABASE=database/database.sqlite`（またはSQLiteファイルの絶対パス）に切り替え、`php artisan config:clear` を実行してください。設定を確実に反映するため、起動中の `php artisan serve` も再起動してください。
 
+### MySQLバックアップ・復元（GM-031）
+
+MySQLバックアップは会員の個人情報、パスワードハッシュ、セッション、通報・問い合わせ等を含み得る機密データです。バックアップ自動化は未設定です。作業前に `php artisan migrate:status --database=mysql` と接続先を確認し、`gunmatch_dev_gm023` 以外へ誤接続していないことを確認してください。MAMP MySQL 8.0.40では `mysqldump` の `--single-transaction --quick --hex-blob --default-character-set=utf8mb4 --set-gtid-purged=OFF --no-tablespaces` を使用できます。整合した論理ダンプを作るため、稼働中にDDL変更や大規模更新を並行しないでください。
+
+バックアップ先 `database/backups/` はGit管理対象外です。ディレクトリはアクセス権 `700`、バックアップとMySQLクライアント設定ファイルは `600` にし、接続パスワードをコマンド引数やGit管理ファイルへ書かず、権限を制限したMySQL option fileを `--defaults-extra-file` で指定してください（このオプションはmysqlクライアントの先頭に置きます）。例：
+
+```bash
+umask 077
+mkdir -p database/backups
+chmod 700 database/backups
+mysqldump --defaults-extra-file=/secure/local/mysql-client.cnf \
+  --single-transaction --quick --hex-blob --default-character-set=utf8mb4 \
+  --set-gtid-purged=OFF --no-tablespaces gunmatch_dev_gm023 \
+  > database/backups/gunmatch_dev_gm023-YYYYMMDD-HHMMSS.sql
+chmod 600 database/backups/gunmatch_dev_gm023-YYYYMMDD-HHMMSS.sql
+```
+
+復元確認では、開発DBを復元先にしないでください。重複しない一時DB名を選び、存在しないことを確認してから、開発DBと同じ文字セット・照合順序で一時DBを作成します。ダンプを一時DBへ復元し、テーブル一覧・全件数・`migrations`・外部キー参照整合性を元DBと比較した後、一時DBを削除します。検証用ダンプも確認後に削除し、保持するバックアップは暗号化・アクセス制限・保持期間・復旧責任者を運営で決めて保管してください。別サーバー・本番環境への接続や復元はこの手順の対象外です。
+
+GM-031では未適用だった `2026_11_12_210000_create_terms_consents_table` のみを開発DBへ適用しました。追加テーブルのレコードは0件で、会員数・管理者権限を変更せず、実際の同意履歴も作成していません。`gunmatch_dev_gm023` のバックアップを同じMySQL 8.0.40上の専用一時DBへ復元して件数・履歴・外部キーを照合し、一時データは検証後に削除しました。この確認は手動の単発検証であり、自動バックアップや本番復旧手順の確認を完了したものではありません。
+
 自動テストは通常の `phpunit.xml` によりSQLiteメモリDBを使います。MySQLでテストするときは `phpunit.mysql.xml` を指定してください。この設定は接続先をテスト専用の `gunmatch_test_gm024` に固定し、認証情報はローカル `.env` から読み込みます。各Featureテストの `RefreshDatabase` はこのテスト専用DBを対象にします。MySQL開発DBをテスト設定として指定したり、テスト用設定を使わずに破壊的なテストを実行したりしないでください。
 
 会員認証にはLaravel標準のセッションGuard、パスワードBroker、署名付きメール確認を使用します。登録時は本名、表示名、メールアドレス、電話番号、都道府県、生年月日を検証し、18歳未満を拒否します。通常利用にはメールと電話番号（SMS）の両方の確認が必要です。確認未完了会員はメール確認・プロフィール補完・SMS確認のみ利用でき、通常の会員機能と管理機能は利用できません。電話番号変更時は確認状態をリセットします。所持許可欄は任意の自己申告であり、SMS認証・本人確認審査とは別で、運営による確認状態とは連動しません。本名・メールアドレス・都道府県・生年月日・電話番号・所持許可は公開プロフィールに表示せず、`User` の配列シリアライズからも除外します。ローカル・テストのメール transport は `array` で、本文・確認URLをログへ記録せず実配送もしません。旧設定等でmailer名 `log` が指定された場合も、メール内容をログ出力せずメモリ内transportへ置き換えます。メール確認URLはLaravelの署名付きURLとして有効期限を検証し、パスワード再設定tokenはハッシュ保管・60分期限・一回利用です。本番では認証済みSMTPと必須TLSが設定されない限りアプリ起動を拒否し、SMTP送信失敗はlog mailerへフォールバックせず、利用者へ失敗を表示します。さくらインターネットの契約環境での接続・実メール配送は未確認です。SMS実配送も未完了です。利用規約・プライバシーポリシーと運営情報の確認が完了するまで、公開環境で会員情報を収集しないでください。退会時は会員・関連セッション・再設定token・SMSチャレンジを削除しますが、通報・問い合わせ・監査履歴はユーザー参照をnull化して保持し得ます。保存期間と保持根拠は未確定で、自動削除処理はありません。確定・未確定の整理は [GUNMATCH_MVP_SPEC.md](GUNMATCH_MVP_SPEC.md)、情報棚卸しと公開前レビュー文案は [GM-028-privacy-inventory.md](GM-028-privacy-inventory.md) を参照してください。
