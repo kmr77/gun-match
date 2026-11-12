@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Announcement;
+use App\Support\LegalTerms;
 use Illuminate\Contracts\View\View;
 
 class StaticPageController extends Controller
@@ -11,6 +12,18 @@ class StaticPageController extends Controller
     {
         $content = config("gunmatch_pages.information.{$page}");
         abort_if($content === null, 404);
+
+        $legalDocument = in_array($page, ['terms', 'privacy'], true)
+            ? LegalTerms::publishedDocument($page)
+            : null;
+
+        if ($legalDocument !== null) {
+            $content['description'] = $page === 'terms'
+                ? 'GunMatchの利用規約です。'
+                : 'GunMatchのプライバシーポリシーです。';
+            $content['notice'] = '文書版 '.$legalDocument['version'].'・発効日 '.$legalDocument['effective_at'];
+            $content['sections'] = $legalDocument['sections'];
+        }
 
         return view('pages.information', [
             'page' => $content,
@@ -30,6 +43,7 @@ class StaticPageController extends Controller
 
         if ($page === 'register') {
             $data['prefectures'] = config('gunmatch_registration.prefectures');
+            $data['termsConsentVersion'] = LegalTerms::registrationVersion();
         }
 
         return view('pages.auth-preview', $data);

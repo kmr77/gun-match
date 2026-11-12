@@ -19,13 +19,168 @@ class RegistrationProfileSpecificationTest extends TestCase
             ->assertSee('利用規約')
             ->assertSee(route('terms'), false)
             ->assertSee(route('privacy'), false)
-            ->assertSee('東京都');
+            ->assertSee('東京都')
+            ->assertSee('正式な規約への同意取得・記録は行っていません。')
+            ->assertDontSee('name="terms_version"', false);
 
         $this->from(route('register'))->post(route('register'), $this->registrationData([
             'birth_date' => now()->subYears(17)->toDateString(),
         ]))->assertRedirect(route('register'))->assertSessionHasErrors(['birth_date']);
 
         $this->assertDatabaseCount('users', 0);
+    }
+
+    public function test_registration_does_not_record_fictional_consent_for_unpublished_terms(): void
+    {
+        $this->from(route('register'))->post(route('register'), $this->registrationData([
+            'terms_version' => '2026-11-12-v1',
+        ]))->assertRedirect(route('register'))
+            ->assertSessionHasErrors('terms_version');
+
+        $this->assertDatabaseCount('users', 0);
+        $this->assertDatabaseCount('terms_consents', 0);
+    }
+
+    public function test_registration_requires_explicit_consent_to_the_published_terms_version(): void
+    {
+        $this->publishTerms('terms-2026-11-v1');
+
+        $this->get(route('register'))
+            ->assertOk()
+            ->assertSee('name="terms_version"', false)
+            ->assertSee('利用規約（terms-2026-11-v1）に同意します');
+
+        $this->from(route('register'))->followingRedirects()
+            ->post(route('register'), $this->registrationData())
+            ->assertOk()
+            ->assertSee('利用規約への同意が必要です。');
+        $this->assertDatabaseCount('users', 0);
+        $this->assertDatabaseCount('terms_consents', 0);
+    }
+
+    public function test_formal_terms_must_have_publishable_content_before_registration_consent_is_enabled(): void
+    {
+        config([
+            'gunmatch_legal.terms.published' => true,
+            'gunmatch_legal.terms.version' => 'terms-2026-11-v1',
+            'gunmatch_legal.terms.effective_at' => now()->subMinute()->toIso8601String(),
+            'gunmatch_legal.terms.sections' => [],
+        ]);
+
+        $this->get(route('register'))
+            ->assertOk()
+            ->assertDontSee('name="terms_version"', false)
+            ->assertSee('正式な規約への同意取得・記録は行っていません。');
+
+        $this->get(route('terms'))
+            ->assertOk()
+            ->assertSee('正式な利用規約は公開前確認中です。')
+            ->assertDontSee('terms-2026-11-v1');
+    }
+
+    public function test_registration_records_the_exact_terms_version_and_explicit_checkbox_action(): void
+    {
+        $this->publishTerms('terms-2026-11-v1');
+
+        $this->post(route('register'), $this->registrationData([
+            'terms_version' => 'terms-2026-11-v1',
+        ]))->assertRedirect(route('verification.notice'));
+
+        $user = User::where('email', 'member@example.test')->firstOrFail();
+        $this->assertDatabaseHas('terms_consents', [
+            'user_id' => $user->id,
+            'terms_version' => 'terms-2026-11-v1',
+            'consent_method' => 'registration_checkbox',
+        ]);
+        $this->assertNotNull($user->termsConsents()->sole()->consented_at);
+        $this->assertSame(1, $user->termsConsents()->count());
+    }
+
+    public function test_terms_history_is_not_overwritten_when_a_new_version_is_published(): void
+    {
+        $this->publishTerms('terms-2026-11-v1');
+        $this->post(route('register'), $this->registrationData([
+            'terms_version' => 'terms-2026-11-v1',
+        ]))->assertRedirect(route('verification.notice'));
+
+        $user = User::where('email', 'member@example.test')->firstOrFail();
+        $consentedAt = $user->termsConsents()->sole()->consented_at;
+
+        $this->publishTerms('terms-2026-12-v2');
+        $this->actingAs($user)->get(route('terms'))
+            ->assertOk()
+            ->assertSee('terms-2026-12-v2');
+        $this->actingAs($user)->get(route('mypage.profile'))->assertOk();
+
+        $this->assertDatabaseHas('terms_consents', [
+            'user_id' => $user->id,
+            'terms_version' => 'terms-2026-11-v1',
+            'consented_at' => $consentedAt->format('Y-m-d H:i:s'),
+        ]);
+        $this->assertSame(1, $user->termsConsents()->count());
+    }
+
+    public function test_privacy_policy_publication_does_not_create_privacy_consent_records(): void
+    {
+        config([
+            'gunmatch_legal.privacy.published' => true,
+            'gunmatch_legal.privacy.version' => 'privacy-2026-11-v1',
+            'gunmatch_legal.privacy.effective_at' => now()->subMinute()->toIso8601String(),
+            'gunmatch_legal.privacy.sections' => [
+                ['title' => '個人情報の取扱い', 'paragraphs' => ['公開用の確認済み本文。']],
+            ],
+        ]);
+
+        $this->get(route('privacy'))
+            ->assertOk()
+            ->assertSee('privacy-2026-11-v1')
+            ->assertSee('公開用の確認済み本文。');
+
+        $this->post(route('register'), $this->registrationData())
+            ->assertRedirect(route('verification.notice'));
+
+        $this->assertDatabaseCount('terms_consents', 0);
+    }
+
+    public function test_registration_rejects_a_forged_or_outdated_terms_version(): void
+    {
+        $this->publishTerms('terms-2026-11-v2');
+
+        $this->from(route('register'))->post(route('register'), $this->registrationData([
+            'terms_version' => 'terms-2026-11-v1',
+        ]))->assertRedirect(route('register'))
+            ->assertSessionHasErrors('terms_version');
+
+        $this->assertDatabaseCount('users', 0);
+        $this->assertDatabaseCount('terms_consents', 0);
+    }
+
+    public function test_registration_consent_is_not_enabled_before_the_terms_effective_date(): void
+    {
+        config([
+            'gunmatch_legal.terms.published' => true,
+            'gunmatch_legal.terms.version' => 'terms-2026-11-v1',
+            'gunmatch_legal.terms.effective_at' => now()->addDay()->toIso8601String(),
+            'gunmatch_legal.terms.sections' => [
+                ['title' => '利用条件', 'paragraphs' => ['確認済みの公開本文。']],
+            ],
+        ]);
+
+        $this->get(route('register'))
+            ->assertOk()
+            ->assertDontSee('name="terms_version"', false);
+        $this->get(route('terms'))
+            ->assertOk()
+            ->assertSee('正式な利用規約は公開前確認中です。');
+    }
+
+    public function test_existing_members_are_not_backfilled_with_a_fictional_terms_consent(): void
+    {
+        $existingMember = User::factory()->create();
+        $this->publishTerms('terms-2026-11-v1');
+
+        $this->assertSame(0, $existingMember->termsConsents()->count());
+        $this->assertDatabaseCount('terms_consents', 0);
     }
 
     public function test_registration_requires_identity_name_email_prefecture_and_birth_date(): void
@@ -220,5 +375,17 @@ class RegistrationProfileSpecificationTest extends TestCase
                 ? null
                 : ($user->has_firearm_permit ? '1' : '0'),
         ];
+    }
+
+    private function publishTerms(string $version): void
+    {
+        config([
+            'gunmatch_legal.terms.published' => true,
+            'gunmatch_legal.terms.version' => $version,
+            'gunmatch_legal.terms.effective_at' => now()->subMinute()->toIso8601String(),
+            'gunmatch_legal.terms.sections' => [
+                ['title' => '利用条件', 'paragraphs' => ['確認済みの公開本文。']],
+            ],
+        ]);
     }
 }

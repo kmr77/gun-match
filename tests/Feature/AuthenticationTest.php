@@ -242,6 +242,11 @@ class AuthenticationTest extends TestCase
             'email' => 'delete-me@example.test',
             'password' => 'GunMatch-Delete!234',
         ]);
+        $member->termsConsents()->create([
+            'terms_version' => 'terms-2026-11-v1',
+            'consented_at' => now()->subDay(),
+            'consent_method' => 'registration_checkbox',
+        ]);
         $other = User::factory()->create(['email' => 'keep-me@example.test']);
         $reportId = DB::table('abuse_reports')->insertGetId([
             'reporter_user_id' => $member->id,
@@ -306,6 +311,7 @@ class AuthenticationTest extends TestCase
         $this->assertDatabaseMissing('sessions', ['user_id' => $member->id]);
         $this->assertDatabaseMissing('password_reset_tokens', ['email' => $member->email]);
         $this->assertDatabaseMissing('sms_verification_challenges', ['user_id' => $member->id]);
+        $this->assertDatabaseMissing('terms_consents', ['user_id' => $member->id]);
         $this->assertDatabaseHas('abuse_reports', [
             'id' => $reportId,
             'reporter_user_id' => null,

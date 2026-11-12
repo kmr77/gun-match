@@ -61,7 +61,31 @@
                     @endif
 
                     @if ($pageKey === 'register')
-                        <p class="form-consent">登録前に<a href="{{ route('terms') }}">利用規約</a>と<a href="{{ route('privacy') }}">プライバシーポリシー</a>をご確認ください。正式公開前に内容を確定します。</p>
+                        <p class="form-consent">
+                            <a href="{{ route('terms') }}">利用規約</a>と<a href="{{ route('privacy') }}">プライバシーポリシー</a>をご確認ください。
+                            プライバシーポリシーの閲覧と利用規約への同意は別の手続きとして扱います。
+                        </p>
+                        @if ($termsConsentVersion !== null)
+                            <label class="remember-field">
+                                <input
+                                    id="terms_version"
+                                    type="checkbox"
+                                    name="terms_version"
+                                    value="{{ $termsConsentVersion }}"
+                                    required
+                                    @if ($errors->has('terms_version')) aria-invalid="true" aria-describedby="terms_version-error" @endif
+                                    @checked(old('terms_version') === $termsConsentVersion)
+                                >
+                                <span>利用規約（{{ $termsConsentVersion }}）に同意します</span>
+                            </label>
+                            @if ($errors->has('terms_version'))
+                                <p class="form-field__error" id="terms_version-error">{{ $errors->first('terms_version') }}</p>
+                            @endif
+                        @else
+                            <p class="page-notice" role="note">
+                                利用規約・プライバシーポリシーは準備中です。現在、正式な規約への同意取得・記録は行っていません。
+                            </p>
+                        @endif
                     @endif
 
                     <button class="btn btn--primary auth-card__button" type="submit">{{ $page['button'] }}</button>
