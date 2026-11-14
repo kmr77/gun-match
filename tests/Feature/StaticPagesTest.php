@@ -117,6 +117,7 @@ class StaticPagesTest extends TestCase
         $knownPaths = array_fill_keys(
             [
                 ...array_map(fn (string $name): string => parse_url(route($name), PHP_URL_PATH) ?: '/', ['home', ...$pageRoutes]),
+                parse_url(route('members.show', User::factory()->create()), PHP_URL_PATH) ?: '/',
                 ...array_map(fn (array $category): string => '/categories/'.$category['slug'], config('gunmatch_categories')),
                 ...array_map(fn (array $item): string => '/outdoor-samples/'.$item['slug'], config('gunmatch_samples.outdoorItems')),
             ],
@@ -151,6 +152,10 @@ class StaticPagesTest extends TestCase
 
                 $path = $parts['path'] ?? '/';
                 if (str_starts_with($path, '/assets/')) {
+                    continue;
+                }
+
+                if (preg_match('#^/members/\d+$#', $path) === 1) {
                     continue;
                 }
 
@@ -233,9 +238,9 @@ class StaticPagesTest extends TestCase
         $this->get(route('mypage.profile.public'))
             ->assertOk()
             ->assertSee('ログイン中の会員')
-            ->assertSee('プロフィール表示サンプル')
-            ->assertSee('第三者への公開機能はありません')
-            ->assertDontSee('公開プロフィール</a>');
+            ->assertSee('公開プロフィール')
+            ->assertSee('表示名と会員区分のみ')
+            ->assertSee(route('members.show', $user));
 
         $this->get(route('mypage.profile.preview'))
             ->assertOk()
@@ -262,13 +267,14 @@ class StaticPagesTest extends TestCase
 
         $this->get(route('mypage.notifications'))
             ->assertOk()
-            ->assertSee('通知設定（準備中）')
-            ->assertSee('通知の配信・変更機能はありません');
+            ->assertSee('サイト内通知')
+            ->assertSee('運営からのお知らせをサイト内で確認できます');
 
         $this->get(route('mypage.profile.preview'))
             ->assertOk()
-            ->assertSee('プロフィール表示サンプルへ')
-            ->assertSee('第三者には公開されません');
+            ->assertSee('プロフィールプレビュー')
+            ->assertSee('公開プロフィール表示へ')
+            ->assertSee('このプレビュー自体は第三者には公開されません');
     }
 
     public function test_email_and_phone_verification_pages_explain_the_next_required_action(): void

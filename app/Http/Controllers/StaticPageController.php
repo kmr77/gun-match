@@ -54,20 +54,24 @@ class StaticPageController extends Controller
         $titles = [
             'home' => 'マイページ',
             'profile' => 'プロフィール編集',
-            'profile-public' => 'プロフィール表示サンプル',
+            'profile-public' => '公開プロフィール',
             'profile-preview' => 'プロフィールプレビュー',
             'settings' => 'アカウント設定',
             'security' => 'セキュリティ設定',
             'account' => 'アカウント管理のご案内',
-            'notifications' => '通知設定（準備中）',
             'announcements' => 'お知らせ一覧',
         ];
 
         abort_unless(array_key_exists($page, $titles), 404);
 
+        $user = auth()->user();
         $data = [
             'pageKey' => $page,
             'title' => $titles[$page],
+            'unreadNotificationCount' => $user->memberNotifications()
+                ->unread()
+                ->whereHas('announcement', fn ($query) => $query->published())
+                ->count(),
         ];
 
         if ($page === 'announcements') {

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Announcement;
+use App\Services\AnnouncementNotificationService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -25,9 +26,10 @@ class AnnouncementController extends Controller
         return view('pages.admin-announcement-form', compact('announcement'));
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request, AnnouncementNotificationService $notificationService): RedirectResponse
     {
         $announcement = Announcement::create($this->validatedData($request));
+        $notificationService->notifyEligibleMembers($announcement);
 
         return redirect()->route('admin.announcements.edit', $announcement)
             ->with('status', 'お知らせを作成しました。');
@@ -38,9 +40,13 @@ class AnnouncementController extends Controller
         return view('pages.admin-announcement-form', compact('announcement'));
     }
 
-    public function update(Request $request, Announcement $announcement): RedirectResponse
-    {
+    public function update(
+        Request $request,
+        Announcement $announcement,
+        AnnouncementNotificationService $notificationService,
+    ): RedirectResponse {
         $announcement->update($this->validatedData($request, $announcement));
+        $notificationService->notifyEligibleMembers($announcement);
 
         return redirect()->route('admin.announcements.edit', $announcement)
             ->with('status', 'お知らせを更新しました。');

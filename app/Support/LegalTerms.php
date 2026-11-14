@@ -3,6 +3,7 @@
 namespace App\Support;
 
 use Carbon\CarbonImmutable;
+use InvalidArgumentException;
 
 class LegalTerms
 {
@@ -25,13 +26,19 @@ class LegalTerms
         $effectiveAt = $configuration['effective_at'] ?? null;
         $sections = $configuration['sections'] ?? null;
 
+        try {
+            $hasEffectiveDate = is_string($effectiveAt)
+                && trim($effectiveAt) !== ''
+                && ! CarbonImmutable::parse($effectiveAt)->isFuture();
+        } catch (InvalidArgumentException) {
+            return null;
+        }
+
         if (
             ($configuration['published'] ?? false) !== true
             || ! is_string($version)
             || preg_match('/\A[A-Za-z0-9._-]{1,50}\z/', $version) !== 1
-            || ! is_string($effectiveAt)
-            || trim($effectiveAt) === ''
-            || CarbonImmutable::parse($effectiveAt)->isFuture()
+            || ! $hasEffectiveDate
             || ! self::hasPublishableSections($sections)
         ) {
             return null;

@@ -34,7 +34,7 @@
                 </form>
             </div>
             <div class="mypage-layout">
-                <x-mypage-nav :active="$pageKey" />
+                <x-mypage-nav :active="$pageKey" :unread-notification-count="$unreadNotificationCount ?? 0" />
                 <section class="mypage-content" aria-labelledby="mypage-content-title">
                     <h2 id="mypage-content-title">{{ $title }}</h2>
 
@@ -64,7 +64,7 @@
                             <p>プロフィールやパスワードは各メニューから更新できます。掲載・検索・取引に関する機能は提供していません。</p>
                         </div>
                     @elseif ($pageKey === 'profile')
-                        <p class="member-help">本名・表示名などを更新できます。本名、メールアドレス、生年月日、都道府県、電話番号、所持許可の自己申告は一般公開されません。第三者向けプロフィール公開機能は未実装です。メールアドレスを変更するとメール再確認が必要です。電話番号を変更するとSMS認証状態がリセットされ、再確認が必要です。</p>
+                        <p class="member-help">本名・表示名などを更新できます。公開プロフィールには表示名と会員区分のみを掲載し、本名、メールアドレス、生年月日、都道府県、電話番号、所持許可の自己申告は公開しません。メールアドレスを変更するとメール再確認が必要です。電話番号を変更するとSMS認証状態がリセットされ、再確認が必要です。</p>
                         <form method="POST" action="{{ route('mypage.profile.update') }}">
                             @csrf
                             @method('PUT')
@@ -129,27 +129,28 @@
                         </form>
                         <p class="member-help"><a href="{{ route('mypage.profile.public') }}">プロフィール表示サンプル</a> ・ <a href="{{ route('mypage.profile.preview') }}">プロフィールプレビュー（本人のみ）</a></p>
                     @elseif ($pageKey === 'profile-public' || $pageKey === 'profile-preview')
-                        <p class="member-help">ご自身の表示名と会員区分を表示するサンプルです。公開設定や第三者への公開機能はありません。</p>
+                        <p class="member-help">
+                            公開プロフィールには表示名と会員区分のみを掲載します。本名、生年月日、電話番号、メールアドレス、所持許可の自己申告、運営による確認審査の状態・メモは公開しません。
+                        </p>
                         @if ($pageKey === 'profile-preview')
                             <x-feedback-message
                                 type="info"
                                 title="プロフィールプレビュー"
-                                message="現在のアカウント情報を表示しています。第三者には公開されません。"
+                                message="現在のアカウント情報から、公開される項目だけを表示しています。このプレビュー自体は第三者には公開されません。"
                             />
                         @endif
-                        <article class="profile-preview-card" aria-label="本人のみが確認できるプロフィール表示サンプル">
+                        <article class="profile-preview-card" aria-label="会員公開プロフィール">
                             <span class="profile-preview-card__label">{{ auth()->user()->member_type->label() }}</span>
                             <h3>{{ auth()->user()->name }}</h3>
-                            <p>第三者向けプロフィール公開機能は未実装です。</p>
                             <dl>
                                 <div><dt>会員区分</dt><dd>{{ auth()->user()->member_type->label() }}</dd></div>
-                                <div><dt>第三者への公開</dt><dd>未実装</dd></div>
+                                <div><dt>公開情報</dt><dd>表示名・会員区分</dd></div>
                             </dl>
                         </article>
                         @if ($pageKey === 'profile-preview')
-                            <p class="member-help"><a href="{{ route('mypage.profile') }}">プロフィール編集画面へ</a> ・ <a href="{{ route('mypage.profile.public') }}">プロフィール表示サンプルへ</a></p>
+                            <p class="member-help"><a href="{{ route('mypage.profile') }}">プロフィール編集画面へ</a> ・ <a href="{{ route('mypage.profile.public') }}">公開プロフィール表示へ</a></p>
                         @else
-                            <p class="member-help"><a href="{{ route('mypage.profile') }}">プロフィール編集画面へ</a> ・ <a href="{{ route('mypage.profile.preview') }}">本人用プレビューへ</a></p>
+                            <p class="member-help"><a href="{{ route('members.show', auth()->user()) }}">公開プロフィールを確認する</a> ・ <a href="{{ route('mypage.profile') }}">プロフィール編集画面へ</a></p>
                         @endif
                     @elseif ($pageKey === 'settings')
                         <p class="member-help">会員区分、運営による会員確認審査、メール・電話番号の認証状態をそれぞれ表示します。SMSによる電話確認は本人確認・事業者確認審査や所持許可の確認とは別です。</p>
@@ -230,11 +231,37 @@
                         </ul>
                         {{ $announcements->links() }}
                         <p class="member-help"><a href="{{ route('announcements.index') }}">お知らせ一覧を開く</a></p>
+                    @elseif ($pageKey === 'notifications')
+                        <p class="member-help">運営からのお知らせをサイト内で確認できます。メール・SMS配信、会員間の取引連絡・マッチング通知は対象外です。</p>
+                        @if ($unreadNotificationCount > 0)
+                            <form method="POST" action="{{ route('mypage.notifications.read-all') }}">
+                                @csrf
+                                @method('PATCH')
+                                <button class="btn btn--outline" type="submit">未読通知をすべて既読にする（{{ $unreadNotificationCount }}件）</button>
+                            </form>
+                        @endif
+                        <ul class="announcement-list">
+                            @forelse ($notifications as $notification)
+                                <li>
+                                    <time datetime="{{ $notification->created_at->toIso8601String() }}">{{ $notification->created_at->format('Y年m月d日 H:i') }}</time>
+                                    <h3><a href="{{ route('announcements.show', $notification->announcement) }}">{{ $notification->announcement->title }}</a></h3>
+                                    <p>{{ $notification->read_at ? '既読' : '未読' }} ・ 運営からのお知らせ</p>
+                                    @if (! $notification->read_at)
+                                        <form method="POST" action="{{ route('mypage.notifications.read', $notification) }}">
+                                            @csrf
+                                            @method('PATCH')
+                                            <button class="btn btn--outline btn--small" type="submit">既読にする</button>
+                                        </form>
+                                    @endif
+                                </li>
+                            @empty
+                                <li>現在、確認できる通知はありません。</li>
+                            @endforelse
+                        </ul>
+                        {{ $notifications->links() }}
+                        <p class="member-help"><a href="{{ route('announcements.index') }}">公開お知らせ一覧を開く</a></p>
                     @else
-                        <p class="member-help">通知設定の表示例です。通知の配信・変更機能はありません。</p>
-                        <div class="setting-row"><div><h3>お知らせ</h3><p>サイトに関するお知らせ</p></div><span class="status-pill">未設定</span></div>
-                        <div class="setting-row"><div><h3>メール通知</h3><p>メール送信機能は未実装です</p></div><span class="status-pill">準備中</span></div>
-                        <p class="member-help"><a href="{{ route('mypage.announcements') }}">お知らせ一覧を見る</a></p>
+                        <p class="member-help">通知の設定ページはありません。</p>
                     @endif
                 </section>
             </div>

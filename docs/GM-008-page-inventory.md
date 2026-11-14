@@ -2,7 +2,7 @@
 
 更新日：2026-11-02
 
-この表は過去のページ制作計画と現行ルートを照合した一覧です。会員登録・認証・プロフィール管理・本人による退会申請、管理者向け会員検索・状態管理・操作履歴・会員詳細と確認審査、運営問い合わせ、お知らせ管理、会員通報を実装済みです。管理者権限の付与・解除はCLI専用です。掲載・取引等の業務機能、通知配信は未実装です。「未制作」は別表に記載し、実装済みとして扱いません。PC/SP欄には実際に確認した幅と作業番号を記録します。
+この表は過去のページ制作計画と現行ルートを照合した一覧です。会員登録・認証・プロフィール管理・本人による退会申請、会員公開プロフィール、公開お知らせに連携した会員別サイト内通知、管理者向け会員検索・状態管理・操作履歴・会員詳細と確認審査、運営問い合わせ、お知らせ管理、会員通報を実装済みです。管理者権限の付与・解除はCLI専用です。掲載・取引等の業務機能、メール・SMS通知配信は未実装です。「未制作」は別表に記載し、実装済みとして扱いません。PC/SP欄には実際に確認した幅と作業番号を記録します。
 
 ## 現在のページ
 
@@ -27,7 +27,7 @@
 | パスワード再設定案内 | `/forgot-password` | `password.request` | 実装済み（Laravel Password Broker） | layouts.app, page-heading, form-field, feedback-message | GM-013: Feature検証済み | DBとメール配信設定 | 本番メール配信を設定 |
 | マイページTOP | `/mypage` | `mypage` | 実装済み（本人の会員情報表示） | layouts.mypage, page-heading, mypage-nav, feedback-message | GM-013: Feature検証済み | DB・認証基盤 | なし |
 | プロフィール編集 | `/mypage/profile` | `mypage.profile` | 本人の登録情報を更新、変更カラム名のみ監査 | layouts.mypage, mypage-nav, form-field, feedback-message | GM-025: Feature検証 | DB・認証基盤 | SMS確認、公開プロフィール項目は未確定 |
-| プロフィール表示サンプル（本人のみ） | `/mypage/profile/public` | `mypage.profile.public` | 本人の表示名・会員区分だけを表示。第三者向け公開機能は未実装 | layouts.mypage, mypage-nav, profile-preview-card | GM-027: 変更箇所の表示確認 | 未実装（第三者向けプロフィール公開） | 公開仕様・表示項目を決定するまで公開機能を案内しない |
+| 公開プロフィール確認 | `/members/{user}`、`/mypage/profile/public` | `members.show`、`mypage.profile.public` | 利用可能かつメール・電話確認済み会員の表示名・会員区分のみ公開 | layouts.app, layouts.mypage, mypage-nav, profile-preview-card | GM-032: Feature検証。今回のPC/SP実ブラウザ確認は未実施 | usersテーブルを利用 | 個人情報・審査情報を公開しない |
 | プロフィールプレビュー | `/mypage/profile/preview` | `mypage.profile.preview` | デザインのみ仮実装（保存・公開なし） | layouts.mypage, mypage-nav, profile-preview-card, feedback-message | GM-010: 1440/375確認済み | 未実装（編集データ連携時に必要） | プレビュー対象データを決定 |
 | アカウント設定 | `/mypage/settings` | `mypage.settings` | デザインのみ仮実装（変更不可） | layouts.mypage, mypage-nav, status-pill | GM-010: 1440/375確認済み | 未実装（設定変更時に必要） | 提供設定項目を決定 |
 | セキュリティ設定 | `/mypage/security` | `mypage.security` | 実装済み（現在のパスワード検証・変更） | layouts.mypage, mypage-nav, form-field | GM-013: Feature検証済み | DB・認証基盤 | なし |
@@ -40,18 +40,18 @@
 | 管理者会員詳細・確認審査 | `/admin/members/{user}`、`PATCH /admin/members/{user}/verification` | `admin.members.show`、`admin.members.verification.update` | 会員情報・利用状態・確認状態・審査記録・状態変更履歴を共通詳細Bladeに表示 | layouts.app, page-heading, feedback-message, admin-table, form-field | GM-017/018の基本画面、GM-022の確認審査Feature検証 | usersへ確認状態等を追加、監査履歴は既存 admin_activity_logs を利用 | 審査運用・保持期間を確定。本人確認画像・証明書番号は収集しない |
 | 管理者お問い合わせ一覧 | `/admin/contact-inquiries` | `admin.contact-inquiries.index` | 受付日時・送信者・件名・対応状態の一覧 | layouts.app, page-heading, admin-table | GM-019: Feature・375pxブラウザー確認 | contact_inquiriesテーブル | 問い合わせ情報の保持・削除期間を決定 |
 | 管理者お問い合わせ詳細 | `/admin/contact-inquiries/{contactInquiry}` | `admin.contact-inquiries.show` | 送信内容・対応状態・対応日時の表示と状態更新 | layouts.app, page-heading, feedback-message, admin-table | GM-019: Feature・375pxブラウザー確認 | contact_inquiriesテーブル | 問い合わせ情報の保持・削除期間を決定 |
-| 通知設定（準備中） | `/mypage/notifications` | `mypage.notifications` | 表示例のみ（配信・変更なし） | layouts.mypage, mypage-nav, status-pill | GM-027: 変更箇所の表示確認 | 未実装（通知配信時に必要） | 通知種別・配信方式を決定 |
+| サイト内通知 | `/mypage/notifications` | `mypage.notifications` | 公開お知らせ通知、未読数、本人所有分の単件・一括既読 | layouts.mypage, mypage-nav, announcement-list | GM-033: Feature検証。今回のPC/SP実ブラウザ確認は未実施 | `member_notifications`。会員・お知らせの組み合わせに一意制約 | メール・SMS配信、取引・マッチング通知は対象外 |
 
 ## GM-027 表示仕様の照合
 
 - TOPの掲載カードは架空のデザイン確認用サンプルと明示し、掲載・取得募集・取引機能が稼働中に見える見出し・バッジを外しました。
 - FAQ、ログイン、メール・電話確認、プロフィール表示、通知設定の案内を現行実装に合わせました。
 - 会員設定では会員区分・運営の確認審査・メール認証・SMS電話確認を別々に表示します。
-- TOP・公開案内・認証ページはGM-027でPC 1440px／スマートフォン375pxのブラウザー表示を確認し、マイページの変更箇所はFeatureテストで表示を確認しました。銃器の掲載・取引機能、第三者向けプロフィール公開、通知配信、実SMS配送は未実装のままです。
-| マイページお知らせ一覧 | `/mypage/announcements` | `mypage.announcements` | DBから公開済みのお知らせを表示 | layouts.mypage, mypage-nav, announcement-list | GM-020: Feature・375px表示確認 | announcementsテーブルを利用 | 既読管理・通知配信は未実装 |
-| 公開お知らせ一覧 | `/announcements` | `announcements.index` | 公開済み・公開日時到来分を新しい順に表示 | layouts.app, page-heading, announcement-list | GM-020: Feature・375px表示確認 | announcementsテーブルを利用 | 通知配信は対象外 |
-| 公開お知らせ詳細 | `/announcements/{announcement}` | `announcements.show` | 公開済みかつ公開日時到来後のみ本文を表示 | layouts.app, page-heading, content-panel | GM-020: Feature・375px表示確認 | announcementsテーブルを利用 | 通知配信は対象外 |
-| 管理者お知らせ管理 | `/admin/announcements` | `admin.announcements.index` | 管理者専用の一覧・作成・編集・削除、下書き・公開管理 | layouts.app, page-heading, feedback-message, admin-table, form-field | GM-020: Feature・375pxブラウザー確認 | announcementsテーブル | 通知配信・既読管理は対象外 |
+- TOP・公開案内・認証ページはGM-027でPC 1440px／スマートフォン375pxのブラウザー表示を確認しました。GM-032〜034で公開プロフィール、サイト内通知、本番運用診断を実装しています。今回の変更画面のPC/SPブラウザー確認は未実施です。銃器の掲載・取引機能、メール・SMS通知配信、実SMS配送は未実装です。
+| マイページお知らせ一覧 | `/mypage/announcements` | `mypage.announcements` | DBから公開済みのお知らせを表示 | layouts.mypage, mypage-nav, announcement-list | GM-020: Feature・375px表示確認 | announcementsテーブルを利用 | メール・SMS通知配信は対象外 |
+| 公開お知らせ一覧 | `/announcements` | `announcements.index` | 公開済み・公開日時到来分を新しい順に表示 | layouts.app, page-heading, announcement-list | GM-020: Feature・375px表示確認 | announcementsテーブルを利用 | 公開時にサイト内通知へ連携 |
+| 公開お知らせ詳細 | `/announcements/{announcement}` | `announcements.show` | 公開済みかつ公開日時到来後のみ本文を表示 | layouts.app, page-heading, content-panel | GM-020: Feature・375px表示確認 | announcementsテーブルを利用 | メール・SMS通知配信は対象外 |
+| 管理者お知らせ管理 | `/admin/announcements` | `admin.announcements.index` | 管理者専用の一覧・作成・編集・削除、下書き・公開管理。公開時は会員別サイト内通知を作成 | layouts.app, page-heading, feedback-message, admin-table, form-field | GM-020: Feature・375pxブラウザー確認 | announcements、member_notificationsテーブル | メール・SMS配信は対象外 |
 | Not Found | 存在しないURL | Laravel標準404 | フロントエンド制作済み（GunMatchデザイン） | layouts.app, site-header/footer | GM-008: 1440/375確認済み | 未実装（不要） | なし |
 
 ## GM-011 共通画面確認追記（2026-10-26）
@@ -89,9 +89,9 @@
 
 - `x-mypage-nav`：既存のサイドメニューを全9画面に拡張。小画面では折り返すメニューにし、各アイコン記号に日本語ラベルを併記。
 - `x-feedback-message`：案内・成功表示例・入力エラー表示例を共通化。成功・エラー例も処理結果ではなく画面表示サンプルであることを明記。
-- 公開プロフィールとプレビューは個人情報を含まない固定の表示サンプル。お知らせ一覧の項目もすべて仮データ。
+- 公開プロフィールは表示名・会員区分に限定。マイページのお知らせ・通知は実DBの公開お知らせ・会員別通知を表示します。
 
-GM-013以降、認証情報と個人情報はログイン中の本人に限定して扱います。お知らせは引き続き表示確認用で、通知配信・既読管理はありません。
+GM-013以降、認証情報と個人情報はログイン中の本人に限定して扱います。公開プロフィールは指定された公開項目のみ表示し、サイト内通知は会員本人の公開お知らせ通知に限定します。
 
 ## GM-009で追加した画面・共通部品
 

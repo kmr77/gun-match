@@ -45,6 +45,13 @@ class AppServiceProvider extends ServiceProvider
             return;
         }
 
+        if (
+            $this->app->runningInConsole()
+            && in_array('gunmatch:production-check', $_SERVER['argv'] ?? [], true)
+        ) {
+            return;
+        }
+
         $smtp = config('mail.mailers.smtp', []);
         $host = $smtp['host'] ?? null;
         $port = filter_var($smtp['port'] ?? null, FILTER_VALIDATE_INT);

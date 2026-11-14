@@ -85,4 +85,9 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(TermsConsent::class);
     }
+
+    public function memberNotifications(): HasMany
+    {
+        return $this->hasMany(MemberNotification::class);
+    }
 }

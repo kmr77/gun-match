@@ -20,8 +20,10 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\MemberNotificationController;
 use App\Http\Controllers\MemberReportController;
 use App\Http\Controllers\OutdoorSampleController;
+use App\Http\Controllers\PublicMemberProfileController;
 use App\Http\Controllers\StaticPageController;
 use App\Http\Middleware\EnsureAccountIsActive;
 use App\Http\Middleware\EnsureMemberVerificationComplete;
@@ -40,6 +42,9 @@ Route::get('/announcements', [AnnouncementController::class, 'index'])->name('an
 Route::get('/announcements/{announcement}', [AnnouncementController::class, 'show'])
     ->whereNumber('announcement')
     ->name('announcements.show');
+Route::get('/members/{user}', [PublicMemberProfileController::class, 'show'])
+    ->whereNumber('user')
+    ->name('members.show');
 Route::middleware(['auth', EnsureAccountIsActive::class, 'verified', EnsureMemberVerificationComplete::class, 'can:access-admin'])
     ->prefix('/admin')
     ->name('admin.')
@@ -149,7 +154,12 @@ Route::controller(StaticPageController::class)->group(function (): void {
             Route::delete('/mypage/account', [DestroyAccountController::class, 'destroy'])
                 ->middleware('throttle:3,1')
                 ->name('mypage.account.destroy');
-            Route::get('/mypage/notifications', 'mypage')->defaults('page', 'notifications')->name('mypage.notifications');
+            Route::get('/mypage/notifications', [MemberNotificationController::class, 'index'])->name('mypage.notifications');
+            Route::patch('/mypage/notifications/read-all', [MemberNotificationController::class, 'markAllRead'])
+                ->name('mypage.notifications.read-all');
+            Route::patch('/mypage/notifications/{notification}/read', [MemberNotificationController::class, 'markRead'])
+                ->whereNumber('notification')
+                ->name('mypage.notifications.read');
             Route::get('/mypage/announcements', 'mypage')->defaults('page', 'announcements')->name('mypage.announcements');
         });
     });
